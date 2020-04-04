@@ -1,10 +1,12 @@
 html,
 body {
-  width: 400px;
+  min-width: 400px;
 }
 
 .menu-content {
   min-height: 300px;
+  max-height: 500px;
+  overflow-y: auto;
 }
 
 .menu-item:hover,

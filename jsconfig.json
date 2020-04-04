@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
-    "checkJs": true
+    "target": "es5",
+    "checkJs": true,
+    "strict": true
   },
   "exclude": ["node_modules", "**/node_modules/*"]
 }
