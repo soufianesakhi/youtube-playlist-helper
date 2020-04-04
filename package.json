@@ -1,0 +1,12 @@
+{
+  "name": "youtube-playlist-helper",
+  "version": "1.0.0",
+  "description": "Generate YouTube playlists from bookmarks and URL lists",
+  "author": "Soufiane Sakhi <soufiane.sakhi.js@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/firefox-webext-browser": "^70.0.1",
+    "webextension-polyfill": "^0.6.0"
+  }
+}
