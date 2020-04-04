@@ -1,10 +1,11 @@
 /// <reference path="./popup.d.ts" />
 
-// @ts-ignore
-document.getElementById("from-bookmark").onclick = () => {
-  /** @type {HTMLElement} container */
-  // @ts-ignore
-  const container = document.getElementById("bookmarks");
+/***********************************
+ *               UI
+ ***********************************/
+
+getById("from-bookmark").onclick = () => {
+  const container = getById("bookmarks");
   container.innerHTML = "";
   getYoutubeFolderBookmarks().then((bookmarks) => {
     bookmarks.forEach((folder) => {
@@ -20,34 +21,24 @@ document.getElementById("from-bookmark").onclick = () => {
   });
 };
 
-// @ts-ignore
-document.getElementById("from-urls").onclick = () => {
+getById("from-urls").onclick = () => {
   activatePopupMenu("from-urls-menu");
 };
 
-document.querySelectorAll(".back-item").forEach(
-  /** @param {HTMLElement} item */
-  // @ts-ignore
-  (item) => {
-    item.onclick = () => {
-      activatePopupMenu("main-menu");
-    };
-  }
-);
+queryAll(".back-item").forEach((item) => {
+  item.onclick = () => {
+    activatePopupMenu("main-menu");
+  };
+});
 
 /**
  * @param  {string} menuId
  */
 function activatePopupMenu(menuId) {
-  document.querySelectorAll(".popup-menu").forEach(
-    /** @param {HTMLElement} menu */
-    // @ts-ignore
-    (menu) => {
-      menu.style.display = "none";
-    }
-  );
-  // @ts-ignore
-  document.getElementById(menuId).style.display = "block";
+  queryAll(".popup-menu").forEach((menu) => {
+    menu.style.display = "none";
+  });
+  getById(menuId).style.display = "block";
 }
 
 /***********************************
@@ -133,4 +124,24 @@ function createPlaylist(videoIds) {
   var url =
     "https://www.youtube.com/watch_videos?video_ids=" + videoIds.join(",");
   window.open(url, "_blank");
+}
+
+/***********************************
+ *            Utils
+ ***********************************/
+
+/**
+ * @param  {string} id
+ * @returns {HTMLElement}
+ */
+function getById(id) {
+  // @ts-ignore
+  return document.getElementById(id);
+}
+/**
+ * @param  {string} selector
+ * @returns {NodeListOf<HTMLElement>}
+ */
+function queryAll(selector) {
+  return document.querySelectorAll(selector);
 }
