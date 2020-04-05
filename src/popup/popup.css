@@ -1,6 +1,11 @@
-html,
 body {
   min-width: 400px;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
 }
 
 .menu-content {
@@ -14,11 +19,13 @@ body {
   background-color: #cff2f2;
 }
 
-.back-item.list-group-item {
+.back-item {
   background-color: #eef0f0;
 }
 
 .menu-item {
+  padding: 0.75rem 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.125);
   text-align: left;
   font-size: 1em;
   cursor: pointer;

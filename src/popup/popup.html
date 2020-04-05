@@ -4,41 +4,32 @@
   <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="popup.css" />
-    <link rel="stylesheet" href="../bootstrap.min.css" />
   </head>
 
   <body>
     <!-- Main -->
-    <div id="main-menu" class="list-group popup-menu">
-      <div id="from-bookmark" class="menu-item list-group-item">
+    <div id="main-menu" class="popup-menu">
+      <div id="from-bookmark" class="menu-item">
         Create a playlist from a bookmark folder
         <i></i>
       </div>
-      <div id="from-urls" class="menu-item list-group-item">
+      <div id="from-urls" class="menu-item">
         Create a playlist from a list of links
         <i></i>
       </div>
     </div>
 
     <!-- From Bookmark -->
-    <div
-      id="from-bookmark-menu"
-      class="list-group popup-menu"
-      style="display: none;"
-    >
-      <div class="back-item menu-item list-group-item"><i></i>Back</div>
+    <div id="from-bookmark-menu" class="popup-menu" style="display: none;">
+      <div class="back-item menu-item"><i></i>Back</div>
       <div class="menu-content">
-        <div id="bookmarks" class="list-group"></div>
+        <div id="bookmarks"></div>
       </div>
     </div>
 
     <!-- From URLs -->
-    <div
-      id="from-urls-menu"
-      class="list-group popup-menu"
-      style="display: none;"
-    >
-      <div class="back-item menu-item list-group-item"><i></i>Back</div>
+    <div id="from-urls-menu" class="popup-menu" style="display: none;">
+      <div class="back-item menu-item"><i></i>Back</div>
       <div class="menu-content">
         from-urls-menu
       </div>

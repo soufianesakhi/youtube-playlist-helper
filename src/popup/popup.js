@@ -11,7 +11,7 @@ getById("from-bookmark").onclick = () => {
     bookmarks.forEach((folder) => {
       const div = document.createElement("div");
       div.textContent = folder.folderName;
-      div.className = "menu-item list-group-item";
+      div.className = "menu-item";
       div.onclick = () => {
         createPlaylist(folder.videoIds);
       };
