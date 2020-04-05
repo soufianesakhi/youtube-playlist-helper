@@ -31,6 +31,13 @@ queryAll(".back-item").forEach((item) => {
   };
 });
 
+getById("create-from-urls").onclick = () => {
+  // @ts-ignore
+  const text = getById("urlsTextarea").value;
+  const videoIds = parseYoutubeIds(text);
+  createPlaylist(videoIds);
+};
+
 /**
  * @param  {string} menuId
  */
@@ -44,8 +51,6 @@ function activatePopupMenu(menuId) {
 /***********************************
  *            Bookmarks
  ***********************************/
-
-const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:.*v=|v\/))([^&\s\?]+)/gi;
 
 async function getYoutubeFolderBookmarks() {
   const tree = await browser.bookmarks.getTree();
@@ -80,7 +85,7 @@ function recursiveCollectBookmarks(parentFolder, tree) {
       if (!node.url) {
         return;
       }
-      const videoId = captureYoutubeId(node.url);
+      const videoId = parseYoutubeId(node.url);
       if (videoId) {
         if (!currentBookmarks) {
           currentBookmarks = {
@@ -99,11 +104,31 @@ function recursiveCollectBookmarks(parentFolder, tree) {
   return bookmarks;
 }
 
+/***********************************
+ *            Parsing
+ ***********************************/
+
+const youtubeRegexPattern = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?\S*(?:watch|embed)?(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/))([^&\s\?]+)/
+  .source;
+
+/**
+ * @param  {string} text
+ */
+function parseYoutubeIds(text) {
+  let matches,
+    videoIds = [];
+  const regex = RegExp(youtubeRegexPattern, "ig");
+  while ((matches = regex.exec(text))) {
+    videoIds.push(matches[1]);
+  }
+  return videoIds;
+}
+
 /**
  * @param  {string} url
  */
-function captureYoutubeId(url) {
-  const result = youtubeRegex.exec(url);
+function parseYoutubeId(url) {
+  const result = RegExp(youtubeRegexPattern, "i").exec(url);
   if (result && result.length > 1) {
     return result[1];
   }

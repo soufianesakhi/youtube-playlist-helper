@@ -11,6 +11,13 @@ body {
 .menu-content {
   min-height: 300px;
   max-height: 500px;
+  overflow-x: hidden;
+}
+
+#urlsTextarea {
+  height: 400px;
+  width: 550px;
+  resize: none;
   overflow-y: auto;
 }
 
@@ -25,7 +32,7 @@ body {
 
 .menu-item {
   padding: 0.75rem 1.25rem;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
   text-align: left;
   font-size: 1em;
   cursor: pointer;
@@ -44,4 +51,14 @@ body {
   border-right: 6px solid #000000;
   float: left;
   margin: 0.4rem 1.4rem 0.4rem 0rem;
+}
+
+#create-from-urls {
+  background-color: #296969;
+  color: white;
+  text-align: center;
+}
+
+#create-from-urls:hover {
+  opacity: 0.9;
 }
