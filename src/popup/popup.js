@@ -8,6 +8,13 @@ getById("from-bookmark").onclick = () => {
   const container = getById("bookmarks");
   container.innerHTML = "";
   getYoutubeFolderBookmarks().then((bookmarks) => {
+    if (bookmarks.length == 0) {
+      const div = document.createElement("div");
+      div.textContent = "No folder containing YouTube links found";
+      div.style.textAlign = "center";
+      div.style.padding = "10px";
+      container.append(div);
+    }
     bookmarks.forEach((folder) => {
       const div = document.createElement("div");
       div.textContent = folder.folderName;
