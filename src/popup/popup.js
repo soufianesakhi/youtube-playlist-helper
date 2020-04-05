@@ -45,7 +45,7 @@ function activatePopupMenu(menuId) {
  *            Bookmarks
  ***********************************/
 
-const youtubeRegex = /^(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(.*v=|v\/)([^&\s]+)/i;
+const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:.*v=|v\/))([^&\s\?]+)/gi;
 
 async function getYoutubeFolderBookmarks() {
   const tree = await browser.bookmarks.getTree();
@@ -104,8 +104,8 @@ function recursiveCollectBookmarks(parentFolder, tree) {
  */
 function captureYoutubeId(url) {
   const result = youtubeRegex.exec(url);
-  if (result && result.length > 2) {
-    return result[2];
+  if (result && result.length > 1) {
+    return result[1];
   }
   return null;
 }
