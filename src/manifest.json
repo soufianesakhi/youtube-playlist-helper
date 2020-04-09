@@ -1,7 +1,7 @@
 {
   "name": "YouTube Playlist Helper",
   "description": "Generate YouTube playlists from bookmarks and URL lists",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "manifest_version": 2,
   "icons": {
     "48": "icons/icon_48.png",
@@ -9,6 +9,7 @@
   },
   "browser_action": {
     "default_title": "YouTube Playlist Helper",
+    "browser_style": true,
     "default_popup": "popup/popup.html"
   },
   "permissions": ["bookmarks"]
