@@ -1,23 +1,23 @@
 body {
-  min-width: 400px;
   margin: 0;
-  font-size: 1rem;
+  font-size: 15px;
   font-weight: 400;
-  line-height: 1.5;
   color: #212529;
   background-color: #fff;
+  overflow-y: auto;
 }
 
 .menu-content {
-  min-height: 300px;
-  max-height: 500px;
   overflow-x: hidden;
 }
 
 #urlsTextarea {
-  height: 400px;
-  width: 550px;
+  min-height: 250px;
+  min-width:335px;
+  width:100%;
   resize: none;
+  white-space: pre;
+  overflow-wrap: normal;
   overflow-y: auto;
 }
 
@@ -31,10 +31,10 @@ body {
 }
 
 .menu-item {
+  min-width: 20rem;
   padding: 0.75rem 1.25rem;
   border-top: 1px solid rgba(0, 0, 0, 0.125);
   text-align: left;
-  font-size: 1em;
   cursor: pointer;
 }
 
@@ -43,7 +43,7 @@ body {
   border-top: 6px solid transparent;
   border-left: 6px solid #000000;
   float: right;
-  margin: 0.5rem 0rem;
+  margin: 0.5rem 0rem 0.5rem 1rem;
 }
 
 .back-item.menu-item > i {
