@@ -106,7 +106,7 @@ function recursiveCollectBookmarks(parentFolder, tree) {
     }
   });
   if (currentBookmarks) {
-    bookmarks.push(currentBookmarks);
+    bookmarks.unshift(currentBookmarks);
   }
   return bookmarks;
 }
