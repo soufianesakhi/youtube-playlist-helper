@@ -1,6 +1,6 @@
 # YouTube Playlist Helper
 
-A YouTube playlist creator for Google Chrome and Firefox.
+A YouTube playlist creator for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/youtube-playlist-helper/) and [Google Chrome](https://chrome.google.com/webstore/detail/youtube-playlist-helper/ibdakohjhchaagmccfedeejmeillongg).
 
 ## Features
 ![extension-popup-menu](https://raw.githubusercontent.com/soufianesakhi/youtube-playlist-helper/master/screenshots/extension-popup-menu.png)
