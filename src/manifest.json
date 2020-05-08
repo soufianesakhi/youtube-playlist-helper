@@ -1,7 +1,7 @@
 {
   "name": "YouTube Playlist Helper",
   "description": "Generate YouTube playlists from bookmarks and URL lists",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "manifest_version": 2,
   "icons": {
     "48": "icons/icon_48.png",
@@ -15,7 +15,7 @@
     "browser_style": true,
     "default_popup": "popup/popup.html"
   },
-  "permissions": ["bookmarks", "storage"],
+  "permissions": ["bookmarks", "storage", "https://www.youtube.com/watch_videos*"],
   "browser_specific_settings": {
     "gecko": {
       "id": "{c3d5f138-77cb-461e-b553-f82bf70fecf7}"

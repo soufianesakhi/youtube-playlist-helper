@@ -170,13 +170,31 @@ function parseYoutubeId(url) {
 /**
  * @param  {string[]} videoIds
  */
-function createPlaylist(videoIds) {
+async function createPlaylist(videoIds) {
   if (videoIds.length == 0) {
     return;
   }
   var url =
     "https://www.youtube.com/watch_videos?video_ids=" + videoIds.join(",");
-  window.open(url, "_blank");
+  if (openPlaylistPage) {
+    const data = await (await fetch(url)).text();
+    const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
+    if (exec && exec.length > 1) {
+      url =
+        "https://www.youtube.com/playlist?list=" +
+        exec[1] +
+        (disablePolymer ? "&disable_polymer=1" : "");
+    } else {
+      alert(
+        "Unable to retrieve playlist id. Directly playing videos instead..."
+      );
+    }
+  }
+  browser.tabs.create({ url });
+  const window = browser.extension.getViews({ type: "popup" }).shift();
+  if (window) {
+    window.close();
+  }
 }
 
 /***********************************
