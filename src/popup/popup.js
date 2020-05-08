@@ -1,5 +1,26 @@
 /// <reference path="./popup.d.ts" />
 
+let openPlaylistPage = false;
+let disablePolymer = false;
+loadSettings();
+
+async function loadSettings() {
+  openPlaylistPage = await loadOption("open_playlist_page", openPlaylistPage);
+  disablePolymer = await loadOption("disable_polymer", disablePolymer);
+}
+
+/**
+ * @param {string} id
+ * @param {any} defaultValue
+ */
+async function loadOption(id, defaultValue) {
+  const result = await browser.storage.sync.get(id);
+  if (result && result[id] != null) {
+    return result[id];
+  }
+  return defaultValue;
+}
+
 /***********************************
  *               UI
  ***********************************/

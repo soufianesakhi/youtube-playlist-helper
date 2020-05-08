@@ -7,10 +7,18 @@
     "48": "icons/icon_48.png",
     "128": "icons/icon_128.png"
   },
+  "options_ui": {
+    "page": "options/options.html"
+  },
   "browser_action": {
     "default_title": "YouTube Playlist Helper",
     "browser_style": true,
     "default_popup": "popup/popup.html"
   },
-  "permissions": ["bookmarks"]
+  "permissions": ["bookmarks", "storage"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{c3d5f138-77cb-461e-b553-f82bf70fecf7}"
+    }
+  }
 }
