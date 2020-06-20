@@ -61,8 +61,8 @@ getById("from-current-tabs").onclick = async () => {
     /** @type {string[]} */
     // @ts-ignore
     const videoIds = tabs.map((tab) => parseYoutubeId(tab.url));
-    await createPlaylist(videoIds);
     closeTabs(tabs);
+    await createPlaylist(videoIds);
   } else {
     alert("There are no open YouTube tabs in the current window");
   }
@@ -223,7 +223,6 @@ async function createPlaylist(videoIds) {
       );
     }
   }
-  closeExtensionPopup();
   return browser.tabs.create({ url });
 }
 
@@ -252,18 +251,9 @@ function queryAll(selector) {
  */
 async function alert(message) {
   browser.notifications.create({
-    // @ts-ignore
     type: "basic",
-    title: `YouTube Playlist Helper`,
+    title: `YouTube Playlist Helper: Error`,
     message: message,
+    iconUrl: "../icons/icon_48.png",
   });
-}
-
-function closeExtensionPopup() {
-  setTimeout(() => {
-    const window = browser.extension.getViews({ type: "popup" }).shift();
-    if (window) {
-      window.close();
-    }
-  }, 200);
 }
