@@ -53,6 +53,21 @@ getById("from-urls").onclick = () => {
   activatePopupMenu("from-urls-menu");
 };
 
+getById("from-current-tabs").onclick = async () => {
+  const regex = RegExp(youtubeRegexPattern, "i");
+  let tabs = await getCurrentWindowTabs();
+  tabs = tabs.filter((tab) => tab.url && regex.test(tab.url));
+  if (tabs.length > 0) {
+    /** @type {string[]} */
+    // @ts-ignore
+    const videoIds = tabs.map((tab) => parseYoutubeId(tab.url));
+    await createPlaylist(videoIds);
+    closeTabs(tabs);
+  } else {
+    alert("There are no open YouTube tabs in the current window");
+  }
+};
+
 queryAll(".back-item").forEach((item) => {
   item.onclick = () => {
     activatePopupMenu("main-menu");
@@ -133,6 +148,24 @@ function recursiveCollectBookmarks(parentFolder, tree) {
 }
 
 /***********************************
+ *            Tabs
+ ***********************************/
+
+function getCurrentWindowTabs() {
+  return browser.tabs.query({ currentWindow: true });
+}
+
+/**
+ * @param  {browser.tabs.Tab[]} tabs
+ */
+function closeTabs(tabs) {
+  /** @type {number[]} */
+  // @ts-ignore
+  const ids = tabs.map((tab) => tab.id);
+  browser.tabs.remove(ids);
+}
+
+/***********************************
  *            Parsing
  ***********************************/
 
@@ -190,11 +223,8 @@ async function createPlaylist(videoIds) {
       );
     }
   }
-  browser.tabs.create({ url });
-  const window = browser.extension.getViews({ type: "popup" }).shift();
-  if (window) {
-    window.close();
-  }
+  closeExtensionPopup();
+  return browser.tabs.create({ url });
 }
 
 /***********************************
@@ -215,4 +245,25 @@ function getById(id) {
  */
 function queryAll(selector) {
   return document.querySelectorAll(selector);
+}
+
+/**
+ * @param {string} message
+ */
+async function alert(message) {
+  browser.notifications.create({
+    // @ts-ignore
+    type: "basic",
+    title: `YouTube Playlist Helper`,
+    message: message,
+  });
+}
+
+function closeExtensionPopup() {
+  setTimeout(() => {
+    const window = browser.extension.getViews({ type: "popup" }).shift();
+    if (window) {
+      window.close();
+    }
+  }, 200);
 }

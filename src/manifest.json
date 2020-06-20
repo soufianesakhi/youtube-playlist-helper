@@ -15,7 +15,13 @@
     "browser_style": true,
     "default_popup": "popup/popup.html"
   },
-  "permissions": ["bookmarks", "storage", "https://www.youtube.com/watch_videos*"],
+  "permissions": [
+    "bookmarks",
+    "tabs",
+    "storage",
+    "notifications",
+    "https://www.youtube.com/watch_videos*"
+  ],
   "browser_specific_settings": {
     "gecko": {
       "id": "{c3d5f138-77cb-461e-b553-f82bf70fecf7}"
