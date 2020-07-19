@@ -68,6 +68,17 @@ getById("from-current-tabs").onclick = async () => {
   }
 };
 
+getById("from-current-thumbnails").onclick = async () => {
+  let body = await getCurrentTabBody();
+  let videoIds = parseYoutubeThumbnailIds(body);
+  videoIds = removeDuplicates(videoIds);
+  if (videoIds.length > 0) {
+    await createPlaylist(videoIds);
+  } else {
+    alert("No YouTube video thumbnail found in the current tab");
+  }
+};
+
 queryAll(".back-item").forEach((item) => {
   item.onclick = () => {
     activatePopupMenu("main-menu");
@@ -155,6 +166,16 @@ function getCurrentWindowTabs() {
   return browser.tabs.query({ currentWindow: true });
 }
 
+async function getCurrentTabBody() {
+  const result = await browser.tabs.executeScript({
+    code: `document.body.innerHTML`,
+    allFrames: false, // this is the default
+    runAt: 'document_start',
+  });
+  console.log(result);
+  return result[0];
+}
+
 /**
  * @param  {browser.tabs.Tab[]} tabs
  */
@@ -172,6 +193,7 @@ function closeTabs(tabs) {
 // https://regex101.com/r/mPyKKP/1/
 const youtubeRegexPattern = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)/
   .source;
+const youtubeThumbnailsRegexPattern = /(?:img\.youtube|i\.ytimg|i1\.ytimg)\.com\/vi\/([^\/\s]+)/.source;
 
 /**
  * @param  {string} text
@@ -180,6 +202,19 @@ function parseYoutubeIds(text) {
   let matches,
     videoIds = [];
   const regex = RegExp(youtubeRegexPattern, "ig");
+  while ((matches = regex.exec(text))) {
+    videoIds.push(matches[1]);
+  }
+  return videoIds;
+}
+
+/**
+ * @param  {string} text
+ */
+function parseYoutubeThumbnailIds(text) {
+  let matches,
+    videoIds = [];
+  const regex = RegExp(youtubeThumbnailsRegexPattern, "ig");
   while ((matches = regex.exec(text))) {
     videoIds.push(matches[1]);
   }
@@ -257,4 +292,12 @@ async function alert(message) {
     message: message,
     iconUrl: "../icons/icon_48.png",
   });
+}
+
+/**
+ * @param  {string[]} array
+ * @returns {string[]}
+ */
+function removeDuplicates(array) {
+  return Array.from(new Set(array));
 }

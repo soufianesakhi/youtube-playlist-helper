@@ -1,6 +1,6 @@
 {
   "name": "YouTube Playlist Helper",
-  "description": "Generate YouTube playlists from bookmarks and URL lists",
+  "description": "Generate YouTube playlists from various sources (links lists, bookmarks, ...)",
   "version": "1.2.1",
   "manifest_version": 2,
   "icons": {
@@ -20,6 +20,7 @@
     "tabs",
     "storage",
     "notifications",
+    "activeTab",
     "https://www.youtube.com/watch_videos*"
   ],
   "browser_specific_settings": {
