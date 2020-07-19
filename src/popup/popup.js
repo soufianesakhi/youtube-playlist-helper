@@ -243,23 +243,28 @@ async function createPlaylist(videoIds) {
   if (videoIds.length == 0) {
     return;
   }
-  var url =
+  const chunkSize = 50;
+  // @ts-ignore
+  const videoIdsChunks = new Array(Math.ceil(videoIds.length / chunkSize)).fill().map(_ => videoIds.splice(0, chunkSize));
+  videoIdsChunks.forEach(async videoIds => {
+    var url =
     "https://www.youtube.com/watch_videos?video_ids=" + videoIds.join(",");
-  if (openPlaylistPage) {
-    const data = await (await fetch(url)).text();
-    const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
-    if (exec && exec.length > 1) {
-      url =
-        "https://www.youtube.com/playlist?list=" +
-        exec[1] +
-        (disablePolymer ? "&disable_polymer=1" : "");
-    } else {
-      alert(
-        "Unable to retrieve playlist id. Directly playing videos instead..."
-      );
+    if (openPlaylistPage) {
+      const data = await (await fetch(url)).text();
+      const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
+      if (exec && exec.length > 1) {
+        url =
+          "https://www.youtube.com/playlist?list=" +
+          exec[1] +
+          (disablePolymer ? "&disable_polymer=1" : "");
+      } else {
+        alert(
+          "Unable to retrieve playlist id. Directly playing videos instead..."
+        );
+      }
     }
-  }
-  return browser.tabs.create({ url });
+    return browser.tabs.create({ url });
+  });
 }
 
 /***********************************
