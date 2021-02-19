@@ -2,11 +2,13 @@
 
 let openPlaylistPage = false;
 let disablePolymer = false;
+let includePlaylistTabs = false;
 loadSettings();
 
 async function loadSettings() {
   openPlaylistPage = await loadOption("open_playlist_page", openPlaylistPage);
   disablePolymer = await loadOption("disable_polymer", disablePolymer);
+  includePlaylistTabs = await loadOption("include_playlist_tabs", includePlaylistTabs);
 }
 
 /**
@@ -57,6 +59,9 @@ getById("from-current-tabs").onclick = async () => {
   const regex = RegExp(youtubeRegexPattern, "i");
   let tabs = await getCurrentWindowTabs();
   tabs = tabs.filter((tab) => tab.url && regex.test(tab.url));
+  if (!includePlaylistTabs) {
+    tabs = tabs.filter(tab => tab.url && tab.url.indexOf("&list=") < 0);
+  }
   if (tabs.length > 0) {
     /** @type {string[]} */
     // @ts-ignore
@@ -64,7 +69,7 @@ getById("from-current-tabs").onclick = async () => {
     closeTabs(tabs);
     await createPlaylist(videoIds);
   } else {
-    alert("There are no open YouTube tabs in the current window");
+    alert("There are no valid YouTube tabs in the current window");
   }
 };
 

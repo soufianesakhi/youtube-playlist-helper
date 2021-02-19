@@ -28,6 +28,7 @@ const OPEN_PLAYLIST_PAGE_OPTION = new CheckBoxOption(
   false
 );
 const DISABLE_POLYMER_OPTION = new CheckBoxOption("disable_polymer", false);
+const INCLUDE_PLAYLIST_TABS_OPTION = new CheckBoxOption("include_playlist_tabs", false);
 
 /**
  * @param  {Event} e
@@ -36,11 +37,13 @@ function saveOptions(e) {
   e.preventDefault();
   OPEN_PLAYLIST_PAGE_OPTION.save();
   DISABLE_POLYMER_OPTION.save();
+  INCLUDE_PLAYLIST_TABS_OPTION.save();
 }
 
 function restoreOptions() {
   OPEN_PLAYLIST_PAGE_OPTION.restore();
   DISABLE_POLYMER_OPTION.restore();
+  INCLUDE_PLAYLIST_TABS_OPTION.restore();
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
