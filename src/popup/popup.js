@@ -1,13 +1,11 @@
 /// <reference path="./popup.d.ts" />
 
 let openPlaylistPage = false;
-let disablePolymer = false;
 let includePlaylistTabs = false;
 loadSettings();
 
 async function loadSettings() {
   openPlaylistPage = await loadOption("open_playlist_page", openPlaylistPage);
-  disablePolymer = await loadOption("disable_polymer", disablePolymer);
   includePlaylistTabs = await loadOption("include_playlist_tabs", includePlaylistTabs);
 }
 
@@ -260,8 +258,7 @@ async function createPlaylist(videoIds) {
       if (exec && exec.length > 1) {
         url =
           "https://www.youtube.com/playlist?list=" +
-          exec[1] +
-          (disablePolymer ? "&disable_polymer=1" : "");
+          exec[1];
       } else {
         alert(
           "Unable to retrieve playlist id. Directly playing videos instead..."
