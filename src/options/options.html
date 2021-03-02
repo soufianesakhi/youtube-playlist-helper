@@ -6,11 +6,15 @@
   </head>
 
   <body>
-    <form style="padding: 10px;">
-      <label>Open playlist page instead of playing playlist videos after creating them<input type="checkbox" id="open_playlist_page" /></label>
-      <br>
-      <label>Include videos of playlist tabs (only the currently playing videos)<input type="checkbox" id="include_playlist_tabs" /></label>
-      <br>
+    <form style="padding: 10px">
+      <fieldset>
+        <legend>General</legend>
+        <label>Open playlist page instead of playing playlist videos after creating them<input type="checkbox" id="open_playlist_page" /></label>
+      </fieldset>
+      <fieldset>
+        <legend>Tabs</legend>
+        <label>Always include YouTube tabs of playlists (current playlist videos only)<input type="checkbox" id="include_playlist_tabs" /></label>
+      </fieldset>
       <div style="float: right; padding: 10px;">
         <button type="submit">Save</button>
       </div>
