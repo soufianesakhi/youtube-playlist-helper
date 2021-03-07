@@ -17,11 +17,9 @@
         Create a playlist from a list of links
         <i></i>
       </div>
-      <div id="from-current-tabs" class="menu-item">
-        Create a playlist from currently open YouTube tabs
-      </div>
-      <div id="combine-current-playlist" class="menu-item">
-        Combine other YouTube tabs with the current playlist tab
+      <div id="combine-tabs" class="menu-item">
+        Combine YouTube tabs and create playlist
+        <i></i>
       </div>
       <div id="from-current-thumbnails" class="menu-item">
         Create a playlist from current tab YouTube video thumbnails
@@ -45,6 +43,22 @@
           placeholder="YouTube urls (newline or whitespace separated)"
         ></textarea>
         <div id="create-from-urls" class="menu-item">Create Playlist</div>
+      </div>
+    </div>
+
+    <!-- Combine Youtube Tabs -->
+    <div id="combine-tabs-menu" class="popup-menu" style="display: none;">
+      <div class="back-item menu-item"><i></i>Back</div>
+      <div class="menu-content">
+        <div id="combine-tabs-exclude-playlists" class="menu-item">
+          Exclude all playlists
+        </div>
+        <div id="combine-tabs-all-playlist" class="menu-item">
+          Include all playlists
+        </div>
+        <div id="combine-tabs-current-playlist" class="menu-item">
+          Include current playlist
+        </div>
       </div>
     </div>
 

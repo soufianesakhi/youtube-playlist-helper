@@ -1,12 +1,10 @@
 /// <reference path="./popup.d.ts" />
 
 let openPlaylistPage = false;
-let includePlaylistTabs = false;
 loadSettings();
 
 async function loadSettings() {
   openPlaylistPage = await loadOption("open_playlist_page", openPlaylistPage);
-  includePlaylistTabs = await loadOption("include_playlist_tabs", includePlaylistTabs);
 }
 
 /**
@@ -53,19 +51,23 @@ getById("from-urls").onclick = () => {
   activatePopupMenu("from-urls-menu");
 };
 
-getById("from-current-tabs").onclick = async () => {
+getById("combine-tabs").onclick = () => {
+  activatePopupMenu("combine-tabs-menu");
+};
+
+getById("combine-tabs-exclude-playlists").onclick = async () => {
   let tabs = await getCurrentYoutubeTabs();
   if (tabs.length > 0) {
     const videoIds = tabs.map((tab) => parseYoutubeId(tab.url || "")).filter(isNotNull);
     closeTabs(tabs);
     await createPlaylist(videoIds);
   } else {
-    alert("There are no valid YouTube tabs in the current window");
+    alert("There are no valid YouTube video tabs (excluding playlists) in the current window");
   }
 };
 
 
-getById("combine-current-playlist").onclick = async () => {
+getById("combine-tabs-current-playlist").onclick = async () => {
   const activeTab = await getActiveTab();
   if (! (isYoutubeTab(activeTab) && isPlaylistTab(activeTab))) {
     return alert("The current tab is not a YouTube playlist tab");
@@ -77,10 +79,32 @@ getById("combine-current-playlist").onclick = async () => {
     /** @type {any} */ let tabId = activeTab.id;
     const currentPlaylistVideoIds = await browser.tabs.executeScript(tabId, { file: "/actions/getPlaylistVideoIds.js" })
     videoIds.push(...currentPlaylistVideoIds);
+    closeTabs([activeTab, ...tabs]);
+    await createPlaylist(videoIds);
+  } else {
+    return alert("There are no valid YouTube video tabs to combine with the current playlist");
+  }
+};
+
+getById("combine-tabs-all-playlist").onclick = async () => {
+  let tabs = await getCurrentYoutubeTabs(true);
+  const videoIds = tabs.filter(not(isPlaylistTab))
+    .map((tab) => parseYoutubeId(tab.url || ""))
+    .filter(isNotNull);
+  const playlistsVideoIdsArray = await Promise.all(tabs.filter(isPlaylistTab).map(tab => {
+    /** @type {any} */ let tabId = tab.id;
+    /** @type {Promise<string[]>} */ const videoIds = browser.tabs.executeScript(tabId, {
+      file: "/actions/getPlaylistVideoIds.js"
+    })
+    return videoIds;
+  }));
+  const playlistsVideoIds = Array.prototype.concat.apply([], playlistsVideoIdsArray)
+  videoIds.push(...playlistsVideoIds);
+  if (videoIds.length > 0) {
     closeTabs(tabs);
     await createPlaylist(videoIds);
   } else {
-    return alert("There are no valid YouTube tabs to combine with the current playlist");
+    return alert("There are no valid YouTube tabs to combine");
   }
 };
 
@@ -205,10 +229,15 @@ function closeTabs(tabs) {
   browser.tabs.remove(ids);
 }
 
-async function getCurrentYoutubeTabs() {
+/**
+ * @param {boolean} [includePlaylistTabs]
+ */
+async function getCurrentYoutubeTabs(includePlaylistTabs) {
   let tabs = await getCurrentWindowTabs();
-  tabs = tabs.filter(isVideoTab);
-  if (!includePlaylistTabs) {
+  if (includePlaylistTabs) {
+    tabs = tabs.filter(isYoutubeTab);
+  } else {
+    tabs = tabs.filter(isVideoTab);
     tabs = tabs.filter(not(isPlaylistTab));
   }
   return tabs;
