@@ -28,16 +28,23 @@ const OPEN_PLAYLIST_PAGE_OPTION = new CheckBoxOption(
   false
 );
 
+const CLOSE_AFTER_COMBINE_OPTION = new CheckBoxOption(
+  "close_after_combine",
+  false
+);
+
 /**
  * @param  {Event} e
  */
 function saveOptions(e) {
   e.preventDefault();
   OPEN_PLAYLIST_PAGE_OPTION.save();
+  CLOSE_AFTER_COMBINE_OPTION.save();
 }
 
 function restoreOptions() {
   OPEN_PLAYLIST_PAGE_OPTION.restore();
+  CLOSE_AFTER_COMBINE_OPTION.restore();
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);

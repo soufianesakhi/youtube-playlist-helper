@@ -1,10 +1,13 @@
 /// <reference path="./popup.d.ts" />
 
 let openPlaylistPage = false;
+let closeAfterCombine = false;
+
 loadSettings();
 
 async function loadSettings() {
   openPlaylistPage = await loadOption("open_playlist_page", openPlaylistPage);
+  closeAfterCombine = await loadOption("close_after_combine", closeAfterCombine);
 }
 
 /**
@@ -59,7 +62,9 @@ getById("combine-tabs-exclude-playlists").onclick = async () => {
   let tabs = await getCurrentYoutubeTabs();
   if (tabs.length > 0) {
     const videoIds = tabs.map((tab) => parseYoutubeId(tab.url || "")).filter(isNotNull);
-    closeTabs(tabs);
+    if (closeAfterCombine) {
+      closeTabs(tabs);
+    }
     await createPlaylist(videoIds);
   } else {
     alert("There are no valid YouTube video tabs (excluding playlists) in the current window");
@@ -79,7 +84,9 @@ getById("combine-tabs-current-playlist").onclick = async () => {
     /** @type {any} */ let tabId = activeTab.id;
     const currentPlaylistVideoIds = await browser.tabs.executeScript(tabId, { file: "/actions/getPlaylistVideoIds.js" })
     videoIds.push(...currentPlaylistVideoIds);
-    closeTabs([activeTab, ...tabs]);
+    if (closeAfterCombine) {
+      closeTabs([activeTab, ...tabs]);
+    }
     await createPlaylist(videoIds);
   } else {
     return alert("There are no valid YouTube video tabs to combine with the current playlist");
@@ -101,7 +108,9 @@ getById("combine-tabs-all-playlist").onclick = async () => {
   const playlistsVideoIds = Array.prototype.concat.apply([], playlistsVideoIdsArray)
   videoIds.push(...playlistsVideoIds);
   if (videoIds.length > 0) {
-    closeTabs(tabs);
+    if (closeAfterCombine) {
+      closeTabs(tabs);
+    }
     await createPlaylist(videoIds);
   } else {
     return alert("There are no valid YouTube tabs to combine");
