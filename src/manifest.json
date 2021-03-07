@@ -22,7 +22,8 @@
     "storage",
     "notifications",
     "activeTab",
-    "https://www.youtube.com/watch_videos*"
+    "https://www.youtube.com/watch*",
+    "https://www.youtube.com/playlist*"
   ],
   "browser_specific_settings": {
     "gecko": {

@@ -54,20 +54,33 @@ getById("from-urls").onclick = () => {
 };
 
 getById("from-current-tabs").onclick = async () => {
-  const regex = RegExp(youtubeRegexPattern, "i");
-  let tabs = await getCurrentWindowTabs();
-  tabs = tabs.filter((tab) => tab.url && regex.test(tab.url));
-  if (!includePlaylistTabs) {
-    tabs = tabs.filter(tab => tab.url && tab.url.indexOf("&list=") < 0);
-  }
+  let tabs = await getCurrentYoutubeTabs();
   if (tabs.length > 0) {
-    /** @type {string[]} */
-    // @ts-ignore
-    const videoIds = tabs.map((tab) => parseYoutubeId(tab.url));
+    const videoIds = tabs.map((tab) => parseYoutubeId(tab.url || "")).filter(isNotNull);
     closeTabs(tabs);
     await createPlaylist(videoIds);
   } else {
     alert("There are no valid YouTube tabs in the current window");
+  }
+};
+
+
+getById("combine-current-playlist").onclick = async () => {
+  const activeTab = await getActiveTab();
+  if (! (isYoutubeTab(activeTab) && isPlaylistTab(activeTab))) {
+    return alert("The current tab is not a YouTube playlist tab");
+  }
+  let tabs = await getCurrentYoutubeTabs();
+  tabs = tabs.filter(tab => tab.url != activeTab.url);
+  if (tabs.length > 0) {
+    const videoIds = tabs.map((tab) => parseYoutubeId(tab.url || "")).filter(isNotNull);
+    /** @type {any} */ let tabId = activeTab.id;
+    const currentPlaylistVideoIds = await browser.tabs.executeScript(tabId, { file: "/actions/getPlaylistVideoIds.js" })
+    videoIds.push(...currentPlaylistVideoIds);
+    closeTabs(tabs);
+    await createPlaylist(videoIds);
+  } else {
+    return alert("There are no valid YouTube tabs to combine with the current playlist");
   }
 };
 
@@ -165,6 +178,11 @@ function recursiveCollectBookmarks(parentFolder, tree) {
  *            Tabs
  ***********************************/
 
+async function getActiveTab() {
+  const tabs = await browser.tabs.query({active: true, currentWindow: true});
+  return tabs[0];
+}
+
 function getCurrentWindowTabs() {
   return browser.tabs.query({ currentWindow: true });
 }
@@ -183,10 +201,42 @@ async function getCurrentTabBody() {
  * @param  {browser.tabs.Tab[]} tabs
  */
 function closeTabs(tabs) {
-  /** @type {number[]} */
-  // @ts-ignore
-  const ids = tabs.map((tab) => tab.id);
+  const ids = tabs.map((tab) => tab.id).filter(isNotNull);
   browser.tabs.remove(ids);
+}
+
+async function getCurrentYoutubeTabs() {
+  let tabs = await getCurrentWindowTabs();
+  tabs = tabs.filter(isVideoTab);
+  if (!includePlaylistTabs) {
+    tabs = tabs.filter(not(isPlaylistTab));
+  }
+  return tabs;
+}
+
+/**
+ * @param  {browser.tabs.Tab} tab
+ */
+function isPlaylistTab(tab) {
+  const url = tab.url || "";
+  return /[&\?]list=/i.test(url);
+}
+
+/**
+ * @param  {browser.tabs.Tab} tab
+ */
+function isVideoTab(tab) {
+  const regex = RegExp(youtubeRegexPattern, "i");
+  const url = tab.url || "";
+  return regex.test(url);
+}
+
+/**
+ * @param  {browser.tabs.Tab} tab
+ */
+function isYoutubeTab(tab) {
+  /** @type {any} */ const url = tab.url;
+  return url.indexOf("youtube.com/") > 0;
 }
 
 /***********************************
@@ -272,6 +322,25 @@ async function createPlaylist(videoIds) {
 /***********************************
  *            Utils
  ***********************************/
+
+/**
+ * @param {(value: T) => boolean} predicate 
+ * @returns {(value: T) => boolean} 
+ * @template T
+ */
+function not(predicate) {
+  return value => {
+    return !predicate(value);
+  }
+}
+/**
+ * @param {T | null | undefined} argument 
+ * @returns {argument is T} 
+ * @template T
+ */
+function isNotNull(argument) {
+  return argument != null;
+}
 
 /**
  * @param  {string} id
