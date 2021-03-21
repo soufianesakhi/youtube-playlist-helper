@@ -128,6 +128,12 @@ getById("from-current-thumbnails").onclick = async () => {
   }
 };
 
+getById("open-settings").onclick = () => {
+  browser.tabs.create({
+    url: browser.runtime.getURL('/options/options.html')
+  });
+};
+
 queryAll(".back-item").forEach((item) => {
   item.onclick = () => {
     activatePopupMenu("main-menu");
