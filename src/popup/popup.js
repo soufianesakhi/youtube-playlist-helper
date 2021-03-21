@@ -26,6 +26,12 @@ async function loadOption(id, defaultValue) {
  *               UI
  ***********************************/
 
+getById("open-editor").onclick = () => {
+  browser.tabs.create({
+    url: browser.runtime.getURL('/editor/index.html')
+  });
+};
+
 getById("from-bookmark").onclick = () => {
   const container = getById("bookmarks");
   container.innerHTML = "";
