@@ -1,15 +1,16 @@
 <script>
-  import Playlist from "./components/Playlist.svelte";
+  import { Route, Router } from "svelte-routing";
+  import New from "./views/New.svelte";
+  import Recent from "./views/Recent.svelte";
+  import Saved from "./views/Saved.svelte";
+
+  export let url = "";
+  let basepath = globalThis.basePath;
 </script>
 
-<main>
-  <Playlist />
-</main>
-
-<style>
-  main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-</style>
+<Router {url} {basepath}>
+  <Route path="/" component={Recent} />
+  <Route path="recent" component={Recent} />
+  <Route path="new" component={New} />
+  <Route path="saved" component={Saved} />
+</Router>
