@@ -1,6 +1,7 @@
 <script>
   import Playlist from "../components/Playlist.svelte";
   import Sidebar from "../components/Sidebar.svelte";
+
 </script>
 
 <Sidebar />
@@ -11,9 +12,4 @@
 </main>
 
 <style>
-  main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
 </style>

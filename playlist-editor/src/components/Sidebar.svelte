@@ -1,38 +1,51 @@
-<script>
+<script lang="ts">
   import { links } from "svelte-routing";
 
   let basepath = globalThis.basePath;
+
+  function isActive(...pages: string[]) {
+    return pages.some((page) => location.href.endsWith(page));
+  }
 </script>
 
 <div class="sidenav" use:links>
-  <a href="{basepath}/recent">Recently created playlists</a>
-  <a href="{basepath}/new">New playlist</a>
-  <a href="{basepath}/saved">Saved playlists</a>
+  <a href="{basepath}/recent" class:active={isActive("recent", basepath || "/")}
+    >Recently created playlists</a
+  >
+  <a href="{basepath}/new" class:active={isActive("new")}>New playlist</a>
+  <a href="{basepath}/saved" class:active={isActive("saved")}>Saved playlists</a
+  >
 </div>
 
 <style>
   .sidenav {
-    height: 100%;
-    width: 20vw;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
+    flex-basis: 20vw;
     background-color: rgb(255, 82, 82);
-    overflow-x: hidden;
-    padding-top: 1rem;
+    padding: 1rem 0.2rem;
   }
 
   .sidenav a {
-    padding: 6px 8px 6px 16px;
+    padding: 1rem 0.5rem;
+    margin-bottom: 0.2rem;
     text-decoration: none;
-    font-size: 1rem;
-    line-height: 1rem;
+    font-size: 1.2rem;
+    line-height: 1.2rem;
     color: #ffffff;
     display: block;
   }
 
   .sidenav a:hover {
-    color: #c7c7c7;
+    background-color: rgb(255, 154, 154);
+  }
+
+  .sidenav a.active {
+    background-color: rgb(255, 221, 221);
+    color: rgb(74, 75, 105);
+    box-shadow: inset 0px 0px 0.2rem #c1c1c1;
+  }
+
+  .sidenav a:hover,
+  .sidenav a.active {
+    border-radius: 0.5rem;
   }
 </style>
