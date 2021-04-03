@@ -2,29 +2,15 @@
   import { flip } from "svelte/animate";
   import PlaylistVideo from "./PlaylistVideo.svelte";
 
-  let playlistVideos: Video[] = [
-    {
-      id: "1",
-      url: "https://www.youtube.com/watch?v=r_0JjYUe5jo",
-      title: "Eminem - Godzilla ft. Juice WRLD (Directed by Cole Bennett)",
-      channel: "Lyrical Lemonade",
-      thumbnailUrl: "https://i.ytimg.com/vi/r_0JjYUe5jo/default.jpg",
-    },
-    {
-      id: "2",
-      url: "https://www.youtube.com/watch?v=dqRZDebPIGs",
-      title: "The Weeknd - In Your Eyes (Official Video)",
-      channel: "The Weeknd",
-      thumbnailUrl:
-        "https://i.ytimg.com/vi/dqRZDebPIGs/hqdefault.jpg?sqp=-oaymwEcCPYBEIoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAPGa3c_An8XFelSeXVREoBJc4spg",
-    },
-  ];
+  export let location;
+  const playlist: Playlist = location.state.playlist;
+  let videos: Video[] = playlist.videos;
   let hovering = -1;
 
   const drop = (event, target) => {
     event.dataTransfer.dropEffect = "move";
     const start = parseInt(event.dataTransfer.getData("text/plain"));
-    const newPlaylistVideos = playlistVideos;
+    const newPlaylistVideos = videos;
 
     if (start < target) {
       newPlaylistVideos.splice(target + 1, 0, newPlaylistVideos[start]);
@@ -33,7 +19,7 @@
       newPlaylistVideos.splice(target, 0, newPlaylistVideos[start]);
       newPlaylistVideos.splice(start + 1, 1);
     }
-    playlistVideos = newPlaylistVideos;
+    videos = newPlaylistVideos;
     hovering = -1;
   };
 
@@ -46,7 +32,7 @@
 </script>
 
 <div class="list">
-  {#each playlistVideos as video, index (video.id)}
+  {#each videos as video, index (video.id)}
     <div
       animate:flip
       draggable={true}

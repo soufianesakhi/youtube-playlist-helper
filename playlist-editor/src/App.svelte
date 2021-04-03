@@ -1,5 +1,6 @@
 <script>
   import { Route, Router } from "svelte-routing";
+  import PlaylistEditor from "./components/PlaylistEditor.svelte";
   import New from "./views/New.svelte";
   import Recent from "./views/Recent.svelte";
   import Saved from "./views/Saved.svelte";
@@ -13,4 +14,5 @@
   <Route path="recent" component={Recent} />
   <Route path="new" component={New} />
   <Route path="saved" component={Saved} />
+  <Route path="editor" component={PlaylistEditor} />
 </Router>
