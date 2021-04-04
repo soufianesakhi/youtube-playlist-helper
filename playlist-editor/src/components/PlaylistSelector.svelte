@@ -27,7 +27,7 @@
   ];
   let playlistsSample: Playlist[] = [];
   for (let i = 0; i < 6; i++) {
-    const timestamp = Date.now();
+    const timestamp = Date.now() + i * 1000;
     playlistsSample.push({
       id: i.toString(),
       title: new Date(timestamp).toLocaleString(),
@@ -50,5 +50,6 @@
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
+    padding: 10px;
   }
 </style>
