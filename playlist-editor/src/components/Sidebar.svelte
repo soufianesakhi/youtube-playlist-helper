@@ -9,7 +9,9 @@
 </script>
 
 <div class="sidenav" use:links>
-  <a href="{basepath}/recent" class:active={isActive("recent", basepath || "/")}
+  <a
+    href="{basepath}/recent"
+    class:active={isActive("recent" /*, basepath || "/"*/)}
     >Recently created playlists</a
   >
   <a href="{basepath}/new" class:active={isActive("new")}>New playlist</a>
@@ -19,7 +21,7 @@
 
 <style>
   .sidenav {
-    flex-basis: 20vw;
+    flex: 0 0 15rem;
     background-color: rgb(255, 82, 82);
     padding: 1rem 0.2rem;
   }

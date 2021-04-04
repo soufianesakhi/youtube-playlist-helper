@@ -1,9 +1,38 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
   import PlaylistVideo from "./PlaylistVideo.svelte";
+  import Sidebar from "./Sidebar.svelte";
 
   export let location;
-  const playlist: Playlist = location.state.playlist;
+  const playlist: Playlist = location?.state?.playlist || {
+    id: 1,
+    title: new Date().toLocaleString(),
+    videos: [
+      {
+        id: "1",
+        url: "https://www.youtube.com/watch?v=r_0JjYUe5jo",
+        title: "Eminem - Godzilla ft. Juice WRLD (Directed by Cole Bennett)",
+        channel: "Lyrical Lemonade",
+        thumbnailUrl: "https://i.ytimg.com/vi/r_0JjYUe5jo/default.jpg",
+      },
+      {
+        id: "2",
+        url: "https://www.youtube.com/watch?v=dqRZDebPIGs",
+        title: "The Weeknd - In Your Eyes (Official Video)",
+        channel: "The Weeknd",
+        thumbnailUrl: "https://i.ytimg.com/vi/dqRZDebPIGs/default.jpg",
+      },
+      {
+        id: "3",
+        url: "https://www.youtube.com/watch?v=dmDbS5LyiZ0",
+        title:
+          "Blinding Lights - The Weeknd (Boyce Avenue acoustic cover) on Spotify & Apple",
+        channel: "Boyce Avenue",
+        thumbnailUrl: "https://i.ytimg.com/vi/dmDbS5LyiZ0/default.jpg",
+      },
+    ],
+    timestamp: Date.now(),
+  };
   let videos: Video[] = playlist.videos;
   let hovering = -1;
 
@@ -29,25 +58,40 @@
     const start = i;
     event.dataTransfer.setData("text/plain", start);
   };
+
+  function deleteVideo(event: CustomEvent) {
+    videos = videos.filter((video) => video.id !== event.detail.id);
+  }
 </script>
 
-<div class="list">
-  {#each videos as video, index (video.id)}
-    <div
-      animate:flip
-      draggable={true}
-      on:dragstart={(event) => dragstart(event, index)}
-      on:dragenter={() => (hovering = index)}
-      on:dragover|preventDefault
-      on:drop|preventDefault={(event) => drop(event, index)}
-    >
-      <PlaylistVideo {video} active={hovering === index} />
-    </div>
-  {/each}
-</div>
+<Sidebar />
+
+<main>
+  <div class="list">
+    {#each videos as video, index (video.id)}
+      <div
+        animate:flip
+        draggable={true}
+        on:dragstart={(event) => dragstart(event, index)}
+        on:dragenter={() => (hovering = index)}
+        on:dragover|preventDefault
+        on:drop|preventDefault={(event) => drop(event, index)}
+      >
+        <PlaylistVideo
+          on:delete={deleteVideo}
+          {video}
+          active={hovering === index}
+        />
+      </div>
+    {:else}
+      <p style="text-align: center">The playlist is empty</p>
+    {/each}
+  </div>
+</main>
 
 <style>
   .list {
+    width: 100%;
     background-color: white;
     border-radius: 4px;
     box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);

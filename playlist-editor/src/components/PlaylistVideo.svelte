@@ -1,21 +1,34 @@
 <script lang="ts">
+  import { createEventDispatcher } from "svelte";
+  import FloatingButton from "./FloatingButton.svelte";
+  import DeleteIcon from "./icons/DeleteIcon.svelte";
+
   export let video: Video;
   export let active: boolean;
+
+  const dispatch = createEventDispatcher();
 
   function videoClicked() {
     window.open(video.url, "_blank");
   }
+
+  function deleteVideo(event: Event) {
+    dispatch("delete", { id: video.id });
+  }
 </script>
 
-<div
-  class="playlist-video"
-  class:is-active={active}
-  on:click|preventDefault={videoClicked}
->
-  <img alt={video.title} src={video.thumbnailUrl} />
+<div class="playlist-video" class:is-active={active}>
+  <img
+    alt={video.title}
+    src={video.thumbnailUrl}
+    on:click|preventDefault={videoClicked}
+  />
   <div class="video-details">
     <span class="video-title">{video.title}</span>
     <span>{video.channel}</span>
+  </div>
+  <div class="video-btns">
+    <FloatingButton on:click={deleteVideo}><DeleteIcon /></FloatingButton>
   </div>
 </div>
 
@@ -42,7 +55,7 @@
   }
 
   .video-details {
-    width: 500px;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -58,5 +71,12 @@
 
   .video-title {
     font-weight: bold;
+  }
+
+  .video-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
   }
 </style>

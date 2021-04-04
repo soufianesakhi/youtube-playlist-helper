@@ -10,7 +10,7 @@
 </script>
 
 <Router {url} {basepath}>
-  <Route path="/" component={Recent} />
+  <Route path="/" component={PlaylistEditor} />
   <Route path="recent" component={Recent} />
   <Route path="new" component={New} />
   <Route path="saved" component={Saved} />
