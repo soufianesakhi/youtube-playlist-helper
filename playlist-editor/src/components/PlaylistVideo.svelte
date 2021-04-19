@@ -12,8 +12,8 @@
     window.open(video.url, "_blank");
   }
 
-  function deleteVideo(event: Event) {
-    dispatch("delete", { id: video.id });
+  function deleteVideo(_: Event) {
+    dispatch("delete", video);
   }
 </script>
 

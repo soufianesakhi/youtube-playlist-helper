@@ -48,6 +48,9 @@ export default {
     replace({
       globalThis: JSON.stringify({
         basePath: production ? "/editor/index.html" : "",
+        youtubeServiceURL: production
+          ? "https://www.youtube.com"
+          : "https://cors-anywhere.herokuapp.com/www.youtube.com:443",
       }),
     }),
     svelte({

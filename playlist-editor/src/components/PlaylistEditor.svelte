@@ -10,6 +10,7 @@
     videos: [
       {
         id: "1",
+        videoId: "r_0JjYUe5jo",
         url: "https://www.youtube.com/watch?v=r_0JjYUe5jo",
         title: "Eminem - Godzilla ft. Juice WRLD (Directed by Cole Bennett)",
         channel: "Lyrical Lemonade",
@@ -17,6 +18,7 @@
       },
       {
         id: "2",
+        videoId: "dqRZDebPIGs",
         url: "https://www.youtube.com/watch?v=dqRZDebPIGs",
         title: "The Weeknd - In Your Eyes (Official Video)",
         channel: "The Weeknd",
@@ -24,6 +26,7 @@
       },
       {
         id: "3",
+        videoId: "dmDbS5LyiZ0",
         url: "https://www.youtube.com/watch?v=dmDbS5LyiZ0",
         title:
           "Blinding Lights - The Weeknd (Boyce Avenue acoustic cover) on Spotify & Apple",
@@ -59,7 +62,7 @@
     event.dataTransfer.setData("text/plain", start);
   };
 
-  function deleteVideo(event: CustomEvent) {
+  async function deleteVideo(event: CustomEvent<Video>) {
     videos = videos.filter((video) => video.id !== event.detail.id);
   }
 </script>
