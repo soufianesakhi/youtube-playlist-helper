@@ -8,7 +8,10 @@ loadSettings();
 
 async function loadSettings() {
   openPlaylistPage = await loadOption("open_playlist_page", openPlaylistPage);
-  closeAfterCombine = await loadOption("close_after_combine", closeAfterCombine);
+  closeAfterCombine = await loadOption(
+    "close_after_combine",
+    closeAfterCombine
+  );
 }
 
 /**
@@ -29,7 +32,7 @@ async function loadOption(id, defaultValue) {
 
 getById("open-editor").onclick = () => {
   browser.tabs.create({
-    url: browser.runtime.getURL('/editor/index.html')
+    url: browser.runtime.getURL("/editor/index.html"),
   });
 };
 
@@ -68,51 +71,69 @@ getById("combine-tabs").onclick = () => {
 getById("combine-tabs-exclude-playlists").onclick = async () => {
   let tabs = await getCurrentYoutubeTabs();
   if (tabs.length > 0) {
-    const videoIds = tabs.map((tab) => parseYoutubeId(tab.url || "")).filter(isNotNull);
+    const videoIds = tabs
+      .map((tab) => parseYoutubeId(tab.url || ""))
+      .filter(isNotNull);
     if (closeAfterCombine) {
       closeTabs(tabs);
     }
     await createPlaylist(videoIds);
   } else {
-    alert("There are no valid YouTube video tabs (excluding playlists) in the current window");
+    alert(
+      "There are no valid YouTube video tabs (excluding playlists) in the current window"
+    );
   }
 };
 
-
 getById("combine-tabs-current-playlist").onclick = async () => {
   const activeTab = await getActiveTab();
-  if (! (isYoutubeTab(activeTab) && isPlaylistTab(activeTab))) {
+  if (!(isYoutubeTab(activeTab) && isPlaylistTab(activeTab))) {
     return alert("The current tab is not a YouTube playlist tab");
   }
   let tabs = await getCurrentYoutubeTabs();
-  tabs = tabs.filter(tab => tab.url != activeTab.url);
+  tabs = tabs.filter((tab) => tab.url != activeTab.url);
   if (tabs.length > 0) {
-    const videoIds = tabs.map((tab) => parseYoutubeId(tab.url || "")).filter(isNotNull);
+    const videoIds = tabs
+      .map((tab) => parseYoutubeId(tab.url || ""))
+      .filter(isNotNull);
     /** @type {any} */ let tabId = activeTab.id;
-    const currentPlaylistVideoIds = await browser.tabs.executeScript(tabId, { file: "/actions/getPlaylistVideoIds.js" })
+    const currentPlaylistVideoIds = await browser.tabs.executeScript(tabId, {
+      file: "/actions/getPlaylistVideoIds.js",
+    });
     videoIds.push(...currentPlaylistVideoIds);
     if (closeAfterCombine) {
       closeTabs([activeTab, ...tabs]);
     }
     await createPlaylist(videoIds);
   } else {
-    return alert("There are no valid YouTube video tabs to combine with the current playlist");
+    return alert(
+      "There are no valid YouTube video tabs to combine with the current playlist"
+    );
   }
 };
 
 getById("combine-tabs-all-playlist").onclick = async () => {
   let tabs = await getCurrentYoutubeTabs(true);
-  const videoIds = tabs.filter(not(isPlaylistTab))
+  const videoIds = tabs
+    .filter(not(isPlaylistTab))
     .map((tab) => parseYoutubeId(tab.url || ""))
     .filter(isNotNull);
-  const playlistsVideoIdsArray = await Promise.all(tabs.filter(isPlaylistTab).map(tab => {
-    /** @type {any} */ let tabId = tab.id;
-    /** @type {Promise<string[]>} */ const videoIds = browser.tabs.executeScript(tabId, {
-      file: "/actions/getPlaylistVideoIds.js"
+  const playlistsVideoIdsArray = await Promise.all(
+    tabs.filter(isPlaylistTab).map((tab) => {
+      /** @type {any} */ let tabId = tab.id;
+      /** @type {Promise<string[]>} */ const videoIds = browser.tabs.executeScript(
+        tabId,
+        {
+          file: "/actions/getPlaylistVideoIds.js",
+        }
+      );
+      return videoIds;
     })
-    return videoIds;
-  }));
-  const playlistsVideoIds = Array.prototype.concat.apply([], playlistsVideoIdsArray)
+  );
+  const playlistsVideoIds = Array.prototype.concat.apply(
+    [],
+    playlistsVideoIdsArray
+  );
   videoIds.push(...playlistsVideoIds);
   if (videoIds.length > 0) {
     if (closeAfterCombine) {
@@ -137,7 +158,7 @@ getById("from-current-thumbnails").onclick = async () => {
 
 getById("open-settings").onclick = () => {
   browser.tabs.create({
-    url: browser.runtime.getURL('/options/options.html')
+    url: browser.runtime.getURL("/options/options.html"),
   });
 };
 
@@ -225,7 +246,7 @@ function recursiveCollectBookmarks(parentFolder, tree) {
  ***********************************/
 
 async function getActiveTab() {
-  const tabs = await browser.tabs.query({active: true, currentWindow: true});
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
   return tabs[0];
 }
 
@@ -237,7 +258,7 @@ async function getCurrentTabBody() {
   const result = await browser.tabs.executeScript({
     code: `document.body.innerHTML`,
     allFrames: false, // this is the default
-    runAt: 'document_start',
+    runAt: "document_start",
   });
   console.log(result);
   return result[0];
@@ -294,10 +315,10 @@ function isYoutubeTab(tab) {
  *            Parsing
  ***********************************/
 
-// https://regex101.com/r/mPyKKP/1/
-const youtubeRegexPattern = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)/
+const { youtubeRegexPattern, parseYoutubeId } = window;
+
+const youtubeThumbnailsRegexPattern = /(?:img\.youtube|i\.ytimg|i1\.ytimg)\.com\/vi\/([^\/\s]+)/
   .source;
-const youtubeThumbnailsRegexPattern = /(?:img\.youtube|i\.ytimg|i1\.ytimg)\.com\/vi\/([^\/\s]+)/.source;
 
 /**
  * @param  {string} text
@@ -325,17 +346,6 @@ function parseYoutubeThumbnailIds(text) {
   return videoIds;
 }
 
-/**
- * @param  {string} url
- */
-function parseYoutubeId(url) {
-  const result = RegExp(youtubeRegexPattern, "i").exec(url);
-  if (result && result.length > 1) {
-    return result[1];
-  }
-  return null;
-}
-
 /***********************************
  *            Playlists
  ***********************************/
@@ -347,22 +357,18 @@ async function createPlaylist(videoIds) {
   if (videoIds.length == 0) {
     return;
   }
-  const video = await window.fetchVideo(videoIds[0]);
-  window.open("http://urlecho.appspot.com/echo?status=200&body=" + encodeURIComponent(JSON.stringify(video)), "_blank");
   const chunkSize = 50;
   // prettier-ignore
   // @ts-ignore
   const videoIdsChunks = new Array(Math.ceil(videoIds.length / chunkSize)).fill().map(_ => videoIds.splice(0, chunkSize));
-  videoIdsChunks.forEach(async videoIds => {
+  videoIdsChunks.forEach(async (videoIds) => {
     var url =
-    "https://www.youtube.com/watch_videos?video_ids=" + videoIds.join(",");
+      "https://www.youtube.com/watch_videos?video_ids=" + videoIds.join(",");
     if (openPlaylistPage) {
       const data = await (await fetch(url)).text();
       const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
       if (exec && exec.length > 1) {
-        url =
-          "https://www.youtube.com/playlist?list=" +
-          exec[1];
+        url = "https://www.youtube.com/playlist?list=" + exec[1];
       } else {
         alert(
           "Unable to retrieve playlist id. Directly playing videos instead..."
@@ -378,18 +384,18 @@ async function createPlaylist(videoIds) {
  ***********************************/
 
 /**
- * @param {(value: T) => boolean} predicate 
- * @returns {(value: T) => boolean} 
+ * @param {(value: T) => boolean} predicate
+ * @returns {(value: T) => boolean}
  * @template T
  */
 function not(predicate) {
-  return value => {
+  return (value) => {
     return !predicate(value);
-  }
+  };
 }
 /**
- * @param {T | null | undefined} argument 
- * @returns {argument is T} 
+ * @param {T | null | undefined} argument
+ * @returns {argument is T}
  * @template T
  */
 function isNotNull(argument) {

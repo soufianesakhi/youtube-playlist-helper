@@ -6,7 +6,10 @@ const THUMBNAIL_URL_SUFFIX = "/default.jpg";
 
 const youtubeServiceURL = globalThis.youtubeServiceURL;
 
-let idCount = 1;
+let idCount = 100;
+
+// https://regex101.com/r/mPyKKP/1/
+window.youtubeRegexPattern = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)/.source;
 
 window.fetchVideo = async (videoId: string) => {
   const res = await fetch(
@@ -26,6 +29,17 @@ window.fetchVideo = async (videoId: string) => {
     channel: videoDetails.author,
     thumbnailUrl: THUMBNAIL_URL_PREFIX + videoId + THUMBNAIL_URL_SUFFIX,
   };
+};
+
+/**
+ * @param  {string} url
+ */
+window.parseYoutubeId = (url) => {
+  const result = RegExp(window.youtubeRegexPattern, "i").exec(url);
+  if (result && result.length > 1) {
+    return result[1];
+  }
+  return null;
 };
 
 export {};

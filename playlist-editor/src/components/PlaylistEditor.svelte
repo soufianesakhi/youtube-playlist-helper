@@ -1,5 +1,7 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
+  import FloatingButton from "./FloatingButton.svelte";
+  import PlaylistPlusIcon from "./icons/PlaylistPlusIcon.svelte";
   import PlaylistVideo from "./PlaylistVideo.svelte";
   import Sidebar from "./Sidebar.svelte";
 
@@ -65,11 +67,28 @@
   async function deleteVideo(event: CustomEvent<Video>) {
     videos = videos.filter((video) => video.id !== event.detail.id);
   }
+
+  async function addVideo() {
+    const url = prompt("YouTube url");
+    if (!url) {
+      return;
+    }
+    const videoId = window.parseYoutubeId(url);
+    if (videoId) {
+      const video = await window.fetchVideo(videoId);
+      videos = [...videos, video];
+    } else {
+      alert("Invalid YouTube url");
+    }
+  }
 </script>
 
 <Sidebar />
 
 <main>
+  <div class="platlist-btns">
+    <FloatingButton on:click={addVideo}><PlaylistPlusIcon /></FloatingButton>
+  </div>
   <div class="list">
     {#each videos as video, index (video.id)}
       <div
@@ -93,6 +112,10 @@
 </main>
 
 <style>
+  .platlist-btns {
+    padding: 20px;
+  }
+
   .list {
     width: 100%;
     background-color: white;

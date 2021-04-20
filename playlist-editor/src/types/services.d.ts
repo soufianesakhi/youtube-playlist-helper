@@ -7,8 +7,11 @@ interface Video {
   thumbnailUrl: string;
 }
 
-type fetchVideoType = (id: string) => Promise<Video>;
+type FetchVideo = (id: string) => Promise<Video>;
+type ParseYoutubeId = (url: string) => string;
 
 interface Window {
-  fetchVideo: fetchVideoType;
+  fetchVideo: FetchVideo;
+  parseYoutubeId: ParseYoutubeId;
+  youtubeRegexPattern: string;
 }
