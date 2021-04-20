@@ -1,0 +1,2 @@
+let t=1;window.fetchVideo=async e=>{const i=await fetch(`https://www.youtube.com/get_video_info?video_id=${e}`,{headers:{origin:"https://www.youtube.com"}}),o=await i.text(),a=new URLSearchParams(o).get("player_response"),{videoDetails:w}=JSON.parse(a);return{id:t++,videoId:e,url:"https://www.youtube.com/watch?v="+e,title:w.title,channel:w.author,thumbnailUrl:"https://i.ytimg.com/vi/"+e+"/default.jpg"}};
+//# sourceMappingURL=video-service.js.map

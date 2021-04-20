@@ -1,4 +1,5 @@
 /// <reference path="./popup.d.ts" />
+/// <reference path="../../playlist-editor/src/types/services.d.ts" />
 
 let openPlaylistPage = false;
 let closeAfterCombine = false;
@@ -346,7 +347,10 @@ async function createPlaylist(videoIds) {
   if (videoIds.length == 0) {
     return;
   }
+  const video = await window.fetchVideo(videoIds[0]);
+  window.open("http://urlecho.appspot.com/echo?status=200&body=" + encodeURIComponent(JSON.stringify(video)), "_blank");
   const chunkSize = 50;
+  // prettier-ignore
   // @ts-ignore
   const videoIdsChunks = new Array(Math.ceil(videoIds.length / chunkSize)).fill().map(_ => videoIds.splice(0, chunkSize));
   videoIdsChunks.forEach(async videoIds => {

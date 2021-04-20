@@ -40,9 +40,10 @@ export default {
   input: "src/main.ts",
   output: {
     sourcemap: true,
-    format: "iife",
+    format: "es",
     name: "app",
-    file: production ? "../src/editor/bundle.js" : "public/build/bundle.js",
+    dir: production ? "../src/editor/" : "public/build/",
+    chunkFileNames: "[name].js",
   },
   plugins: [
     replace({

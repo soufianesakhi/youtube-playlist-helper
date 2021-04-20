@@ -9,9 +9,7 @@
   <body>
     <!-- Main -->
     <div id="main-menu" class="popup-menu">
-      <div id="open-editor" class="menu-item">
-        Open playlist editor
-      </div>
+      <div id="open-editor" class="menu-item">Open playlist editor</div>
       <div id="from-bookmark" class="menu-item">
         Create a playlist from a bookmark folder
         <i></i>
@@ -27,13 +25,11 @@
       <div id="from-current-thumbnails" class="menu-item">
         Create a playlist from current tab YouTube video thumbnails
       </div>
-      <div id="open-settings" class="menu-item">
-        Settings
-      </div>
+      <div id="open-settings" class="menu-item">Settings</div>
     </div>
 
     <!-- From Bookmark -->
-    <div id="from-bookmark-menu" class="popup-menu" style="display: none;">
+    <div id="from-bookmark-menu" class="popup-menu" style="display: none">
       <div class="back-item menu-item"><i></i>Back</div>
       <div class="menu-content">
         <div id="bookmarks"></div>
@@ -41,7 +37,7 @@
     </div>
 
     <!-- From URLs -->
-    <div id="from-urls-menu" class="popup-menu" style="display: none;">
+    <div id="from-urls-menu" class="popup-menu" style="display: none">
       <div class="back-item menu-item"><i></i>Back</div>
       <div class="menu-content">
         <textarea
@@ -53,7 +49,7 @@
     </div>
 
     <!-- Combine Youtube Tabs -->
-    <div id="combine-tabs-menu" class="popup-menu" style="display: none;">
+    <div id="combine-tabs-menu" class="popup-menu" style="display: none">
       <div class="back-item menu-item"><i></i>Back</div>
       <div class="menu-content">
         <div id="combine-tabs-exclude-playlists" class="menu-item">
@@ -69,6 +65,7 @@
     </div>
 
     <script src="../browser-polyfill.min.js"></script>
+    <script src="../editor/video-service.js"></script>
     <script src="popup.js"></script>
   </body>
 </html>
