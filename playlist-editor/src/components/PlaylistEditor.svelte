@@ -38,7 +38,7 @@
     ],
     timestamp: Date.now(),
   };
-  let videos: Video[] = playlist.videos;
+  let videos: Video[] = playlist.videos as Video[];
   let hovering = -1;
 
   const drop = (event, target) => {

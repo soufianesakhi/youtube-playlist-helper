@@ -119,20 +119,18 @@ getById("combine-tabs-all-playlist").onclick = async () => {
     .map((tab) => parseYoutubeId(tab.url || ""))
     .filter(isNotNull);
   const playlistsVideoIdsArray = await Promise.all(
-    tabs.filter(isPlaylistTab).map((tab) => {
+    tabs.filter(isPlaylistTab).map(async (tab) => {
       /** @type {any} */ let tabId = tab.id;
-      /** @type {Promise<string[]>} */ const videoIds = browser.tabs.executeScript(
-        tabId,
-        {
-          file: "/actions/getPlaylistVideoIds.js",
-        }
-      );
+      const result = await browser.tabs.executeScript(tabId, {
+        file: "/actions/getPlaylistVideoIds.js",
+      });
+      /** @type {string[]} */ const videoIds = result[0];
       return videoIds;
     })
   );
-  const playlistsVideoIds = Array.prototype.concat.apply(
-    [],
-    playlistsVideoIdsArray
+  const playlistsVideoIds = playlistsVideoIdsArray.reduce(
+    (acc, val) => acc.concat(val),
+    []
   );
   videoIds.push(...playlistsVideoIds);
   if (videoIds.length > 0) {
@@ -357,26 +355,32 @@ async function createPlaylist(videoIds) {
   if (videoIds.length == 0) {
     return;
   }
+  const playlistAsync = window.generatePlaylist(videoIds);
   const chunkSize = 50;
+  const remainingVideoIds = [...videoIds];
   // prettier-ignore
   // @ts-ignore
-  const videoIdsChunks = new Array(Math.ceil(videoIds.length / chunkSize)).fill().map(_ => videoIds.splice(0, chunkSize));
-  videoIdsChunks.forEach(async (videoIds) => {
-    var url =
-      "https://www.youtube.com/watch_videos?video_ids=" + videoIds.join(",");
-    if (openPlaylistPage) {
-      const data = await (await fetch(url)).text();
-      const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
-      if (exec && exec.length > 1) {
-        url = "https://www.youtube.com/playlist?list=" + exec[1];
-      } else {
-        alert(
-          "Unable to retrieve playlist id. Directly playing videos instead..."
-        );
+  const videoIdsChunks = new Array(Math.ceil(remainingVideoIds.length / chunkSize)).fill().map(_ => remainingVideoIds.splice(0, chunkSize));
+  await Promise.all(
+    videoIdsChunks.map(async (videoIds) => {
+      var url =
+        "https://www.youtube.com/watch_videos?video_ids=" + videoIds.join(",");
+      if (openPlaylistPage) {
+        const data = await (await fetch(url)).text();
+        const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
+        if (exec && exec.length > 1) {
+          url = "https://www.youtube.com/playlist?list=" + exec[1];
+        } else {
+          alert(
+            "Unable to retrieve playlist id. Directly playing videos instead..."
+          );
+        }
       }
-    }
-    return browser.tabs.create({ url });
-  });
+      return browser.tabs.create({ url });
+    })
+  );
+  const playlist = await playlistAsync;
+  window.saveRecentPlaylist(playlist);
 }
 
 /***********************************

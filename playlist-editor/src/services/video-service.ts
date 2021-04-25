@@ -31,15 +31,23 @@ window.fetchVideo = async (videoId: string) => {
   };
 };
 
-/**
- * @param  {string} url
- */
-window.parseYoutubeId = (url) => {
+window.parseYoutubeId = (url: string) => {
   const result = RegExp(window.youtubeRegexPattern, "i").exec(url);
   if (result && result.length > 1) {
     return result[1];
   }
   return null;
+};
+
+window.generatePlaylist = async (videoIds: string[]) => {
+  const id = await window.generatePlaylistId();
+  const date = new Date();
+  return {
+    id,
+    title: date.toLocaleString(),
+    videos: videoIds,
+    timestamp: date.getTime(),
+  };
 };
 
 export {};

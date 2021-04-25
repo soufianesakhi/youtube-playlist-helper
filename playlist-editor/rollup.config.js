@@ -9,7 +9,7 @@ import svelte from "rollup-plugin-svelte";
 import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 
-const production = !process.env.ROLLUP_WATCH;
+const production = process.env.PRODUCTION;
 
 function serve() {
   let server;
@@ -39,7 +39,7 @@ function serve() {
 export default {
   input: "src/main.ts",
   output: {
-    sourcemap: true,
+    sourcemap: !production,
     format: "es",
     name: "app",
     dir: production ? "../src/editor/" : "public/build/",
