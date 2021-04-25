@@ -2,38 +2,47 @@
   import { navigate } from "svelte-routing";
 
   export let playlist: Playlist;
+  const videosAsync =
+    typeof playlist.videos[0] !== "string"
+      ? Promise.resolve(playlist.videos as Video[])
+      : Promise.all(playlist.videos.map((id) => window.fetchVideo(id)));
   let basepath = globalThis.basePath;
 
-  function previewClicked() {
-    navigate(`${basepath}/editor`, { state: { playlist } });
+  async function previewClicked() {
+    const videos = await videosAsync;
+    navigate(`${basepath}/editor`, {
+      state: { playlist: { ...playlist, videos } },
+    });
   }
 </script>
 
-<div class="preview" on:click|preventDefault={previewClicked}>
-  <div class="preview-row">
-    <img
-      class="preview-img"
-      alt={playlist.videos[0]?.title}
-      src={playlist.videos[0]?.thumbnailUrl}
-    />
-    <img
-      class="preview-img"
-      alt={playlist.videos[1]?.title}
-      src={playlist.videos[1]?.thumbnailUrl}
-    />
-  </div>
-  <div class="preview-row">
-    <img
-      class="preview-img"
-      alt={playlist.videos[2]?.title}
-      src={playlist.videos[2]?.thumbnailUrl}
-    />
-    <div class="preview-img playlist-count">
-      <span>({playlist.videos.length})</span>
+{#await videosAsync then videos}
+  <div class="preview" on:click|preventDefault={previewClicked}>
+    <div class="preview-row">
+      <img
+        class="preview-img"
+        alt={videos[0]?.title}
+        src={videos[0]?.thumbnailUrl}
+      />
+      <img
+        class="preview-img"
+        alt={videos[1]?.title}
+        src={videos[1]?.thumbnailUrl}
+      />
     </div>
+    <div class="preview-row">
+      <img
+        class="preview-img"
+        alt={videos[2]?.title}
+        src={videos[2]?.thumbnailUrl}
+      />
+      <div class="preview-img playlist-count">
+        <span>({playlist.videos.length})</span>
+      </div>
+    </div>
+    <span class="preview-title">{playlist.title}</span>
   </div>
-  <span class="preview-title">{playlist.title}</span>
-</div>
+{/await}
 
 <style>
   .preview {

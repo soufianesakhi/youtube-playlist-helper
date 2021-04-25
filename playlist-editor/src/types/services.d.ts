@@ -4,6 +4,7 @@ type GeneratePlaylist = (videoIds: string[]) => Promise<Playlist>;
 
 type GeneratePlaylistId = () => Promise<string>;
 type SavePlaylist = (playlist: Playlist) => void;
+type GetPlaylists = () => Promise<Playlist[]>;
 
 interface Window {
   youtubeRegexPattern: string;
@@ -13,4 +14,5 @@ interface Window {
   generatePlaylistId: GeneratePlaylistId;
   savePlaylist: SavePlaylist;
   saveRecentPlaylist: SavePlaylist;
+  getRecentPlaylists: GetPlaylists;
 }

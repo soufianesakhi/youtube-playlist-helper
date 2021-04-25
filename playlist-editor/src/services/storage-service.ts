@@ -10,8 +10,21 @@ function playlistToDto(playlist: Playlist) {
   return playlist;
 }
 
+const PLAYLIST_KEY_PREFIX = "playlist_";
+
 window.saveRecentPlaylist = async (playlist: Playlist) => {
-  localStorage.setItem(playlist.id, JSON.stringify(playlistToDto(playlist)));
+  localStorage.setItem(
+    PLAYLIST_KEY_PREFIX + playlist.id,
+    JSON.stringify(playlistToDto(playlist))
+  );
+};
+
+window.getRecentPlaylists = async () => {
+  const items = { ...localStorage };
+  const playlists = Object.keys(items)
+    .filter((key) => key.startsWith(PLAYLIST_KEY_PREFIX))
+    .map((key) => JSON.parse(items[key]) as Playlist);
+  return playlists;
 };
 
 if (typeof browser != "undefined") {
@@ -27,7 +40,6 @@ if (typeof browser != "undefined") {
     return count;
   };
 
-  const PLAYLIST_KEY_PREFIX = "playlist_";
   window.savePlaylist = async (playlist: Playlist) => {
     const obj = {};
     obj[PLAYLIST_KEY_PREFIX + playlist.id] = JSON.stringify(

@@ -71,6 +71,7 @@
 
   .video-title {
     font-weight: bold;
+    width: 50vw;
   }
 
   .video-btns {

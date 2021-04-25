@@ -9,9 +9,7 @@
 </script>
 
 <div class="sidenav" use:links>
-  <a
-    href="{basepath}/recent"
-    class:active={isActive("recent" /*, basepath || "/"*/)}
+  <a href="{basepath}/recent" class:active={isActive("recent", basepath || "/")}
     >Recently created playlists</a
   >
   <a href="{basepath}/new" class:active={isActive("new")}>New playlist</a>
