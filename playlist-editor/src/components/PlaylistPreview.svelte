@@ -1,18 +1,13 @@
 <script lang="ts">
-  import { navigate } from "svelte-routing";
-
   export let playlist: Playlist;
   const videosAsync =
     typeof playlist.videos[0] !== "string"
       ? Promise.resolve(playlist.videos as Video[])
       : Promise.all(playlist.videos.map((id) => window.fetchVideo(id)));
-  let basepath = globalThis.basePath;
 
   async function previewClicked() {
     const videos = await videosAsync;
-    navigate(`${basepath}/editor`, {
-      state: { playlist: { ...playlist, videos } },
-    });
+    window.openPlaylistEditor({ ...playlist, videos });
   }
 </script>
 

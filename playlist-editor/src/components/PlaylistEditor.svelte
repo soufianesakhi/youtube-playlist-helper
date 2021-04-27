@@ -5,8 +5,7 @@
   import PlaylistVideo from "./PlaylistVideo.svelte";
   import Sidebar from "./Sidebar.svelte";
 
-  export let location;
-  const playlist: Playlist = location?.state?.playlist;
+  const playlist: Playlist = history.state.playlist;
   let videos: Video[] = playlist.videos as Video[];
   let hovering = -1;
 

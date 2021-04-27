@@ -1,20 +1,15 @@
 <script lang="ts">
-  import { links } from "svelte-routing";
-
-  let basepath = globalThis.basePath;
-
   function isActive(...pages: string[]) {
     return pages.some((page) => location.href.endsWith(page));
   }
 </script>
 
-<div class="sidenav" use:links>
-  <a href="{basepath}/recent" class:active={isActive("recent", basepath || "/")}
+<div class="sidenav">
+  <a href="#/recent" class:active={isActive("recent", "/", "#", ".html")}
     >Recently created playlists</a
   >
-  <a href="{basepath}/new" class:active={isActive("new")}>New playlist</a>
-  <a href="{basepath}/saved" class:active={isActive("saved")}>Saved playlists</a
-  >
+  <a href="#/new" class:active={isActive("new")}>New playlist</a>
+  <a href="#/saved" class:active={isActive("saved")}>Saved playlists</a>
 </div>
 
 <style>

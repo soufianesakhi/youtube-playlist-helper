@@ -1,18 +1,18 @@
 <script>
-  import { Route, Router } from "svelte-routing";
+  import Router from "svelte-spa-router";
   import PlaylistEditor from "./components/PlaylistEditor.svelte";
   import New from "./views/New.svelte";
   import Recent from "./views/Recent.svelte";
   import Saved from "./views/Saved.svelte";
 
-  export let url = "";
-  let basepath = globalThis.basePath;
+  const routes = {
+    "/": Recent,
+    "/recent": Recent,
+    "/new": New,
+    "/saved": Saved,
+    "/editor": PlaylistEditor,
+    "*": Recent,
+  };
 </script>
 
-<Router {url} {basepath}>
-  <Route path="/" component={Recent} />
-  <Route path="recent" component={Recent} />
-  <Route path="new" component={New} />
-  <Route path="saved" component={Saved} />
-  <Route path="editor" component={PlaylistEditor} />
-</Router>
+<Router {routes} />

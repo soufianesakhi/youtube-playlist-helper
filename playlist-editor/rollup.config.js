@@ -48,7 +48,6 @@ export default {
   plugins: [
     replace({
       globalThis: JSON.stringify({
-        basePath: production ? "/editor/index.html" : "",
         youtubeServiceURL: production
           ? "https://www.youtube.com"
           : "http://localhost:4444/www.youtube.com:443",

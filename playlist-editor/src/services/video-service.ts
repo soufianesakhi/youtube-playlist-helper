@@ -6,7 +6,7 @@ const THUMBNAIL_URL_SUFFIX = "/default.jpg";
 
 const youtubeServiceURL = globalThis.youtubeServiceURL;
 
-let idCount = 100;
+window.videoIdCount = 100;
 
 // https://regex101.com/r/mPyKKP/1/
 window.youtubeRegexPattern = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)/.source;
@@ -22,7 +22,7 @@ window.fetchVideo = async (videoId: string) => {
   const playerRes = new URLSearchParams(text).get("player_response");
   const { videoDetails } = JSON.parse(playerRes);
   return {
-    id: idCount++,
+    id: window.videoIdCount++,
     videoId,
     url: YOUTUBE_URL_PREFIX + videoId,
     title: videoDetails.title,
@@ -48,6 +48,11 @@ window.generatePlaylist = async (videoIds: string[]) => {
     videos: videoIds,
     timestamp: date.getTime(),
   };
+};
+
+window.openPlaylistEditor = (playlist: Playlist) => {
+  history.pushState({ playlist }, "", "#/editor");
+  window.dispatchEvent(new Event("hashchange"));
 };
 
 export {};
