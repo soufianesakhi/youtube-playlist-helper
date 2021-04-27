@@ -6,38 +6,7 @@
   import Sidebar from "./Sidebar.svelte";
 
   export let location;
-  const playlist: Playlist = location?.state?.playlist || {
-    id: 1,
-    title: new Date().toLocaleString(),
-    videos: [
-      {
-        id: "1",
-        videoId: "r_0JjYUe5jo",
-        url: "https://www.youtube.com/watch?v=r_0JjYUe5jo",
-        title: "Eminem - Godzilla ft. Juice WRLD (Directed by Cole Bennett)",
-        channel: "Lyrical Lemonade",
-        thumbnailUrl: "https://i.ytimg.com/vi/r_0JjYUe5jo/default.jpg",
-      },
-      {
-        id: "2",
-        videoId: "dqRZDebPIGs",
-        url: "https://www.youtube.com/watch?v=dqRZDebPIGs",
-        title: "The Weeknd - In Your Eyes (Official Video)",
-        channel: "The Weeknd",
-        thumbnailUrl: "https://i.ytimg.com/vi/dqRZDebPIGs/default.jpg",
-      },
-      {
-        id: "3",
-        videoId: "dmDbS5LyiZ0",
-        url: "https://www.youtube.com/watch?v=dmDbS5LyiZ0",
-        title:
-          "Blinding Lights - The Weeknd (Boyce Avenue acoustic cover) on Spotify & Apple",
-        channel: "Boyce Avenue",
-        thumbnailUrl: "https://i.ytimg.com/vi/dmDbS5LyiZ0/default.jpg",
-      },
-    ],
-    timestamp: Date.now(),
-  };
+  const playlist: Playlist = location?.state?.playlist;
   let videos: Video[] = playlist.videos as Video[];
   let hovering = -1;
 

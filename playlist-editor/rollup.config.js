@@ -51,7 +51,7 @@ export default {
         basePath: production ? "/editor/index.html" : "",
         youtubeServiceURL: production
           ? "https://www.youtube.com"
-          : "https://cors-anywhere.herokuapp.com/www.youtube.com:443",
+          : "http://localhost:4444/www.youtube.com:443",
       }),
     }),
     svelte({
