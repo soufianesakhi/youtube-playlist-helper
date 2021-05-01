@@ -7,6 +7,7 @@
     "dev": "rollup -c -w",
     "prod": "rollup -c -w --environment PRODUCTION",
     "start": "sirv public",
+    "start:cors": "cors -p 4444",
     "validate": "svelte-check"
   },
   "devDependencies": {
@@ -16,6 +17,7 @@
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^1.0.0",
     "@types/firefox-webext-browser": "^82.0.0",
+    "cors-anywhere-cli": "^1.2.0",
     "rollup": "^2.3.4",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-css-only": "^3.1.0",

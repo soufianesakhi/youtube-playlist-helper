@@ -1,13 +1,19 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
   import FloatingButton from "./FloatingButton.svelte";
+  import CheckIcon from "./icons/CheckIcon.svelte";
+  import CloseIcon from "./icons/CloseIcon.svelte";
+  import PencilIcon from "./icons/PencilIcon.svelte";
   import PlaylistPlusIcon from "./icons/PlaylistPlusIcon.svelte";
   import PlaylistVideo from "./PlaylistVideo.svelte";
   import Sidebar from "./Sidebar.svelte";
+  import SimpleButton from "./SimpleButton.svelte";
 
-  const playlist: Playlist = history.state.playlist;
+  let playlist: Playlist = history.state.playlist;
   let videos: Video[] = playlist.videos as Video[];
   let hovering = -1;
+  let originalTitle: string;
+  let editingTitle = false;
 
   const drop = (event, target) => {
     event.dataTransfer.dropEffect = "move";
@@ -49,11 +55,35 @@
       alert("Invalid YouTube url");
     }
   }
+  function startTitleEdit() {
+    originalTitle = playlist.title;
+    editingTitle = true;
+  }
+  function resetTitle() {
+    playlist.title = originalTitle;
+    endTitleEdit();
+  }
+  function endTitleEdit() {
+    originalTitle = null;
+    editingTitle = false;
+  }
 </script>
 
 <Sidebar />
 
 <main>
+  <h2>
+    {#if !editingTitle}
+      <div style="line-height: 40px;">{playlist.title}</div>
+      <SimpleButton className="edit-title-btn" on:click={startTitleEdit}>
+        <PencilIcon />
+      </SimpleButton>
+    {:else}
+      <input class="edit-title-input" type="text" bind:value={playlist.title} />
+      <SimpleButton on:click={endTitleEdit}><CheckIcon /></SimpleButton>
+      <SimpleButton on:click={resetTitle}><CloseIcon /></SimpleButton>
+    {/if}
+  </h2>
   <div class="platlist-btns">
     <FloatingButton on:click={addVideo}><PlaylistPlusIcon /></FloatingButton>
   </div>
@@ -80,8 +110,33 @@
 </main>
 
 <style>
+  h2 {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    font-size: 24px;
+  }
+
+  .edit-title-input {
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    margin-right: 5px;
+    padding: 0;
+    font-weight: bold;
+  }
+
+  :global(.edit-title-btn) {
+    margin-left: 20px;
+  }
+
   .platlist-btns {
+    display: flex;
     padding: 20px;
+  }
+
+  .platlist-btns > :global(*) {
+    margin-left: 10px;
   }
 
   .list {
