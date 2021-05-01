@@ -27,6 +27,7 @@ type GetPlaylists = () => Promise<Playlist[]>;
 interface Window {
   generatePlaylistId: GeneratePlaylistId;
   savePlaylist: SavePlaylist;
+  getPlaylists: GetPlaylists;
   saveRecentPlaylist: SavePlaylist;
   getRecentPlaylists: GetPlaylists;
 }

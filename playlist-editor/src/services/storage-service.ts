@@ -45,7 +45,14 @@ if (typeof browser != "undefined") {
     obj[PLAYLIST_KEY_PREFIX + playlist.id] = JSON.stringify(
       playlistToDto(playlist)
     );
-    storage.set(obj);
+    return storage.set(obj);
+  };
+
+  window.getPlaylists = async () => {
+    const allItems = await storage.get(null);
+    return Object.keys(allItems)
+      .filter((key) => key.startsWith(PLAYLIST_KEY_PREFIX))
+      .map((key) => JSON.parse(allItems[key]));
   };
 } else if (window.location.protocol.startsWith("http")) {
   // Development mode fallback
@@ -55,6 +62,7 @@ if (typeof browser != "undefined") {
   };
 
   window.savePlaylist = window.saveRecentPlaylist;
+  window.getPlaylists = window.getRecentPlaylists;
 }
 
 export {};

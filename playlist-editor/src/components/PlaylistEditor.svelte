@@ -5,6 +5,7 @@
   import CloseIcon from "./icons/CloseIcon.svelte";
   import PencilIcon from "./icons/PencilIcon.svelte";
   import PlaylistPlusIcon from "./icons/PlaylistPlusIcon.svelte";
+  import SaveIcon from "./icons/SaveIcon.svelte";
   import PlaylistVideo from "./PlaylistVideo.svelte";
   import Sidebar from "./Sidebar.svelte";
   import SimpleButton from "./SimpleButton.svelte";
@@ -55,6 +56,12 @@
       alert("Invalid YouTube url");
     }
   }
+
+  async function savePlaylist() {
+    await window.savePlaylist(playlist);
+    alert("Playlist saved");
+  }
+
   function startTitleEdit() {
     originalTitle = playlist.title;
     editingTitle = true;
@@ -85,7 +92,12 @@
     {/if}
   </h2>
   <div class="platlist-btns">
-    <FloatingButton on:click={addVideo}><PlaylistPlusIcon /></FloatingButton>
+    <FloatingButton on:click={addVideo} title="Add video"
+      ><PlaylistPlusIcon /></FloatingButton
+    >
+    <FloatingButton on:click={savePlaylist} title="Save the playlist"
+      ><SaveIcon /></FloatingButton
+    >
   </div>
   <div class="list">
     {#each videos as video, index (video.id)}
