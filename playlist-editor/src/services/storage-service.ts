@@ -30,6 +30,20 @@ window.getRecentPlaylists = async () => {
 if (typeof browser != "undefined") {
   const storage = browser.storage.sync;
 
+  window.fetchObject = async (id, defaultValue) => {
+    const result = await browser.storage.sync.get(id);
+    if (result && result[id] != null) {
+      return result[id];
+    }
+    return defaultValue;
+  };
+
+  window.storeObject = async (id, obj) => {
+    const items = {};
+    items[id] = obj ? JSON.stringify(obj) : null;
+    return storage.set(items);
+  };
+
   const ID_COUNTER_KEY = "PlaylistIdCounter";
   window.generatePlaylistId = async () => {
     const obj = await storage.get(ID_COUNTER_KEY);
@@ -41,11 +55,10 @@ if (typeof browser != "undefined") {
   };
 
   window.savePlaylist = async (playlist: Playlist) => {
-    const obj = {};
-    obj[PLAYLIST_KEY_PREFIX + playlist.id] = JSON.stringify(
+    return window.storeObject(
+      PLAYLIST_KEY_PREFIX + playlist.id,
       playlistToDto(playlist)
     );
-    return storage.set(obj);
   };
 
   window.getPlaylists = async () => {
@@ -57,6 +70,15 @@ if (typeof browser != "undefined") {
 } else if (window.location.protocol.startsWith("http")) {
   // Development mode fallback
 
+  window.fetchObject = async (id, defaultValue) => {
+    const value = localStorage.getItem(id);
+    return (value && JSON.parse(value)) || defaultValue;
+  };
+
+  window.storeObject = async (id, obj) => {
+    localStorage.setItem(id, obj ? JSON.stringify(obj) : null);
+  };
+
   window.generatePlaylistId = async () => {
     return Date.now().toString();
   };
@@ -64,5 +86,20 @@ if (typeof browser != "undefined") {
   window.savePlaylist = window.saveRecentPlaylist;
   window.getPlaylists = window.getRecentPlaylists;
 }
+
+const DEFAULT_SETTINGS: Settings = {
+  openPlaylistPage: false,
+  closeAfterCombine: false,
+};
+window.getSettings = async () => {
+  const settings = { ...DEFAULT_SETTINGS };
+  await Promise.all(
+    Object.keys(DEFAULT_SETTINGS).map(async (key) => {
+      const value = await window.fetchObject(key, DEFAULT_SETTINGS[key]);
+      settings[key] = value;
+    })
+  );
+  return settings;
+};
 
 export {};

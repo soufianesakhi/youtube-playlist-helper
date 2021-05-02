@@ -1,31 +1,6 @@
 /// <reference path="./popup.d.ts" />
 /// <reference path="../../playlist-editor/src/types/services.d.ts" />
 
-let openPlaylistPage = false;
-let closeAfterCombine = false;
-
-loadSettings();
-
-async function loadSettings() {
-  openPlaylistPage = await loadOption("open_playlist_page", openPlaylistPage);
-  closeAfterCombine = await loadOption(
-    "close_after_combine",
-    closeAfterCombine
-  );
-}
-
-/**
- * @param {string} id
- * @param {any} defaultValue
- */
-async function loadOption(id, defaultValue) {
-  const result = await browser.storage.sync.get(id);
-  if (result && result[id] != null) {
-    return result[id];
-  }
-  return defaultValue;
-}
-
 /***********************************
  *               UI
  ***********************************/
@@ -74,7 +49,8 @@ getById("combine-tabs-exclude-playlists").onclick = async () => {
     const videoIds = tabs
       .map((tab) => parseYoutubeId(tab.url || ""))
       .filter(isNotNull);
-    if (closeAfterCombine) {
+    const settings = await window.getSettings();
+    if (settings.closeAfterCombine) {
       closeTabs(tabs);
     }
     await createPlaylist(videoIds);
@@ -101,7 +77,8 @@ getById("combine-tabs-current-playlist").onclick = async () => {
       file: "/actions/getPlaylistVideoIds.js",
     });
     videoIds.push(...currentPlaylistVideoIds);
-    if (closeAfterCombine) {
+    const settings = await window.getSettings();
+    if (settings.closeAfterCombine) {
       closeTabs([activeTab, ...tabs]);
     }
     await createPlaylist(videoIds);
@@ -134,7 +111,8 @@ getById("combine-tabs-all-playlist").onclick = async () => {
   );
   videoIds.push(...playlistsVideoIds);
   if (videoIds.length > 0) {
-    if (closeAfterCombine) {
+    const settings = await window.getSettings();
+    if (settings.closeAfterCombine) {
       closeTabs(tabs);
     }
     await createPlaylist(videoIds);
@@ -361,11 +339,12 @@ async function createPlaylist(videoIds) {
   // prettier-ignore
   // @ts-ignore
   const videoIdsChunks = new Array(Math.ceil(remainingVideoIds.length / chunkSize)).fill().map(_ => remainingVideoIds.splice(0, chunkSize));
+  const settings = await window.getSettings();
   await Promise.all(
     videoIdsChunks.map(async (videoIds) => {
       var url =
         "https://www.youtube.com/watch_videos?video_ids=" + videoIds.join(",");
-      if (openPlaylistPage) {
+      if (settings.openPlaylistPage) {
         const data = await (await fetch(url)).text();
         const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
         if (exec && exec.length > 1) {

@@ -13,3 +13,9 @@ interface Playlist {
   videos: Video[] | string[];
   timestamp: number;
 }
+
+interface Settings {
+  [id: string]: any;
+  openPlaylistPage: boolean;
+  closeAfterCombine: boolean;
+}

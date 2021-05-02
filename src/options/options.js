@@ -1,50 +1,56 @@
-var CheckBoxOption = (function () {
+/// <reference path="../../playlist-editor/src/types/model.d.ts" />
+
+class CheckBoxOption {
   /**
-   * @class
    * @param {string} id
    * @param {boolean} defaultValue
    */
-  function CheckBoxOption(id, defaultValue) {
+  constructor (id, defaultValue) {
     this.id = id;
     this.defaultValue = defaultValue;
   }
-  CheckBoxOption.prototype.restore = function () {
+
+  restore() {
     browser.storage.sync.get(this.id).then((result) => {
       query(`#${this.id}`).checked =
         result && result[this.id] != null ? result[this.id] : this.defaultValue;
     }, console.log);
   };
-  CheckBoxOption.prototype.save = function () {
+
+  async save() {
     const input = query(`#${this.id}:checked`);
-    browser.storage.sync.set({
+    await browser.storage.sync.set({
       [this.id]: !!input,
     });
   };
-  return CheckBoxOption;
-})();
+}
 
-const OPEN_PLAYLIST_PAGE_OPTION = new CheckBoxOption(
-  "open_playlist_page",
-  false
-);
+/**
+ * @type {Settings}
+ */
+let settings;
 
-const CLOSE_AFTER_COMBINE_OPTION = new CheckBoxOption(
-  "close_after_combine",
-  false
-);
+/**
+ * @type {CheckBoxOption[]}
+ */
+let options = [];
 
 /**
  * @param  {Event} e
  */
-function saveOptions(e) {
+async function saveOptions(e) {
   e.preventDefault();
-  OPEN_PLAYLIST_PAGE_OPTION.save();
-  CLOSE_AFTER_COMBINE_OPTION.save();
+  await Promise.all(options.map(option => option.save()));
+  alert("Settings saved");
 }
 
-function restoreOptions() {
-  OPEN_PLAYLIST_PAGE_OPTION.restore();
-  CLOSE_AFTER_COMBINE_OPTION.restore();
+async function restoreOptions() {
+  settings = await window.getSettings();
+  Object.keys(settings).forEach((id) => {
+    const option = new CheckBoxOption(id, settings[id]);
+    options.push(option);
+    option.restore();
+  });
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
