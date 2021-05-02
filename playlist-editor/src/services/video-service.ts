@@ -55,4 +55,35 @@ window.openPlaylistEditor = (playlist: Playlist) => {
   window.dispatchEvent(new Event("hashchange"));
 };
 
-export {};
+const PLAYLIST_LIMIT = 50;
+window.openPlaylist = async (videoIds: string[]) => {
+  const remainingVideoIds = [...videoIds];
+  // prettier-ignore
+  // @ts-ignore
+  const videoIdsChunks = new Array(Math.ceil(remainingVideoIds.length / PLAYLIST_LIMIT)).fill().map(_ => remainingVideoIds.splice(0, PLAYLIST_LIMIT));
+  const settings = await window.getSettings();
+  await Promise.all(
+    videoIdsChunks.map(async (videoIds) => {
+      var url = youtubeServiceURL + "/watch_videos?video_ids=" + videoIds.join(",");
+      if (settings.openPlaylistPage) {
+        const data = await (await fetch(url)).text();
+        const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
+        if (exec && exec.length > 1) {
+          url = "https://www.youtube.com/playlist?list=" + exec[1];
+        } else {
+          alert(
+            "Unable to retrieve playlist id. Directly playing videos instead..."
+          );
+        }
+      }
+      if (typeof browser != "undefined") {
+        return browser.tabs.create({ url });
+      } else {
+        window.open(url, "_blank");
+      }
+    })
+  );
+};
+
+export { };
+

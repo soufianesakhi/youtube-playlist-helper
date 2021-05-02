@@ -4,6 +4,7 @@
   import CheckIcon from "./icons/CheckIcon.svelte";
   import CloseIcon from "./icons/CloseIcon.svelte";
   import PencilIcon from "./icons/PencilIcon.svelte";
+  import PlaylistPlayIcon from "./icons/PlaylistPlayIcon.svelte";
   import PlaylistPlusIcon from "./icons/PlaylistPlusIcon.svelte";
   import SaveIcon from "./icons/SaveIcon.svelte";
   import PlaylistVideo from "./PlaylistVideo.svelte";
@@ -58,8 +59,14 @@
   }
 
   async function savePlaylist() {
+    playlist = { ...playlist, videos };
     await window.savePlaylist(playlist);
     alert("Playlist saved");
+  }
+
+  function play() {
+    const videoIds = videos.map((video) => video.videoId.toString());
+    window.openPlaylist(videoIds);
   }
 
   function startTitleEdit() {
@@ -92,6 +99,9 @@
     {/if}
   </h2>
   <div class="platlist-btns">
+    <FloatingButton on:click={play} title="Play all videos"
+      ><PlaylistPlayIcon /></FloatingButton
+    >
     <FloatingButton on:click={addVideo} title="Add video"
       ><PlaylistPlusIcon /></FloatingButton
     >
@@ -144,7 +154,7 @@
 
   .platlist-btns {
     display: flex;
-    padding: 20px;
+    padding: 0px 20px 20px;
   }
 
   .platlist-btns > :global(*) {

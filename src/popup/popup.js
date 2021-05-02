@@ -333,32 +333,8 @@ async function createPlaylist(videoIds) {
   if (videoIds.length == 0) {
     return;
   }
-  const playlistAsync = window.generatePlaylist(videoIds);
-  const chunkSize = 50;
-  const remainingVideoIds = [...videoIds];
-  // prettier-ignore
-  // @ts-ignore
-  const videoIdsChunks = new Array(Math.ceil(remainingVideoIds.length / chunkSize)).fill().map(_ => remainingVideoIds.splice(0, chunkSize));
-  const settings = await window.getSettings();
-  await Promise.all(
-    videoIdsChunks.map(async (videoIds) => {
-      var url =
-        "https://www.youtube.com/watch_videos?video_ids=" + videoIds.join(",");
-      if (settings.openPlaylistPage) {
-        const data = await (await fetch(url)).text();
-        const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
-        if (exec && exec.length > 1) {
-          url = "https://www.youtube.com/playlist?list=" + exec[1];
-        } else {
-          alert(
-            "Unable to retrieve playlist id. Directly playing videos instead..."
-          );
-        }
-      }
-      return browser.tabs.create({ url });
-    })
-  );
-  const playlist = await playlistAsync;
+  window.openPlaylist(videoIds);
+  const playlist = await window.generatePlaylist(videoIds);
   window.saveRecentPlaylist(playlist);
 }
 
