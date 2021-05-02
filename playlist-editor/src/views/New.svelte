@@ -1,14 +1,16 @@
-<script>
-  import PlaylistSelector from "../components/PlaylistSelector.svelte";
-  import Sidebar from "../components/Sidebar.svelte";
+<script lang="ts">
+  import PlaylistEditor from "../components/PlaylistEditor.svelte";
+
+  async function newPLaylist() {
+    let playlist = await window.generatePlaylist();
+    return { ...playlist, title: "Playlist title" };
+  }
+  const playlistAsync = newPLaylist();
 </script>
 
-<Sidebar />
-
-<main>
-  <h2>New</h2>
-  <PlaylistSelector />
-</main>
+{#await playlistAsync then playlist}
+  <PlaylistEditor {playlist} editingTitle={true} />
+{/await}
 
 <style>
 </style>

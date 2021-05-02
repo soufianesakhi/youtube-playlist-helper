@@ -12,15 +12,17 @@
   import Sidebar from "./Sidebar.svelte";
   import SimpleButton from "./SimpleButton.svelte";
 
-  let playlist: Playlist = history.state.playlist;
+  export let editingTitle = false;
+  export let playlist: Playlist = history.state.playlist;
   if (!playlist) {
     replace("/");
   }
-  const nextPage = history.state.previousPage || "/";
+  const previousPage = (history.state && history.state.previousPage) || "/";
+  const isNew = location.hash.startsWith("#/new");
+
   let videos: Video[] = playlist.videos as Video[];
   let hovering = -1;
   let originalTitle: string;
-  let editingTitle = false;
 
   const drop = (event, target) => {
     event.dataTransfer.dropEffect = "move";
@@ -68,13 +70,13 @@
     const id = await window.savePlaylist(playlist);
     playlist = { ...playlist, id };
     alert("Playlist saved");
-    await replace(nextPage);
+    await replace("/saved");
   }
   async function deletePlaylist() {
     await window.removePlaylist(playlist);
     alert("Playlist deleted");
     window.history.state;
-    await replace(nextPage);
+    await replace(previousPage);
   }
 
   function play() {
@@ -112,18 +114,24 @@
     {/if}
   </h2>
   <div class="platlist-btns">
-    <FloatingButton on:click={play} title="Play all videos"
-      ><PlaylistPlayIcon /></FloatingButton
-    >
+    {#if videos.length > 0}
+      <FloatingButton on:click={play} title="Play all videos"
+        ><PlaylistPlayIcon /></FloatingButton
+      >
+    {/if}
     <FloatingButton on:click={addVideo} title="Add video"
       ><PlaylistPlusIcon /></FloatingButton
     >
-    <FloatingButton on:click={savePlaylist} title="Save the playlist"
-      ><SaveIcon /></FloatingButton
-    >
-    <FloatingButton on:click={deletePlaylist} title="Delete the playlist"
-      ><CloseIcon /></FloatingButton
-    >
+    {#if videos.length > 0}
+      <FloatingButton on:click={savePlaylist} title="Save the playlist"
+        ><SaveIcon /></FloatingButton
+      >
+    {/if}
+    {#if !isNew}
+      <FloatingButton on:click={deletePlaylist} title="Delete the playlist"
+        ><CloseIcon /></FloatingButton
+      >
+    {/if}
   </div>
   <div class="list">
     {#each videos as video, index (video.id)}

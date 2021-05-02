@@ -39,13 +39,13 @@ window.parseYoutubeId = (url: string) => {
   return null;
 };
 
-window.generatePlaylist = async (videoIds: string[]) => {
+window.generatePlaylist = async (videoIds?: string[]) => {
   const id = await window.generatePlaylistId();
   const date = new Date();
   return {
     id,
     title: date.toLocaleString(),
-    videos: videoIds,
+    videos: videoIds || [],
     timestamp: date.getTime(),
   };
 };

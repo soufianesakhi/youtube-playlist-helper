@@ -4,7 +4,7 @@
 
 type FetchVideo = (id: string) => Promise<Video>;
 type ParseYoutubeId = (url: string) => string;
-type GeneratePlaylist = (videoIds: string[]) => Promise<Playlist>;
+type GeneratePlaylist = (videoIds?: string[]) => Promise<Playlist>;
 type OpenPlaylistEditor = (playlist: Playlist) => void;
 type OpenPlaylist = (videoIds: string[]) => Promise<void>;
 

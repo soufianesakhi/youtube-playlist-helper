@@ -1,11 +1,14 @@
 <script lang="ts">
   function isActive(...pages: string[]) {
-    return pages.some((page) => location.href.endsWith(page));
+    return pages.some(
+      (page) =>
+        location.href.endsWith(page) || location.href.endsWith(page + "/")
+    );
   }
 </script>
 
 <div class="sidenav">
-  <a href="#/recent" class:active={isActive("recent", "/", "#", ".html")}
+  <a href="#/recent" class:active={isActive("recent", "#", ".html")}
     >Recently created playlists</a
   >
   <a href="#/new" class:active={isActive("new")}>New playlist</a>
