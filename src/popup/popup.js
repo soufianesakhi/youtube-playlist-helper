@@ -76,7 +76,7 @@ getById("combine-tabs-current-playlist").onclick = async () => {
     const currentPlaylistVideoIds = await browser.tabs.executeScript(tabId, {
       file: "/actions/getPlaylistVideoIds.js",
     });
-    videoIds.push(...currentPlaylistVideoIds);
+    videoIds.push(...currentPlaylistVideoIds[0]);
     const settings = await window.getSettings();
     if (settings.closeAfterCombine) {
       closeTabs([activeTab, ...tabs]);
@@ -130,6 +130,21 @@ getById("from-current-thumbnails").onclick = async () => {
   } else {
     alert("No YouTube video thumbnail found in the current tab");
   }
+};
+
+getById("save-playlist").onclick = async () => {
+  const activeTab = await getActiveTab();
+  if (!(isYoutubeTab(activeTab) && isPlaylistTab(activeTab))) {
+    return alert("The current tab is not a YouTube playlist tab");
+  }
+  /** @type {any} */ let tabId = activeTab.id;
+  const result = await browser.tabs.executeScript(tabId, {
+    file: "/actions/getPlaylistVideoIds.js",
+  });
+  const videoIds = result[0];
+  const playlist = await window.generatePlaylist(videoIds);
+  await window.savePlaylist(playlist);
+  alert("Playlist saved", true);
 };
 
 getById("open-settings").onclick = () => {
@@ -379,11 +394,12 @@ function queryAll(selector) {
 
 /**
  * @param {string} message
+ * @param {boolean=} isInfo
  */
-async function alert(message) {
+async function alert(message, isInfo) {
   browser.notifications.create({
     type: "basic",
-    title: `YouTube Playlist Helper: Error`,
+    title: "YouTube Playlist Helper" + (isInfo ? "" : ": Error"),
     message: message,
     iconUrl: "../icons/icon_48.png",
   });
