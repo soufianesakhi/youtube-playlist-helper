@@ -8,7 +8,6 @@
 <Sidebar />
 
 <main>
-  <h2>Saved</h2>
   {#await playlistsAsync then playlists}
     <PlaylistSelector {playlists} />
   {/await}

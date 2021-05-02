@@ -17,7 +17,11 @@
 
 <style>
   .sidenav {
-    flex: 0 0 15rem;
+    height: 100%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
     background-color: rgb(255, 82, 82);
     padding: 1rem 0.2rem;
   }

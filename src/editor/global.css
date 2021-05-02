@@ -6,8 +6,6 @@ body {
 }
 
 body {
-  display: flex;
-  align-items: stretch;
   color: #333;
   margin: 0;
   box-sizing: border-box;
@@ -15,7 +13,13 @@ body {
     Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 }
 
+.sidenav {
+  width: 15rem;
+  box-sizing: border-box;
+}
+
 main {
+  margin-left: 15rem;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
