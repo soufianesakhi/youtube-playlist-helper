@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher } from "svelte";
-  import FloatingButton from "./FloatingButton.svelte";
   import DeleteIcon from "./icons/DeleteIcon.svelte";
+  import SimpleButton from "./SimpleButton.svelte";
 
   export let video: Video;
   export let active: boolean;
@@ -28,7 +28,7 @@
     <span>{video.channel}</span>
   </div>
   <div class="video-btns">
-    <FloatingButton on:click={deleteVideo}><DeleteIcon /></FloatingButton>
+    <SimpleButton on:click={deleteVideo}><DeleteIcon /></SimpleButton>
   </div>
 </div>
 
