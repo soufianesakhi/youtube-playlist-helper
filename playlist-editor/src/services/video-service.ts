@@ -51,7 +51,9 @@ window.generatePlaylist = async (videoIds: string[]) => {
 };
 
 window.openPlaylistEditor = (playlist: Playlist) => {
-  history.pushState({ playlist }, "", "#/editor");
+  const previousPage =
+    location.hash.length > 0 ? location.hash.substring(1) : "/";
+  history.pushState({ playlist, previousPage }, "", "#/editor");
   window.dispatchEvent(new Event("hashchange"));
 };
 
@@ -64,7 +66,8 @@ window.openPlaylist = async (videoIds: string[]) => {
   const settings = await window.getSettings();
   await Promise.all(
     videoIdsChunks.map(async (videoIds) => {
-      var url = youtubeServiceURL + "/watch_videos?video_ids=" + videoIds.join(",");
+      var url =
+        youtubeServiceURL + "/watch_videos?video_ids=" + videoIds.join(",");
       if (settings.openPlaylistPage) {
         const data = await (await fetch(url)).text();
         const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
@@ -85,5 +88,4 @@ window.openPlaylist = async (videoIds: string[]) => {
   );
 };
 
-export { };
-
+export {};

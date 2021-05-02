@@ -17,6 +17,7 @@ window.saveRecentPlaylist = async (playlist: Playlist) => {
     PLAYLIST_KEY_PREFIX + playlist.id,
     JSON.stringify(playlistToDto(playlist))
   );
+  return playlist.id;
 };
 
 window.getRecentPlaylists = async () => {
@@ -27,21 +28,63 @@ window.getRecentPlaylists = async () => {
   return playlists;
 };
 
+window.savePlaylist = async (playlist: Playlist) => {
+  let id = playlist.id;
+  if (!playlist.saved) {
+    id = await window.generatePlaylistId();
+  }
+  playlist = {
+    ...playlist,
+    id,
+    timestamp: Date.now(),
+  };
+  await window.storeObject(PLAYLIST_KEY_PREFIX + id, playlistToDto(playlist));
+  return id;
+};
+
+window.removePlaylist = async (playlist: Playlist) => {
+  if (!playlist.saved) {
+    // Recent playlist
+    localStorage.removeItem(PLAYLIST_KEY_PREFIX + playlist.id);
+  } else {
+    return window.removeObject(PLAYLIST_KEY_PREFIX + playlist.id);
+  }
+};
+
+window.getPlaylists = async () => {
+  const allItems = await window.fetchAllObjects();
+  return Object.keys(allItems)
+    .filter((key) => key.startsWith(PLAYLIST_KEY_PREFIX))
+    .map((key) => {
+      const playlist: Playlist = JSON.parse(allItems[key]);
+      playlist.saved = true;
+      return playlist;
+    });
+};
+
 if (typeof browser != "undefined") {
   const storage = browser.storage.sync;
 
   window.fetchObject = async (id, defaultValue) => {
-    const result = await browser.storage.sync.get(id);
+    const result = await storage.get(id);
     if (result && result[id] != null) {
       return result[id];
     }
     return defaultValue;
   };
 
+  window.fetchAllObjects = async () => {
+    return storage.get(null);
+  };
+
   window.storeObject = async (id, obj) => {
     const items = {};
     items[id] = obj ? JSON.stringify(obj) : null;
     return storage.set(items);
+  };
+
+  window.removeObject = async (id) => {
+    return storage.remove(id);
   };
 
   const ID_COUNTER_KEY = "PlaylistIdCounter";
@@ -53,20 +96,6 @@ if (typeof browser != "undefined") {
     storage.set(obj);
     return count;
   };
-
-  window.savePlaylist = async (playlist: Playlist) => {
-    return window.storeObject(
-      PLAYLIST_KEY_PREFIX + playlist.id,
-      playlistToDto(playlist)
-    );
-  };
-
-  window.getPlaylists = async () => {
-    const allItems = await storage.get(null);
-    return Object.keys(allItems)
-      .filter((key) => key.startsWith(PLAYLIST_KEY_PREFIX))
-      .map((key) => JSON.parse(allItems[key]));
-  };
 } else if (window.location.protocol.startsWith("http")) {
   // Development mode fallback
 
@@ -75,16 +104,21 @@ if (typeof browser != "undefined") {
     return (value && JSON.parse(value)) || defaultValue;
   };
 
+  window.fetchAllObjects = async () => {
+    return { ...localStorage };
+  };
+
   window.storeObject = async (id, obj) => {
     localStorage.setItem(id, obj ? JSON.stringify(obj) : null);
+  };
+
+  window.removeObject = async (id) => {
+    localStorage.removeItem(id);
   };
 
   window.generatePlaylistId = async () => {
     return Date.now().toString();
   };
-
-  window.savePlaylist = window.saveRecentPlaylist;
-  window.getPlaylists = window.getRecentPlaylists;
 }
 
 const DEFAULT_SETTINGS: Settings = {

@@ -12,6 +12,7 @@ interface Playlist {
   title: string;
   videos: Video[] | string[];
   timestamp: number;
+  saved?: boolean;
 }
 
 interface Settings {

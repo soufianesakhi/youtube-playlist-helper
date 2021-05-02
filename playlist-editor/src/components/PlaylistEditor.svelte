@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { replace } from "svelte-spa-router";
   import { flip } from "svelte/animate";
   import FloatingButton from "./FloatingButton.svelte";
   import CheckIcon from "./icons/CheckIcon.svelte";
@@ -12,6 +13,10 @@
   import SimpleButton from "./SimpleButton.svelte";
 
   let playlist: Playlist = history.state.playlist;
+  if (!playlist) {
+    replace("/");
+  }
+  const nextPage = history.state.previousPage || "/";
   let videos: Video[] = playlist.videos as Video[];
   let hovering = -1;
   let originalTitle: string;
@@ -60,8 +65,16 @@
 
   async function savePlaylist() {
     playlist = { ...playlist, videos };
-    await window.savePlaylist(playlist);
+    const id = await window.savePlaylist(playlist);
+    playlist = { ...playlist, id };
     alert("Playlist saved");
+    await replace(nextPage);
+  }
+  async function deletePlaylist() {
+    await window.removePlaylist(playlist);
+    alert("Playlist deleted");
+    window.history.state;
+    await replace(nextPage);
   }
 
   function play() {
@@ -107,6 +120,9 @@
     >
     <FloatingButton on:click={savePlaylist} title="Save the playlist"
       ><SaveIcon /></FloatingButton
+    >
+    <FloatingButton on:click={deletePlaylist} title="Delete the playlist"
+      ><CloseIcon /></FloatingButton
     >
   </div>
   <div class="list">
