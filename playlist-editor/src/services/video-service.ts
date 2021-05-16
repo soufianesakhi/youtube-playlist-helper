@@ -9,26 +9,36 @@ const youtubeServiceURL = globalThis.youtubeServiceURL;
 window.videoIdCount = 100;
 
 // https://regex101.com/r/mPyKKP/1/
-window.youtubeRegexPattern = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)/.source;
+window.youtubeRegexPattern =
+  /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)/.source;
 
-window.fetchVideo = async (videoId: string) => {
-  const res = await fetch(
-    `${youtubeServiceURL}/get_video_info?video_id=${videoId}`,
-    {
-      headers: { origin: "https://www.youtube.com" },
+window.fetchVideo = async (videoId: string, retryCount?: number) => {
+  try {
+    const res = await fetch(
+      `${youtubeServiceURL}/get_video_info?video_id=${videoId}`,
+      {
+        headers: { origin: "https://www.youtube.com" },
+      }
+    );
+    const text = await res.text();
+    const playerRes = new URLSearchParams(text).get("player_response");
+    const { videoDetails } = JSON.parse(playerRes);
+    return {
+      id: window.videoIdCount++,
+      videoId,
+      url: YOUTUBE_URL_PREFIX + videoId,
+      title: videoDetails.title,
+      channel: videoDetails.author,
+      thumbnailUrl: THUMBNAIL_URL_PREFIX + videoId + THUMBNAIL_URL_SUFFIX,
+    };
+  } catch (e) {
+    if (retryCount === 2) {
+      console.log(e);
+      return null;
+    } else {
+      return await window.fetchVideo(videoId, retryCount ? retryCount++ : 1);
     }
-  );
-  const text = await res.text();
-  const playerRes = new URLSearchParams(text).get("player_response");
-  const { videoDetails } = JSON.parse(playerRes);
-  return {
-    id: window.videoIdCount++,
-    videoId,
-    url: YOUTUBE_URL_PREFIX + videoId,
-    title: videoDetails.title,
-    channel: videoDetails.author,
-    thumbnailUrl: THUMBNAIL_URL_PREFIX + videoId + THUMBNAIL_URL_SUFFIX,
-  };
+  }
 };
 
 window.parseYoutubeId = (url: string) => {
@@ -37,6 +47,16 @@ window.parseYoutubeId = (url: string) => {
     return result[1];
   }
   return null;
+};
+
+window.parseYoutubeIds = (text: string) => {
+  let matches: RegExpExecArray;
+  let videoIds: string[] = [];
+  const regex = RegExp(window.youtubeRegexPattern, "ig");
+  while ((matches = regex.exec(text))) {
+    videoIds.push(matches[1]);
+  }
+  return videoIds;
 };
 
 window.generatePlaylist = async (videoIds?: string[]) => {

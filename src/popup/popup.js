@@ -162,7 +162,7 @@ queryAll(".back-item").forEach((item) => {
 getById("create-from-urls").onclick = () => {
   // @ts-ignore
   const text = getById("urlsTextarea").value;
-  const videoIds = parseYoutubeIds(text);
+  const videoIds = window.parseYoutubeIds(text);
   createPlaylist(videoIds);
 };
 
@@ -308,21 +308,8 @@ function isYoutubeTab(tab) {
 
 const { youtubeRegexPattern, parseYoutubeId } = window;
 
-const youtubeThumbnailsRegexPattern = /(?:img\.youtube|i\.ytimg|i1\.ytimg)\.com\/vi\/([^\/\s]+)/
-  .source;
-
-/**
- * @param  {string} text
- */
-function parseYoutubeIds(text) {
-  let matches,
-    videoIds = [];
-  const regex = RegExp(youtubeRegexPattern, "ig");
-  while ((matches = regex.exec(text))) {
-    videoIds.push(matches[1]);
-  }
-  return videoIds;
-}
+const youtubeThumbnailsRegexPattern =
+  /(?:img\.youtube|i\.ytimg|i1\.ytimg)\.com\/vi\/([^\/\s]+)/.source;
 
 /**
  * @param  {string} text

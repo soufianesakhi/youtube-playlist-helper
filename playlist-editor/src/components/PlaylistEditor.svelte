@@ -3,14 +3,22 @@
   import { flip } from "svelte/animate";
   import FloatingButton from "./FloatingButton.svelte";
   import CheckIcon from "./icons/CheckIcon.svelte";
+  import ClipboardMultiple from "./icons/ClipboardMultiple.svelte";
   import CloseIcon from "./icons/CloseIcon.svelte";
   import PencilIcon from "./icons/PencilIcon.svelte";
   import PlaylistPlayIcon from "./icons/PlaylistPlayIcon.svelte";
   import PlaylistPlusIcon from "./icons/PlaylistPlusIcon.svelte";
+  import PlusMultiple from "./icons/PlusMultiple.svelte";
   import SaveIcon from "./icons/SaveIcon.svelte";
+  import Modal from "./Modal.svelte";
   import PlaylistVideo from "./PlaylistVideo.svelte";
   import Sidebar from "./Sidebar.svelte";
   import SimpleButton from "./SimpleButton.svelte";
+
+  enum ModalType {
+    Export,
+    Import,
+  }
 
   export let editingTitle = false;
   export let playlist: Playlist = history.state.playlist;
@@ -21,8 +29,23 @@
   const isNew = location.hash.startsWith("#/new");
 
   let videos: Video[] = playlist.videos as Video[];
+  if (videos.length > 0) {
+    const ids = videos
+      .map((v) => parseInt(v.id as string))
+      .filter((n) => !isNaN(n));
+    if (ids.length > 0) {
+      window.videoIdCount = Math.max(...ids) + 1;
+    }
+  }
   let hovering = -1;
   let originalTitle: string;
+
+  let displayModal = false;
+  let modalType: ModalType;
+  let importText = "";
+  let exportText = "";
+  let notificationText = "";
+  let exportTextArea: HTMLTextAreaElement;
 
   const drop = (event, target) => {
     event.dataTransfer.dropEffect = "move";
@@ -63,6 +86,36 @@
     } else {
       alert("Invalid YouTube url");
     }
+  }
+
+  async function importVideos() {
+    let importedVideos = await Promise.all(
+      window.parseYoutubeIds(importText).map((id) => window.fetchVideo(id))
+    );
+    importedVideos = importedVideos.filter((v) => v != null);
+    videos = [...videos, ...importedVideos];
+    importText = "";
+    displayModal = false;
+    alert(`Imported ${importedVideos.length} videos`);
+  }
+
+  async function exportVideos() {
+    exportTextArea.select();
+    exportTextArea.setSelectionRange(0, 99999);
+    document.execCommand("copy");
+    notificationText = "Copied !";
+    setTimeout(() => (notificationText = ""), 2000);
+  }
+
+  async function displayImport() {
+    displayModal = true;
+    modalType = ModalType.Import;
+  }
+
+  function displayExport() {
+    displayModal = true;
+    exportText = videos.map((v) => v.url).join("\n");
+    modalType = ModalType.Export;
   }
 
   async function savePlaylist() {
@@ -122,7 +175,13 @@
     <FloatingButton on:click={addVideo} title="Add video"
       ><PlaylistPlusIcon /></FloatingButton
     >
+    <FloatingButton on:click={displayImport} title="Import videos"
+      ><PlusMultiple /></FloatingButton
+    >
     {#if videos.length > 0}
+      <FloatingButton on:click={displayExport} title="Export videos"
+        ><ClipboardMultiple /></FloatingButton
+      >
       <FloatingButton on:click={savePlaylist} title="Save the playlist"
         ><SaveIcon /></FloatingButton
       >
@@ -154,6 +213,22 @@
     {/each}
   </div>
 </main>
+
+<Modal bind:display={displayModal}>
+  {#if modalType === ModalType.Export}
+    <!-- prettier-ignore -->
+    <textarea bind:value={exportText} bind:this={exportTextArea}/>
+    <FloatingButton on:click={exportVideos} title="Copy to clipboard"
+      ><ClipboardMultiple /></FloatingButton
+    >
+    <span style="margin-left: 1rem">{notificationText}</span>
+  {:else if modalType === ModalType.Import}
+    <textarea bind:value={importText} />
+    <FloatingButton on:click={importVideos} title="Import videos"
+      ><PlusMultiple /></FloatingButton
+    >
+  {/if}
+</Modal>
 
 <style>
   h2 {
@@ -194,5 +269,14 @@
 
   .list > div:not(:last-child) {
     border-bottom: 1px solid #dbdbdb;
+  }
+
+  textarea {
+    min-width: 30rem;
+    height: 50vh;
+  }
+
+  :global(textarea + *) {
+    margin-left: 1rem;
   }
 </style>
