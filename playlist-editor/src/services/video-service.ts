@@ -12,33 +12,31 @@ window.videoIdCount = 100;
 window.youtubeRegexPattern =
   /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?]+(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?]+)/.source;
 
-window.fetchVideo = async (videoId: string, retryCount?: number) => {
+window.fetchVideo = async (videoId: string) => {
+  let title = "";
+  let channel = "";
   try {
-    const res = await fetch(
-      `${youtubeServiceURL}/get_video_info?video_id=${videoId}`,
-      {
-        headers: { origin: "https://www.youtube.com" },
-      }
-    );
-    const text = await res.text();
-    const playerRes = new URLSearchParams(text).get("player_response");
-    const { videoDetails } = JSON.parse(playerRes);
-    return {
-      id: window.videoIdCount++,
-      videoId,
-      url: YOUTUBE_URL_PREFIX + videoId,
-      title: videoDetails.title,
-      channel: videoDetails.author,
-      thumbnailUrl: THUMBNAIL_URL_PREFIX + videoId + THUMBNAIL_URL_SUFFIX,
-    };
+    const res = await fetch(`${youtubeServiceURL}/watch?v=${videoId}`);
+    const html = await res.text();
+    var parser = new DOMParser();
+    var htmlDoc = parser.parseFromString(html, "text/html");
+    title =
+      htmlDoc.querySelector("meta[name=title]")?.getAttribute("content") || "";
+    channel =
+      htmlDoc
+        .querySelector("[itemprop=author] [itemprop=name]")
+        ?.getAttribute("content") || "";
   } catch (e) {
-    if (retryCount === 2) {
-      console.log(e);
-      return null;
-    } else {
-      return await window.fetchVideo(videoId, retryCount ? retryCount++ : 1);
-    }
+    console.log(e);
   }
+  return {
+    id: window.videoIdCount++,
+    videoId,
+    url: YOUTUBE_URL_PREFIX + videoId,
+    title,
+    channel,
+    thumbnailUrl: THUMBNAIL_URL_PREFIX + videoId + THUMBNAIL_URL_SUFFIX,
+  };
 };
 
 window.parseYoutubeId = (url: string) => {

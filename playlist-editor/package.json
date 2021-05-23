@@ -7,7 +7,7 @@
     "dev": "rollup -c -w",
     "prod": "rollup -c -w --environment PRODUCTION",
     "start": "sirv public",
-    "start:cors": "cors -p 4444",
+    "cors": "cors -p 4444",
     "validate": "svelte-check"
   },
   "devDependencies": {
