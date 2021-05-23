@@ -10,6 +10,7 @@
   import PlaylistPlusIcon from "./icons/PlaylistPlusIcon.svelte";
   import PlusMultiple from "./icons/PlusMultiple.svelte";
   import SaveIcon from "./icons/SaveIcon.svelte";
+  import LoadingModal from "./LoadingModal.svelte";
   import Modal from "./Modal.svelte";
   import PlaylistVideo from "./PlaylistVideo.svelte";
   import Sidebar from "./Sidebar.svelte";
@@ -28,15 +29,22 @@
   const previousPage = (history.state && history.state.previousPage) || "/";
   const isNew = location.hash.startsWith("#/new");
 
-  let videos = playlist.loadedVideos;
-  if (videos.length > 0) {
-    const ids = videos
-      .map((v) => parseInt(v.id as string))
-      .filter((n) => !isNaN(n));
-    if (ids.length > 0) {
-      window.videoIdCount = Math.max(...ids) + 1;
+  let loading = true;
+  let videos = [];
+  Promise.all(playlist.videos.map((id) => window.fetchVideo(id))).then(
+    (loadedVideos) => {
+      videos = [...loadedVideos];
+      if (videos.length > 0) {
+        const ids = videos
+          .map((v) => parseInt(v.id as string))
+          .filter((n) => !isNaN(n));
+        if (ids.length > 0) {
+          window.videoIdCount = Math.max(...ids) + 1;
+        }
+      }
+      loading = false;
     }
-  }
+  );
   let hovering = -1;
   let originalTitle: string;
 
@@ -167,52 +175,54 @@
       <SimpleButton on:click={resetTitle}><CloseIcon /></SimpleButton>
     {/if}
   </h2>
-  <div class="platlist-btns">
-    {#if videos.length > 0}
-      <FloatingButton on:click={play} title="Play all videos"
-        ><PlaylistPlayIcon /></FloatingButton
+  {#if !loading}
+    <div class="platlist-btns">
+      {#if videos.length > 0}
+        <FloatingButton on:click={play} title="Play all videos"
+          ><PlaylistPlayIcon /></FloatingButton
+        >
+      {/if}
+      <FloatingButton on:click={addVideo} title="Add video"
+        ><PlaylistPlusIcon /></FloatingButton
       >
-    {/if}
-    <FloatingButton on:click={addVideo} title="Add video"
-      ><PlaylistPlusIcon /></FloatingButton
-    >
-    <FloatingButton on:click={displayImport} title="Import videos"
-      ><PlusMultiple /></FloatingButton
-    >
-    {#if videos.length > 0}
-      <FloatingButton on:click={displayExport} title="Export videos"
-        ><ClipboardMultiple /></FloatingButton
+      <FloatingButton on:click={displayImport} title="Import videos"
+        ><PlusMultiple /></FloatingButton
       >
-      <FloatingButton on:click={savePlaylist} title="Save the playlist"
-        ><SaveIcon /></FloatingButton
-      >
-    {/if}
-    {#if !isNew}
-      <FloatingButton on:click={deletePlaylist} title="Delete the playlist"
-        ><CloseIcon /></FloatingButton
-      >
-    {/if}
-  </div>
-  <div class="list">
-    {#each videos as video, index (video.id)}
-      <div
-        animate:flip
-        draggable={true}
-        on:dragstart={(event) => dragstart(event, index)}
-        on:dragenter={() => (hovering = index)}
-        on:dragover|preventDefault
-        on:drop|preventDefault={(event) => drop(event, index)}
-      >
-        <PlaylistVideo
-          on:delete={deleteVideo}
-          {video}
-          active={hovering === index}
-        />
-      </div>
-    {:else}
-      <p style="text-align: center">The playlist is empty</p>
-    {/each}
-  </div>
+      {#if videos.length > 0}
+        <FloatingButton on:click={displayExport} title="Export videos"
+          ><ClipboardMultiple /></FloatingButton
+        >
+        <FloatingButton on:click={savePlaylist} title="Save the playlist"
+          ><SaveIcon /></FloatingButton
+        >
+      {/if}
+      {#if !isNew}
+        <FloatingButton on:click={deletePlaylist} title="Delete the playlist"
+          ><CloseIcon /></FloatingButton
+        >
+      {/if}
+    </div>
+    <div class="list">
+      {#each videos as video, index (video.id)}
+        <div
+          animate:flip
+          draggable={true}
+          on:dragstart={(event) => dragstart(event, index)}
+          on:dragenter={() => (hovering = index)}
+          on:dragover|preventDefault
+          on:drop|preventDefault={(event) => drop(event, index)}
+        >
+          <PlaylistVideo
+            on:delete={deleteVideo}
+            {video}
+            active={hovering === index}
+          />
+        </div>
+      {:else}
+        <p style="text-align: center">The playlist is empty</p>
+      {/each}
+    </div>
+  {/if}
 </main>
 
 <Modal bind:display={displayModal}>
@@ -230,6 +240,10 @@
     >
   {/if}
 </Modal>
+
+{#if loading}
+  <LoadingModal />
+{/if}
 
 <style>
   h2 {
