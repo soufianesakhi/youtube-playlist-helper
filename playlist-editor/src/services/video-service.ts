@@ -15,19 +15,26 @@ window.youtubeRegexPattern =
 window.fetchVideo = async (videoId: string) => {
   let title = "";
   let channel = "";
-  try {
-    const res = await fetch(`${youtubeServiceURL}/watch?v=${videoId}`);
-    const html = await res.text();
-    var parser = new DOMParser();
-    var htmlDoc = parser.parseFromString(html, "text/html");
-    title =
-      htmlDoc.querySelector("meta[name=title]")?.getAttribute("content") || "";
-    channel =
-      htmlDoc
-        .querySelector("[itemprop=author] [itemprop=name]")
-        ?.getAttribute("content") || "";
-  } catch (e) {
-    console.log(e);
+  let sessionVideoData = sessionStorage.getItem(videoId);
+  if (!sessionVideoData) {
+    try {
+      const res = await fetch(`${youtubeServiceURL}/watch?v=${videoId}`);
+      const html = await res.text();
+      var parser = new DOMParser();
+      var htmlDoc = parser.parseFromString(html, "text/html");
+      title =
+        htmlDoc.querySelector("meta[name=title]")?.getAttribute("content") ||
+        "";
+      channel =
+        htmlDoc
+          .querySelector("[itemprop=author] [itemprop=name]")
+          ?.getAttribute("content") || "";
+      sessionStorage.setItem(videoId, JSON.stringify({ title, channel }));
+    } catch (e) {
+      console.log(e);
+    }
+  } else {
+    ({ title, channel } = JSON.parse(sessionVideoData));
   }
   return {
     id: window.videoIdCount++,
