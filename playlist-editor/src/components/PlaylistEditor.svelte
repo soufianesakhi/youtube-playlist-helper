@@ -28,7 +28,7 @@
   const previousPage = (history.state && history.state.previousPage) || "/";
   const isNew = location.hash.startsWith("#/new");
 
-  let videos: Video[] = playlist.videos as Video[];
+  let videos = playlist.loadedVideos;
   if (videos.length > 0) {
     const ids = videos
       .map((v) => parseInt(v.id as string))
@@ -119,7 +119,8 @@
   }
 
   async function savePlaylist() {
-    playlist = { ...playlist, videos };
+    const videoIds = videos.map((video) => video.videoId.toString());
+    playlist = { ...playlist, videos: videoIds };
     const id = await window.savePlaylist(playlist);
     playlist = { ...playlist, id };
     alert("Playlist saved");

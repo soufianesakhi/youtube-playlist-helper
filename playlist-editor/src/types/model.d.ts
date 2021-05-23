@@ -10,7 +10,8 @@ interface Video {
 interface Playlist {
   id: string;
   title: string;
-  videos: Video[] | string[];
+  loadedVideos?: Video[];
+  videos: string[];
   timestamp: number;
   saved?: boolean;
 }

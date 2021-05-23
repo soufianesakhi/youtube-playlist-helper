@@ -1,16 +1,34 @@
 <script lang="ts">
+  import LoadingModal from "./LoadingModal.svelte";
   import PlaylistPreview from "./PlaylistPreview.svelte";
 
-  export let playlists: Playlist[] = [];
+  export let playlists: Playlist[];
+
+  let loading = true;
+  const playlistsAsync = Promise.all(
+    playlists.map(async (playlist) => {
+      playlist.loadedVideos = await Promise.all(
+        playlist.videos.map((id) => window.fetchVideo(id))
+      );
+      return playlist;
+    })
+  );
+  playlistsAsync.finally(() => (loading = false));
 </script>
 
 <div class="selector">
-  {#each playlists as playlist (playlist.id)}
-    <PlaylistPreview {playlist} />
-  {:else}
-    <p style="text-align: center">No playlist found</p>
-  {/each}
+  {#await playlistsAsync then loadedPlaylists}
+    {#each loadedPlaylists as playlist (playlist.id)}
+      <PlaylistPreview {playlist} />
+    {:else}
+      <p style="text-align: center">No playlist found</p>
+    {/each}
+  {/await}
 </div>
+
+{#if loading}
+  <LoadingModal />
+{/if}
 
 <style>
   .selector {

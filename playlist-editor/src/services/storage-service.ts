@@ -2,12 +2,9 @@
 /// <reference path="../../node_modules/@types/firefox-webext-browser/index.d.ts" />
 
 function playlistToDto(playlist: Playlist) {
-  const videos = playlist.videos;
-  if (videos.length > 0 && typeof videos[0] !== "string") {
-    const videoIds = (videos as Video[]).map((video) => video.videoId);
-    playlist = { ...playlist, videos: videoIds };
-  }
-  return playlist;
+  const dto = { ...playlist };
+  delete dto.loadedVideos;
+  return dto;
 }
 
 const PLAYLIST_KEY_PREFIX = "playlist_";

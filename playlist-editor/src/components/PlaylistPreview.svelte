@@ -1,43 +1,37 @@
 <script lang="ts">
   export let playlist: Playlist;
-  const videosAsync =
-    typeof playlist.videos[0] !== "string"
-      ? Promise.resolve(playlist.videos as Video[])
-      : Promise.all(playlist.videos.map((id) => window.fetchVideo(id)));
+  const videos = playlist.loadedVideos;
 
   async function previewClicked() {
-    const videos = await videosAsync;
-    window.openPlaylistEditor({ ...playlist, videos });
+    window.openPlaylistEditor(playlist);
   }
 </script>
 
-{#await videosAsync then videos}
-  <div class="preview" on:click|preventDefault={previewClicked}>
-    <div class="preview-row">
-      <img
-        class="preview-img"
-        alt={videos[0]?.title}
-        src={videos[0]?.thumbnailUrl}
-      />
-      <img
-        class="preview-img"
-        alt={videos[1]?.title}
-        src={videos[1]?.thumbnailUrl}
-      />
-    </div>
-    <div class="preview-row">
-      <img
-        class="preview-img"
-        alt={videos[2]?.title}
-        src={videos[2]?.thumbnailUrl}
-      />
-      <div class="preview-img playlist-count">
-        <span>({playlist.videos.length})</span>
-      </div>
-    </div>
-    <span class="preview-title">{playlist.title}</span>
+<div class="preview" on:click|preventDefault={previewClicked}>
+  <div class="preview-row">
+    <img
+      class="preview-img"
+      alt={videos[0]?.title}
+      src={videos[0]?.thumbnailUrl}
+    />
+    <img
+      class="preview-img"
+      alt={videos[1]?.title}
+      src={videos[1]?.thumbnailUrl}
+    />
   </div>
-{/await}
+  <div class="preview-row">
+    <img
+      class="preview-img"
+      alt={videos[2]?.title}
+      src={videos[2]?.thumbnailUrl}
+    />
+    <div class="preview-img playlist-count">
+      <span>({playlist.videos.length})</span>
+    </div>
+  </div>
+  <span class="preview-title">{playlist.title}</span>
+</div>
 
 <style>
   .preview {
