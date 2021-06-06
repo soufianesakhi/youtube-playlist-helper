@@ -97,6 +97,7 @@
   }
 
   async function importVideos() {
+    loading = true;
     let importedVideos = await Promise.all(
       window.parseYoutubeIds(importText).map((id) => window.fetchVideo(id))
     );
@@ -104,7 +105,8 @@
     videos = [...videos, ...importedVideos];
     importText = "";
     displayModal = false;
-    alert(`Imported ${importedVideos.length} videos`);
+    loading = false;
+    setTimeout(() => alert(`Imported ${importedVideos.length} videos`), 100);
   }
 
   async function exportVideos() {
