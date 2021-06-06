@@ -194,13 +194,17 @@
         <FloatingButton on:click={displayExport} title="Export videos"
           ><ClipboardMultiple /></FloatingButton
         >
-        <FloatingButton on:click={savePlaylist} title="Save the playlist"
-          ><SaveIcon /></FloatingButton
+        <FloatingButton
+          on:click={savePlaylist}
+          title="Save the playlist"
+          bgcolor="#28a745"><SaveIcon /></FloatingButton
         >
       {/if}
       {#if !isNew}
-        <FloatingButton on:click={deletePlaylist} title="Delete the playlist"
-          ><CloseIcon /></FloatingButton
+        <FloatingButton
+          on:click={deletePlaylist}
+          title="Delete the playlist"
+          bgcolor="#dc3545"><CloseIcon /></FloatingButton
         >
       {/if}
     </div>

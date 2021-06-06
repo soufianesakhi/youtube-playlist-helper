@@ -1,11 +1,12 @@
 <script lang="ts">
   export let title = "";
+  export let bgcolor = "#007bff";
 </script>
 
-<div class="fab" on:click>
+<div class="fab" style="background-color: {bgcolor}" on:click>
   <slot />
   {#if !!title}
-    <span class="tooltip">{title}</span>
+    <span class="tooltip" style="background-color: {bgcolor}">{title}</span>
   {/if}
 </div>
 
@@ -17,7 +18,6 @@
     width: 40px;
     height: 40px;
     line-height: 40px;
-    background-color: rgb(0, 107, 207);
     color: white;
     border-radius: 50%;
     box-shadow: 0 6px 10px 0 #666;
@@ -37,7 +37,7 @@
   .tooltip {
     visibility: hidden;
     width: 120px;
-    background-color: rgb(0, 107, 207, 0.8);
+    opacity: 0.8;
     color: #fff;
     text-align: center;
     border-radius: 6px;
