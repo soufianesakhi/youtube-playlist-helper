@@ -137,10 +137,12 @@
     await replace("/saved");
   }
   async function deletePlaylist() {
-    await window.removePlaylist(playlist);
-    alert("Playlist deleted");
-    window.history.state;
-    await replace(previousPage);
+    if (confirm("The playlist is about to be deleted")) {
+      await window.removePlaylist(playlist);
+      setTimeout(() => alert("Playlist deleted"), 100);
+      window.history.state;
+      await replace(previousPage);
+    }
   }
 
   function play() {
