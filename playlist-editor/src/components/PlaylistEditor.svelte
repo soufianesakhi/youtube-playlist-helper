@@ -10,6 +10,7 @@
   import PlaylistPlusIcon from "./icons/PlaylistPlusIcon.svelte";
   import PlusMultiple from "./icons/PlusMultiple.svelte";
   import SaveIcon from "./icons/SaveIcon.svelte";
+  import ReverseIcon from "./icons/ReverseIcon.svelte";
   import LoadingModal from "./LoadingModal.svelte";
   import Modal from "./Modal.svelte";
   import PlaylistVideo from "./PlaylistVideo.svelte";
@@ -128,6 +129,15 @@
     modalType = ModalType.Export;
   }
 
+  async function reversePlaylist() {
+    let reversed = new Array(videos.length);
+    for(let i = 0; i < videos.length; i++) {
+      let r = videos.length - i - 1;
+      reversed[i] = videos[r];
+    }
+    videos = reversed;
+  }
+
   async function savePlaylist() {
     const videoIds = videos.map((video) => video.videoId.toString());
     playlist = { ...playlist, videos: videoIds };
@@ -196,6 +206,12 @@
         <FloatingButton on:click={displayExport} title="Export videos"
           ><ClipboardMultiple /></FloatingButton
         >
+        {#if videos.length > 1}
+        <FloatingButton
+          on:click={reversePlaylist}
+          title="Reverse order"><ReverseIcon /></FloatingButton
+        >
+        {/if}
         <FloatingButton
           on:click={savePlaylist}
           title="Save the playlist"
