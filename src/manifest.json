@@ -1,7 +1,7 @@
 {
   "name": "YouTube Playlist Helper",
   "description": "Generate YouTube playlists from various sources (links lists, bookmarks, ...)",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "manifest_version": 2,
   "icons": {
     "48": "icons/icon_48.png",

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { replace } from "svelte-spa-router";
   import { flip } from "svelte/animate";
+  import { expoOut } from "svelte/easing";
   import FloatingButton from "./FloatingButton.svelte";
   import CheckIcon from "./icons/CheckIcon.svelte";
   import ClipboardMultiple from "./icons/ClipboardMultiple.svelte";
@@ -9,8 +10,8 @@
   import PlaylistPlayIcon from "./icons/PlaylistPlayIcon.svelte";
   import PlaylistPlusIcon from "./icons/PlaylistPlusIcon.svelte";
   import PlusMultiple from "./icons/PlusMultiple.svelte";
-  import SaveIcon from "./icons/SaveIcon.svelte";
   import ReverseIcon from "./icons/ReverseIcon.svelte";
+  import SaveIcon from "./icons/SaveIcon.svelte";
   import LoadingModal from "./LoadingModal.svelte";
   import Modal from "./Modal.svelte";
   import PlaylistVideo from "./PlaylistVideo.svelte";
@@ -131,7 +132,7 @@
 
   async function reversePlaylist() {
     let reversed = new Array(videos.length);
-    for(let i = 0; i < videos.length; i++) {
+    for (let i = 0; i < videos.length; i++) {
       let r = videos.length - i - 1;
       reversed[i] = videos[r];
     }
@@ -172,6 +173,12 @@
     originalTitle = null;
     editingTitle = false;
   }
+  const customFlip: typeof flip = (node, animation, _) => {
+    return flip(node, animation, {
+      duration: 1000,
+      easing: expoOut,
+    });
+  };
 </script>
 
 <Sidebar />
@@ -207,10 +214,9 @@
           ><ClipboardMultiple /></FloatingButton
         >
         {#if videos.length > 1}
-        <FloatingButton
-          on:click={reversePlaylist}
-          title="Reverse order"><ReverseIcon /></FloatingButton
-        >
+          <FloatingButton on:click={reversePlaylist} title="Reverse order"
+            ><ReverseIcon /></FloatingButton
+          >
         {/if}
         <FloatingButton
           on:click={savePlaylist}
@@ -229,7 +235,7 @@
     <div class="list">
       {#each videos as video, index (video.id)}
         <div
-          animate:flip
+          animate:customFlip
           draggable={true}
           on:dragstart={(event) => dragstart(event, index)}
           on:dragenter={() => (hovering = index)}
