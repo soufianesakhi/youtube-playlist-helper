@@ -6,7 +6,7 @@ A YouTube playlist creator for [Firefox](https://addons.mozilla.org/en-US/firefo
 
 ![extension-popup-menu](https://raw.githubusercontent.com/soufianesakhi/youtube-playlist-helper/master/screenshots/extension-popup-menu.png)
 
-- A complete playlist editor: add, delete and reorder videos
+- A complete playlist editor: add, delete, reorder, reverse, import and export videos
 
   ![playlist-editor](https://raw.githubusercontent.com/soufianesakhi/youtube-playlist-helper/master/screenshots/playlist-editor.png)
 
