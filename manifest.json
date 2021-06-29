@@ -4,17 +4,17 @@
   "version": "2.2.0",
   "manifest_version": 2,
   "icons": {
-    "48": "icons/icon_48.png",
-    "128": "icons/icon_128.png"
+    "48": "src/icons/icon_48.png",
+    "128": "src/icons/icon_128.png"
   },
   "options_ui": {
-    "page": "options/options.html",
+    "page": "src/options/options.html",
     "open_in_tab": true
   },
   "browser_action": {
     "default_title": "YouTube Playlist Helper",
     "browser_style": true,
-    "default_popup": "popup/popup.html"
+    "default_popup": "src/popup/popup.html"
   },
   "permissions": [
     "bookmarks",
