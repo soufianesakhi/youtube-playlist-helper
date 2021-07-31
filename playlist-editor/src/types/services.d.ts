@@ -1,23 +1,7 @@
-/**
- * video-service
- */
-
-type FetchVideo = (id: string, retryCount?: number) => Promise<Video>;
-type ParseYoutubeId = (url: string) => string;
-type ParseYoutubeIds = (url: string) => string[];
-type GeneratePlaylist = (videoIds?: string[]) => Promise<Playlist>;
-type OpenPlaylistEditor = (playlist: Playlist) => void;
-type OpenPlaylist = (videoIds: string[]) => Promise<void>;
-
 interface Window {
   videoIdCount: number;
   youtubeRegexPattern: string;
-  fetchVideo: FetchVideo;
-  parseYoutubeId: ParseYoutubeId;
-  parseYoutubeIds: ParseYoutubeIds;
-  generatePlaylist: GeneratePlaylist;
-  openPlaylistEditor: OpenPlaylistEditor;
-  openPlaylist: OpenPlaylist;
+  videoService: import("../services/video-service").VideoService;
 }
 
 /**

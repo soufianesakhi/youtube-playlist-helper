@@ -18,6 +18,8 @@
   import Sidebar from "./Sidebar.svelte";
   import SimpleButton from "./SimpleButton.svelte";
 
+  const videoService = window.videoService;
+
   enum ModalType {
     Export,
     Import,
@@ -33,7 +35,7 @@
 
   let loading = true;
   let videos = [];
-  Promise.all(playlist.videos.map((id) => window.fetchVideo(id))).then(
+  Promise.all(playlist.videos.map((id) => videoService.fetchVideo(id))).then(
     (loadedVideos) => {
       videos = [...loadedVideos];
       if (videos.length > 0) {
@@ -89,9 +91,9 @@
     if (!url) {
       return;
     }
-    const videoId = window.parseYoutubeId(url);
+    const videoId = videoService.parseYoutubeId(url);
     if (videoId) {
-      const video = await window.fetchVideo(videoId);
+      const video = await videoService.fetchVideo(videoId);
       videos = [...videos, video];
     } else {
       alert("Invalid YouTube url");
@@ -101,7 +103,9 @@
   async function importVideos() {
     loading = true;
     let importedVideos = await Promise.all(
-      window.parseYoutubeIds(importText).map((id) => window.fetchVideo(id))
+      videoService
+        .parseYoutubeIds(importText)
+        .map((id) => videoService.fetchVideo(id))
     );
     importedVideos = importedVideos.filter((v) => v != null);
     videos = [...videos, ...importedVideos];
@@ -158,7 +162,7 @@
 
   function play() {
     const videoIds = videos.map((video) => video.videoId.toString());
-    window.openPlaylist(videoIds);
+    videoService.openPlaylist(videoIds);
   }
 
   function startTitleEdit() {

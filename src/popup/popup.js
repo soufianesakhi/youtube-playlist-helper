@@ -1,6 +1,14 @@
 /// <reference path="./popup.d.ts" />
 /// <reference path="../../playlist-editor/src/types/services.d.ts" />
 
+/**
+ * @typedef {import("webextension-polyfill").Bookmarks.BookmarkTreeNode} BookmarkTreeNode
+ * @typedef {import("webextension-polyfill").Tabs.Tab} Tab
+ */
+
+const videoService = window.videoService;
+const parseYoutubeId = videoService.parseYoutubeId;
+
 /***********************************
  *               UI
  ***********************************/
@@ -142,7 +150,7 @@ getById("save-playlist").onclick = async () => {
     file: "/actions/getPlaylistVideoIds.js",
   });
   const videoIds = result[0];
-  const playlist = await window.generatePlaylist(videoIds);
+  const playlist = await videoService.generatePlaylist(videoIds);
   await window.savePlaylist(playlist);
   alert("Playlist saved", true);
 };
@@ -162,7 +170,7 @@ queryAll(".back-item").forEach((item) => {
 getById("create-from-urls").onclick = () => {
   // @ts-ignore
   const text = getById("urlsTextarea").value;
-  const videoIds = window.parseYoutubeIds(text);
+  const videoIds = videoService.parseYoutubeIds(text);
   createPlaylist(videoIds);
 };
 
@@ -187,7 +195,7 @@ async function getYoutubeFolderBookmarks() {
 
 /**
  * @param  {string} parentFolder
- * @param  {browser.bookmarks.BookmarkTreeNode[]} tree
+ * @param  {BookmarkTreeNode[]} tree
  * @returns {YouTubeBookmarks[]}
  */
 function recursiveCollectBookmarks(parentFolder, tree) {
@@ -256,7 +264,7 @@ async function getCurrentTabBody() {
 }
 
 /**
- * @param  {browser.tabs.Tab[]} tabs
+ * @param  {Tab[]} tabs
  */
 function closeTabs(tabs) {
   const ids = tabs.map((tab) => tab.id).filter(isNotNull);
@@ -278,7 +286,7 @@ async function getCurrentYoutubeTabs(includePlaylistTabs) {
 }
 
 /**
- * @param  {browser.tabs.Tab} tab
+ * @param  {Tab} tab
  */
 function isPlaylistTab(tab) {
   const url = tab.url || "";
@@ -286,7 +294,7 @@ function isPlaylistTab(tab) {
 }
 
 /**
- * @param  {browser.tabs.Tab} tab
+ * @param  {Tab} tab
  */
 function isVideoTab(tab) {
   const regex = RegExp(youtubeRegexPattern, "i");
@@ -295,7 +303,7 @@ function isVideoTab(tab) {
 }
 
 /**
- * @param  {browser.tabs.Tab} tab
+ * @param  {Tab} tab
  */
 function isYoutubeTab(tab) {
   /** @type {any} */ const url = tab.url;
@@ -306,7 +314,7 @@ function isYoutubeTab(tab) {
  *            Parsing
  ***********************************/
 
-const { youtubeRegexPattern, parseYoutubeId } = window;
+const { youtubeRegexPattern } = window;
 
 const youtubeThumbnailsRegexPattern =
   /(?:img\.youtube|i\.ytimg|i1\.ytimg)\.com\/vi\/([^\/\s]+)/.source;
@@ -335,8 +343,8 @@ async function createPlaylist(videoIds) {
   if (videoIds.length == 0) {
     return;
   }
-  window.openPlaylist(videoIds);
-  const playlist = await window.generatePlaylist(videoIds);
+  videoService.openPlaylist(videoIds);
+  const playlist = await videoService.generatePlaylist(videoIds);
   window.saveRecentPlaylist(playlist);
 }
 

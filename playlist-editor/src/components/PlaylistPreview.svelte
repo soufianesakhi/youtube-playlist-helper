@@ -1,9 +1,11 @@
 <script lang="ts">
+  import PlaylistCount from "./PlaylistCount.svelte";
+
   export let playlist: Playlist;
   const videos = playlist.loadedVideos;
 
   async function previewClicked() {
-    window.openPlaylistEditor(playlist);
+    window.videoService.openPlaylistEditor(playlist);
   }
 </script>
 
@@ -26,9 +28,7 @@
       alt={videos[2]?.title}
       src={videos[2]?.thumbnailUrl}
     />
-    <div class="preview-img playlist-count">
-      <span>({playlist.videos.length})</span>
-    </div>
+    <PlaylistCount {playlist} className="preview-img" />
   </div>
   <span class="preview-title">{playlist.title}</span>
 </div>
@@ -45,7 +45,7 @@
     background-color: #eeeeee;
   }
 
-  .preview-img {
+  :global(.preview-img) {
     width: 80px;
     height: 45px;
     padding: 0;
@@ -55,15 +55,6 @@
 
   img {
     object-fit: cover;
-  }
-
-  .playlist-count {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    background-color: black;
-    color: white;
   }
 
   .preview-title {

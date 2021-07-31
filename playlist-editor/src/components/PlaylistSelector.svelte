@@ -8,7 +8,9 @@
   const playlistsAsync = Promise.all(
     playlists.map(async (playlist) => {
       playlist.loadedVideos = await Promise.all(
-        playlist.videos.slice(0, 3).map((id) => window.fetchVideo(id))
+        playlist.videos
+          .slice(0, 3)
+          .map((id) => window.videoService.fetchVideo(id))
       );
       return playlist;
     })
