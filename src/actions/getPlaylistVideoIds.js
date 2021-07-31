@@ -1,6 +1,6 @@
 [
   ...document.querySelectorAll(
-    ".ytd-playlist-panel-video-renderer[href], .ytd-playlist-video-renderer[href]"
+    "#content .ytd-playlist-panel-video-renderer[href], #content .ytd-playlist-video-renderer[href]"
   ),
 ]
   .map((e) => e.getAttribute("href"))
