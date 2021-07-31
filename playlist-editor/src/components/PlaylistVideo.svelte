@@ -5,6 +5,7 @@
 
   export let video: Video;
   export let active: boolean;
+  export let disableThumbnails = false;
 
   const dispatch = createEventDispatcher();
 
@@ -18,11 +19,13 @@
 </script>
 
 <div class="playlist-video" class:is-active={active}>
-  <img
-    alt={video.title}
-    src={video.thumbnailUrl}
-    on:click|preventDefault={videoClicked}
-  />
+  {#if !disableThumbnails}
+    <img
+      alt={video.title}
+      src={video.thumbnailUrl}
+      on:click|preventDefault={videoClicked}
+    />
+  {/if}
   <div class="video-details">
     <span class="video-title">{video.title}</span>
     <span>{video.channel}</span>

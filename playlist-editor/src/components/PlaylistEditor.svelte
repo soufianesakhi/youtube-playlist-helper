@@ -59,6 +59,11 @@
   let notificationText = "";
   let exportTextArea: HTMLTextAreaElement;
 
+  let disableThumbnails = true;
+  window.getSettings().then((settings) => {
+    disableThumbnails = settings.disableThumbnails;
+  });
+
   const drop = (event, target) => {
     event.dataTransfer.dropEffect = "move";
     const start = parseInt(event.dataTransfer.getData("text/plain"));
@@ -249,6 +254,7 @@
           <PlaylistVideo
             on:delete={deleteVideo}
             {video}
+            {disableThumbnails}
             active={hovering === index}
           />
         </div>
