@@ -1,28 +1,76 @@
 /// <reference path="../../playlist-editor/src/types/model.d.ts" />
 
+/**
+ * @param {string} id
+ * @param {boolean} defaultValue
+ * @returns {Option}
+ */
+function buildOption(id, defaultValue) {
+  if (id === "defaultEditorPage") {
+    return new SelectBoxOption(id, defaultValue);
+  }
+  return new CheckBoxOption(id, defaultValue);
+}
+
+/**
+ * @implements {Option}
+ */
 class CheckBoxOption {
   /**
    * @param {string} id
    * @param {boolean} defaultValue
    */
-  constructor (id, defaultValue) {
+  constructor(id, defaultValue) {
     this.id = id;
     this.defaultValue = defaultValue;
   }
 
   restore() {
     browser.storage.sync.get(this.id).then((result) => {
-      query(`#${this.id}`).checked =
+      /** @type {HTMLInputElement} */
+      const element = query(`#${this.id}`);
+      element.checked =
         result && result[this.id] != null ? result[this.id] : this.defaultValue;
     }, console.log);
-  };
+  }
 
   async save() {
     const input = query(`#${this.id}:checked`);
     await browser.storage.sync.set({
       [this.id]: !!input,
     });
-  };
+  }
+}
+
+/**
+ * @implements {Option}
+ */
+class SelectBoxOption {
+  /**
+   * @param {string} id
+   * @param {boolean} defaultValue
+   */
+  constructor(id, defaultValue) {
+    this.id = id;
+    this.defaultValue = defaultValue;
+  }
+
+  restore() {
+    browser.storage.sync.get(this.id).then((result) => {
+      /** @type {HTMLSelectElement} */
+      const element = query(`#${this.id}`);
+      element.value =
+        result && result[this.id] != null ? result[this.id] : this.defaultValue;
+    }, console.log);
+  }
+
+  async save() {
+    /** @type {HTMLSelectElement} */
+    const element = query(`#${this.id}`);
+    await browser.storage.sync.set({
+      [this.id]: element.value,
+    });
+  }
 }
 
 /**
@@ -31,7 +79,7 @@ class CheckBoxOption {
 let settings;
 
 /**
- * @type {CheckBoxOption[]}
+ * @type {Option[]}
  */
 let options = [];
 
@@ -40,14 +88,14 @@ let options = [];
  */
 async function saveOptions(e) {
   e.preventDefault();
-  await Promise.all(options.map(option => option.save()));
+  await Promise.all(options.map((option) => option.save()));
   alert("Settings saved");
 }
 
 async function restoreOptions() {
   settings = await window.getSettings();
   Object.keys(settings).forEach((id) => {
-    const option = new CheckBoxOption(id, settings[id]);
+    const option = buildOption(id, settings[id]);
     options.push(option);
     option.restore();
   });

@@ -21,4 +21,5 @@ interface Settings {
   openPlaylistPage: boolean;
   closeAfterCombine: boolean;
   disableThumbnails: boolean;
+  defaultEditorPage: string;
 }

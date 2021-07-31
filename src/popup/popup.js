@@ -13,9 +13,12 @@ const parseYoutubeId = videoService.parseYoutubeId;
  *               UI
  ***********************************/
 
-getById("open-editor").onclick = () => {
+getById("open-editor").onclick = async () => {
+  const settings = await window.getSettings();
   browser.tabs.create({
-    url: browser.runtime.getURL("/editor/index.html"),
+    url: browser.runtime.getURL(
+      `/editor/index.html#${settings.defaultEditorPage}`
+    ),
   });
 };
 
