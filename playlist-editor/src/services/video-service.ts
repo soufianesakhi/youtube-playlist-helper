@@ -19,17 +19,12 @@ class VideoService {
     let sessionVideoData = sessionStorage.getItem(videoId);
     if (!sessionVideoData) {
       try {
-        const res = await fetch(`${this.youtubeServiceURL}/watch?v=${videoId}`);
-        const html = await res.text();
-        var parser = new DOMParser();
-        var htmlDoc = parser.parseFromString(html, "text/html");
-        title =
-          htmlDoc.querySelector("meta[name=title]")?.getAttribute("content") ||
-          "";
-        channel =
-          htmlDoc
-            .querySelector("[itemprop=author] [itemprop=name]")
-            ?.getAttribute("content") || "";
+        const res = await fetch(
+          `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+        );
+        const json = await res.json();
+        title = json.title;
+        channel = json.author_name;
         sessionStorage.setItem(videoId, JSON.stringify({ title, channel }));
       } catch (e) {
         console.log(e);
@@ -99,11 +94,10 @@ class VideoService {
     const settings = await window.getSettings();
     await Promise.all(
       videoIdsChunks.map(async (videoIds) => {
-        var url =
-          this.youtubeServiceURL +
-          "/watch_videos?video_ids=" +
-          videoIds.join(",");
+        const video_ids = videoIds.join(",");
+        let url = `https://www.youtube.com/watch_videos?video_ids=${video_ids}`;
         if (settings.openPlaylistPage) {
+          url = `${this.youtubeServiceURL}/watch_videos?video_ids=${video_ids}`;
           const data = await (await fetch(url)).text();
           const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
           if (exec && exec.length > 1) {

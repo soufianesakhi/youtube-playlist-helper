@@ -34,6 +34,7 @@
   const isNew = location.hash.startsWith("#/new");
 
   let loading = true;
+  let dataLoaded = false;
   let videos = [];
   Promise.all(playlist.videos.map((id) => videoService.fetchVideo(id))).then(
     (loadedVideos) => {
@@ -47,6 +48,7 @@
         }
       }
       loading = false;
+      dataLoaded = true;
     }
   );
   let hovering = -1;
@@ -167,7 +169,8 @@
 
   function play() {
     const videoIds = videos.map((video) => video.videoId.toString());
-    videoService.openPlaylist(videoIds);
+    loading = true;
+    videoService.openPlaylist(videoIds).finally(() => (loading = false));
   }
 
   function startTitleEdit() {
@@ -205,7 +208,7 @@
       <SimpleButton on:click={resetTitle}><CloseIcon /></SimpleButton>
     {/if}
   </h2>
-  {#if !loading}
+  {#if dataLoaded || !loading}
     <div class="platlist-btns">
       {#if videos.length > 0}
         <FloatingButton on:click={play} title="Play all videos"
