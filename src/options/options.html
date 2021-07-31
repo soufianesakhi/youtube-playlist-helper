@@ -6,19 +6,32 @@
     <title>Settings</title>
   </head>
 
-  <body style="display: flex; flex-direction: column; align-items: center;">
-    <header style="display: flex; align-items: center;">
-      <img style="margin-right: 10px;" src="../icons/icon_48.png">
+  <body style="display: flex; flex-direction: column; align-items: center">
+    <header style="display: flex; align-items: center">
+      <img style="margin-right: 10px" src="../icons/icon_48.png" />
       <h1>YouTube Playlist Helper</h1>
     </header>
-    <form style="padding: 10px;">
+    <form style="padding: 10px">
       <fieldset>
         <legend>General</legend>
-        <label>Open playlist page instead of playing playlist videos after creating them<input type="checkbox" id="openPlaylistPage" /></label>
-        <br>
-        <label>Close tabs after combine<input type="checkbox" id="closeAfterCombine" /></label>
+        <label
+          >Open playlist page instead of playing playlist videos after creating
+          them<input type="checkbox" id="openPlaylistPage"
+        /></label>
+        <br />
+        <label
+          >Close tabs after combine<input
+            type="checkbox"
+            id="closeAfterCombine"
+        /></label>
+        <br />
+        <label
+          >Disable thumbnail previews (playlist editor)<input
+            type="checkbox"
+            id="disableThumbnails"
+        /></label>
       </fieldset>
-      <div style="float: right; padding: 10px;">
+      <div style="float: right; padding: 10px">
         <button type="submit">Save</button>
       </div>
     </form>

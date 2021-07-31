@@ -20,4 +20,5 @@ interface Settings {
   [id: string]: any;
   openPlaylistPage: boolean;
   closeAfterCombine: boolean;
+  disableThumbnails: boolean;
 }

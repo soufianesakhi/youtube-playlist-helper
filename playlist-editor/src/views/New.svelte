@@ -2,7 +2,7 @@
   import PlaylistEditor from "../components/PlaylistEditor.svelte";
 
   async function newPLaylist() {
-    let playlist = await window.generatePlaylist();
+    let playlist = await window.videoService.generatePlaylist();
     return { ...playlist, title: "Playlist title" };
   }
   const playlistAsync = newPLaylist();

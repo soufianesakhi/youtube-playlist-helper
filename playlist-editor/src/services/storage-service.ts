@@ -121,6 +121,7 @@ if (typeof browser != "undefined") {
 const DEFAULT_SETTINGS: Settings = {
   openPlaylistPage: false,
   closeAfterCombine: false,
+  disableThumbnails: false,
 };
 window.getSettings = async () => {
   const settings = { ...DEFAULT_SETTINGS };

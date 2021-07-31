@@ -47,7 +47,10 @@ class VideoService {
     };
   }
 
-  getVideoThumbnailUrl(videoId: string) {
+  getVideoThumbnailUrl(videoId) {
+    if (!videoId) {
+      return null;
+    }
     return this.THUMBNAIL_URL_PREFIX + videoId + this.THUMBNAIL_URL_SUFFIX;
   }
 

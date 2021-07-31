@@ -1,35 +1,42 @@
 <script lang="ts">
   import PlaylistCount from "./PlaylistCount.svelte";
 
+  const videoService = window.videoService;
+
   export let playlist: Playlist;
-  const videos = playlist.loadedVideos;
+  export let disableThumbnails = false;
+  const videos = playlist.videos;
 
   async function previewClicked() {
-    window.videoService.openPlaylistEditor(playlist);
+    videoService.openPlaylistEditor(playlist);
   }
 </script>
 
 <div class="preview" on:click|preventDefault={previewClicked}>
-  <div class="preview-row">
-    <img
-      class="preview-img"
-      alt={videos[0]?.title}
-      src={videos[0]?.thumbnailUrl}
-    />
-    <img
-      class="preview-img"
-      alt={videos[1]?.title}
-      src={videos[1]?.thumbnailUrl}
-    />
-  </div>
-  <div class="preview-row">
-    <img
-      class="preview-img"
-      alt={videos[2]?.title}
-      src={videos[2]?.thumbnailUrl}
-    />
-    <PlaylistCount {playlist} className="preview-img" />
-  </div>
+  {#if !disableThumbnails}
+    <div class="preview-row">
+      <img
+        class="preview-img"
+        alt="Playlist Video Thumbail 1"
+        src={videoService.getVideoThumbnailUrl(videos[0])}
+      />
+      <img
+        class="preview-img"
+        alt="Playlist Video Thumbail 2"
+        src={videoService.getVideoThumbnailUrl(videos[1])}
+      />
+    </div>
+    <div class="preview-row">
+      <img
+        class="preview-img"
+        alt="Playlist Video Thumbail 3"
+        src={videoService.getVideoThumbnailUrl(videos[2])}
+      />
+      <PlaylistCount {playlist} className="preview-img" />
+    </div>
+  {:else}
+    <PlaylistCount {playlist} className="preview-count" />
+  {/if}
   <span class="preview-title">{playlist.title}</span>
 </div>
 
@@ -48,6 +55,15 @@
   :global(.preview-img) {
     width: 80px;
     height: 45px;
+    padding: 0;
+    margin: 0;
+    float: left;
+  }
+
+  :global(.preview-count) {
+    width: 160px;
+    height: 90px;
+    font-size: 20px;
     padding: 0;
     margin: 0;
     float: left;
