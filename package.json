@@ -4,6 +4,9 @@
   "description": "Generate YouTube playlists from bookmarks and URL lists",
   "author": "Soufiane Sakhi <soufiane.sakhi.js@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "cd playlist-editor && npm run build"
+  },
   "dependencies": {},
   "devDependencies": {
     "@types/firefox-webext-browser": "^70.0.1",

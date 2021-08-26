@@ -15,7 +15,7 @@
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-replace": "^2.4.1",
     "@rollup/plugin-typescript": "^8.0.0",
-    "@tsconfig/svelte": "^1.0.0",
+    "@tsconfig/svelte": "^1.0.13",
     "@types/firefox-webext-browser": "^82.0.0",
     "cors-anywhere-cli": "^1.2.0",
     "http-proxy": ">=1.18.1",

@@ -143,6 +143,17 @@ getById("from-current-thumbnails").onclick = async () => {
   }
 };
 
+getById("from-current-links").onclick = async () => {
+  let body = await getCurrentTabBody();
+  let videoIds = parseYoutubeLinks(body);
+  videoIds = removeDuplicates(videoIds);
+  if (videoIds.length > 0) {
+    await createPlaylist(videoIds);
+  } else {
+    alert("No YouTube video link found in the current tab");
+  }
+};
+
 getById("save-playlist").onclick = async () => {
   const activeTab = await getActiveTab();
   if (!(isYoutubeTab(activeTab) && isPlaylistTab(activeTab))) {
@@ -331,6 +342,20 @@ function parseYoutubeThumbnailIds(text) {
   const regex = RegExp(youtubeThumbnailsRegexPattern, "ig");
   while ((matches = regex.exec(text))) {
     videoIds.push(matches[1]);
+  }
+  return videoIds;
+}
+
+/**
+ * @param  {string} text
+ */
+function parseYoutubeLinks(text) {
+  let matches,
+    videoIds = [];
+  const regex = RegExp(youtubeRegexPattern, "ig");
+  while ((matches = regex.exec(text))) {
+    const videoId = matches[1].replace(/"$/, "");
+    videoIds.push(videoId);
   }
   return videoIds;
 }
