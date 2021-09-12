@@ -20,7 +20,7 @@ class VideoService {
     if (!sessionVideoData) {
       try {
         const res = await fetch(
-          `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`
+          `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`
         );
         const json = await res.json();
         title = json.title;
