@@ -20,6 +20,7 @@ getById("open-editor").onclick = async () => {
       `/editor/index.html#${settings.defaultEditorPage}`
     ),
   });
+  window.close();
 };
 
 getById("from-bookmark").onclick = () => {
@@ -39,6 +40,7 @@ getById("from-bookmark").onclick = () => {
       div.className = "menu-item";
       div.onclick = () => {
         createPlaylist(folder.videoIds);
+        window.close();
       };
       container.append(div);
     });
@@ -70,6 +72,7 @@ getById("combine-tabs-exclude-playlists").onclick = async () => {
       "There are no valid YouTube video tabs (excluding playlists) in the current window"
     );
   }
+  window.close();
 };
 
 getById("combine-tabs-current-playlist").onclick = async () => {
@@ -98,6 +101,7 @@ getById("combine-tabs-current-playlist").onclick = async () => {
       "There are no valid YouTube video tabs to combine with the current playlist"
     );
   }
+  window.close();
 };
 
 getById("combine-tabs-all-playlist").onclick = async () => {
@@ -130,6 +134,7 @@ getById("combine-tabs-all-playlist").onclick = async () => {
   } else {
     return alert("There are no valid YouTube tabs to combine");
   }
+  window.close();
 };
 
 getById("from-current-links").onclick = async () => {
@@ -141,6 +146,19 @@ getById("from-current-links").onclick = async () => {
   } else {
     alert("No YouTube video link found in the current tab");
   }
+  window.close();
+};
+
+getById("convert-playlist-to-queue").onclick = async () => {
+  const activeTab = await getActiveTab();
+  if (!(isYoutubeTab(activeTab) && isPlayingPlaylistTab(activeTab))) {
+    return alert("The current tab is not a YouTube playlist tab");
+  }
+  /** @type {any} */ let tabId = activeTab.id;
+  await browser.tabs.executeScript(tabId, {
+    file: "/actions/convert-playlist-to-queue.js",
+  });
+  window.close();
 };
 
 getById("save-playlist").onclick = async () => {
@@ -155,6 +173,7 @@ getById("save-playlist").onclick = async () => {
   const videoIds = result[0];
   const playlist = await videoService.generatePlaylist(videoIds);
   await window.savePlaylist(playlist);
+  window.close();
   alert("Playlist saved", true);
 };
 
@@ -294,6 +313,14 @@ async function getCurrentYoutubeTabs(includePlaylistTabs) {
 function isPlaylistTab(tab) {
   const url = tab.url || "";
   return /[&\?]list=/i.test(url);
+}
+
+/**
+ * @param  {Tab} tab
+ */
+ function isPlayingPlaylistTab(tab) {
+  const url = tab.url || "";
+  return isPlaylistTab(tab) && !url.includes("/playlist");
 }
 
 /**
