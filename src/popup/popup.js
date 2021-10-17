@@ -132,20 +132,9 @@ getById("combine-tabs-all-playlist").onclick = async () => {
   }
 };
 
-getById("from-current-thumbnails").onclick = async () => {
-  let body = await getCurrentTabBody();
-  let videoIds = parseYoutubeThumbnailIds(body);
-  videoIds = removeDuplicates(videoIds);
-  if (videoIds.length > 0) {
-    await createPlaylist(videoIds);
-  } else {
-    alert("No YouTube video thumbnail found in the current tab");
-  }
-};
-
 getById("from-current-links").onclick = async () => {
   let body = await getCurrentTabBody();
-  let videoIds = parseYoutubeLinks(body);
+  let videoIds = [...parseYoutubeLinks(body), ...parseYoutubeThumbnailIds(body)];
   videoIds = removeDuplicates(videoIds);
   if (videoIds.length > 0) {
     await createPlaylist(videoIds);
