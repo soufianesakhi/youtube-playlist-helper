@@ -40,7 +40,7 @@ getById("from-bookmark").onclick = () => {
       div.className = "menu-item";
       div.onclick = () => {
         createPlaylist(folder.videoIds);
-        window.close();
+        setTimeout(() => window.close(), 10);
       };
       container.append(div);
     });
@@ -181,6 +181,7 @@ getById("open-settings").onclick = () => {
   browser.tabs.create({
     url: browser.runtime.getURL("/options/options.html"),
   });
+  window.close();
 };
 
 queryAll(".back-item").forEach((item) => {
