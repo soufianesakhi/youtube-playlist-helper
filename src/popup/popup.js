@@ -48,6 +48,21 @@ getById("from-bookmark").onclick = () => {
   });
 };
 
+getById("from-builder").onclick = async () => {
+  /** @type string[] */
+  const playlistBuilder = await browser.runtime.sendMessage({
+    cmd: "get-playlist-builder",
+  });
+  if (!playlistBuilder || playlistBuilder.length == 0) {
+    alert("The playlist builder is empty. You can add videos using the right-click context menu on YouTube videos and links", true);
+    return;
+  }
+  getById("builderUrlsTextarea").value = playlistBuilder
+    .map((id) => window.videoService.YOUTUBE_URL_PREFIX + id)
+    .join("\n");
+  activatePopupMenu("from-builder-menu");
+};
+
 getById("from-urls").onclick = () => {
   activatePopupMenu("from-urls-menu");
 };
@@ -190,11 +205,20 @@ queryAll(".back-item").forEach((item) => {
   };
 });
 
-getById("create-from-urls").onclick = () => {
+getById("create-from-builder").onclick = async () => {
+  await createPlaylistFromTextArea("builderUrlsTextarea");
+  browser.runtime.sendMessage({
+    cmd: "clear-playlist-builder",
+  });
+};
+
+getById("create-from-urls").onclick = () => createPlaylistFromTextArea("urlsTextarea");
+
+async function createPlaylistFromTextArea(id) {
   // @ts-ignore
-  const text = getById("urlsTextarea").value;
+  const text = getById(id).value;
   const videoIds = videoService.parseYoutubeIds(text);
-  createPlaylist(videoIds);
+  await createPlaylist(videoIds);
 };
 
 /**
@@ -418,7 +442,7 @@ function isNotNull(argument) {
 
 /**
  * @param  {string} id
- * @returns {HTMLElement}
+ * @returns {HTMLInputElement}
  */
 function getById(id) {
   // @ts-ignore

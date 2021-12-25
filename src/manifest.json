@@ -16,12 +16,22 @@
     "browser_style": true,
     "default_popup": "popup/popup.html"
   },
+  "background": {
+    "scripts": [
+      "browser-polyfill.min.js",
+      "editor/storage-service.js",
+      "editor/video-service.js",
+      "background.js"
+    ],
+    "persistent": false
+  },
   "permissions": [
     "bookmarks",
     "tabs",
     "storage",
     "notifications",
     "activeTab",
+    "contextMenus",
     "https://www.youtube.com/watch*",
     "https://www.youtube.com/playlist*"
   ],

@@ -11,7 +11,7 @@ body {
   overflow-x: hidden;
 }
 
-#urlsTextarea {
+#urlsTextarea, #builderUrlsTextarea {
   min-height: 250px;
   min-width: 335px;
   width: 100%;
@@ -53,12 +53,12 @@ body {
   margin: 0.4rem 1.4rem 0.4rem 0rem;
 }
 
-#create-from-urls {
+#create-from-urls, #create-from-builder {
   background-color: #296969;
   color: white;
   text-align: center;
 }
 
-#create-from-urls:hover {
+#create-from-urls:hover, #create-from-builder:hover {
   opacity: 0.9;
 }
