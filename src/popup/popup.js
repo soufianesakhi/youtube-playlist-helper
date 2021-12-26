@@ -49,18 +49,25 @@ getById("from-bookmark").onclick = () => {
 };
 
 getById("from-builder").onclick = async () => {
-  /** @type string[] */
-  const playlistBuilder = await browser.runtime.sendMessage({
-    cmd: "get-playlist-builder",
+  const tabs = await browser.tabs.query({
+    url: browser.runtime.getURL(
+      `/editor/index.html`
+    )
   });
-  if (!playlistBuilder || playlistBuilder.length == 0) {
-    alert("The playlist builder is empty. You can add videos using the right-click context menu on YouTube videos and links", true);
-    return;
+  const builderTabs = tabs.filter(tab => tab.url && new URL(tab.url).hash === "#/playlist-builder");
+  if (builderTabs.length == 0) {
+    await browser.tabs.create({
+      url: browser.runtime.getURL(
+        `/editor/index.html#/playlist-builder`
+      ),
+    });
+  } else {
+    const windowId = builderTabs[0].windowId;
+    windowId && await browser.windows.update(windowId, { focused: true });
+    const tabId = builderTabs[0].id;
+    tabId && await browser.tabs.update(tabId, { active: true });
   }
-  getById("builderUrlsTextarea").value = playlistBuilder
-    .map((id) => window.videoService.YOUTUBE_URL_PREFIX + id)
-    .join("\n");
-  activatePopupMenu("from-builder-menu");
+  window.close();
 };
 
 getById("from-urls").onclick = () => {
@@ -204,13 +211,6 @@ queryAll(".back-item").forEach((item) => {
     activatePopupMenu("main-menu");
   };
 });
-
-getById("create-from-builder").onclick = async () => {
-  await createPlaylistFromTextArea("builderUrlsTextarea");
-  browser.runtime.sendMessage({
-    cmd: "clear-playlist-builder",
-  });
-};
 
 getById("create-from-urls").onclick = () => createPlaylistFromTextArea("urlsTextarea");
 

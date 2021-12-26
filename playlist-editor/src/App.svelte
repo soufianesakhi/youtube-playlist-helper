@@ -11,6 +11,7 @@
     "/new": New,
     "/saved": Saved,
     "/editor": PlaylistEditor,
+    "/playlist-builder": PlaylistEditor,
     "*": Recent,
   };
 </script>

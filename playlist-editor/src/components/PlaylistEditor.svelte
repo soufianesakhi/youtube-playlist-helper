@@ -26,31 +26,41 @@
   }
 
   export let editingTitle = false;
-  export let playlist: Playlist = history.state.playlist;
-  if (!playlist) {
-    replace("/");
-  }
-  const previousPage = (history.state && history.state.previousPage) || "/";
+  export let playlist: Playlist = history.state?.playlist;
+  const previousPage = history.state?.previousPage || "/";
   const isNew = location.hash.startsWith("#/new");
-
+  const isPlaylistBuilder = location.hash.startsWith("#/playlist-builder");
   let loading = true;
   let dataLoaded = false;
   let videos = [];
-  Promise.all(playlist.videos.map((id) => videoService.fetchVideo(id))).then(
-    (loadedVideos) => {
-      videos = [...loadedVideos];
-      if (videos.length > 0) {
-        const ids = videos
-          .map((v) => parseInt(v.id as string))
-          .filter((n) => !isNaN(n));
-        if (ids.length > 0) {
-          window.videoIdCount = Math.max(...ids) + 1;
-        }
-      }
-      loading = false;
-      dataLoaded = true;
+  
+  (async function() {
+    if (isPlaylistBuilder) {
+      const videoIds = await browser.runtime.sendMessage({
+        cmd: "get-playlist-builder",
+      });
+      playlist = await videoService.generatePlaylist(videoIds);
     }
-  );
+    if (!playlist) {
+      replace("/");
+    }
+    Promise.all(playlist.videos.map((id) => videoService.fetchVideo(id))).then(
+      (loadedVideos) => {
+        videos = [...loadedVideos];
+        if (videos.length > 0) {
+          const ids = videos
+            .map((v) => parseInt(v.id as string))
+            .filter((n) => !isNaN(n));
+          if (ids.length > 0) {
+            window.videoIdCount = Math.max(...ids) + 1;
+          }
+        }
+        loading = false;
+        dataLoaded = true;
+      }
+    );
+  })();
+
   let hovering = -1;
   let originalTitle: string;
 
@@ -91,6 +101,7 @@
 
   async function deleteVideo(event: CustomEvent<Video>) {
     videos = videos.filter((video) => video.id !== event.detail.id);
+    await savePlaylistBuilder();
   }
 
   async function addVideo() {
@@ -102,6 +113,7 @@
     if (videoId) {
       const video = await videoService.fetchVideo(videoId);
       videos = [...videos, video];
+      await savePlaylistBuilder();
     } else {
       alert("Invalid YouTube url");
     }
@@ -116,6 +128,7 @@
     );
     importedVideos = importedVideos.filter((v) => v != null);
     videos = [...videos, ...importedVideos];
+    await savePlaylistBuilder();
     importText = "";
     displayModal = false;
     loading = false;
@@ -148,6 +161,7 @@
       reversed[i] = videos[r];
     }
     videos = reversed;
+    await savePlaylistBuilder();
   }
 
   async function savePlaylist() {
@@ -155,14 +169,37 @@
     playlist = { ...playlist, videos: videoIds };
     const id = await window.savePlaylist(playlist);
     playlist = { ...playlist, id };
+    if (isPlaylistBuilder) {
+      await browser.runtime.sendMessage({
+        cmd: "clear-playlist-builder",
+      });
+    }
     alert("Playlist saved");
     await replace("/saved");
   }
+
+  async function savePlaylistBuilder() {
+    if (isPlaylistBuilder) {
+      const videoIds = videos.map((video) => video.videoId.toString());
+      await browser.runtime.sendMessage({
+        cmd: "update-playlist-builder",
+        playlistBuilder: videoIds
+      });
+    }
+  }
+
+  async function clearPlaylistBuilder() {
+    if (isPlaylistBuilder) {
+      videos = [];
+      await browser.runtime.sendMessage({
+        cmd: "clear-playlist-builder"
+      });
+    }
+  }
+
   async function deletePlaylist() {
     if (confirm("The playlist is about to be deleted")) {
       await window.removePlaylist(playlist);
-      setTimeout(() => alert("Playlist deleted"), 100);
-      window.history.state;
       await replace(previousPage);
     }
   }
@@ -198,7 +235,7 @@
 <main>
   <h2>
     {#if !editingTitle}
-      <div style="line-height: 40px;">{playlist.title}</div>
+      <div style="line-height: 40px;">{playlist?.title}</div>
       <SimpleButton className="edit-title-btn" on:click={startTitleEdit}>
         <PencilIcon />
       </SimpleButton>
@@ -230,13 +267,20 @@
             ><ReverseIcon /></FloatingButton
           >
         {/if}
+        {#if isPlaylistBuilder}
+          <FloatingButton
+            on:click={clearPlaylistBuilder}
+            title="Clear the playlist builder"
+            bgcolor="#dc3545"><CloseIcon /></FloatingButton
+          >
+        {/if}
         <FloatingButton
           on:click={savePlaylist}
           title="Save the playlist"
           bgcolor="#28a745"><SaveIcon /></FloatingButton
         >
       {/if}
-      {#if !isNew}
+      {#if !isNew && !isPlaylistBuilder}
         <FloatingButton
           on:click={deletePlaylist}
           title="Delete the playlist"

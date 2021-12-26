@@ -1,4 +1,5 @@
 const playlistBuilderId = "yphPlaylistBuilder";
+const playlistBuilderPageId = "yphPlaylistBuilderPage";
 
 browser.runtime.onInstalled.addListener(function () {
   browser.contextMenus.create({
@@ -6,16 +7,37 @@ browser.runtime.onInstalled.addListener(function () {
     title: "Add video to the playlist builder",
     contexts: ["link", "video"]
   });
+  browser.contextMenus.create({
+    id: playlistBuilderPageId,
+    title: "Add video to the playlist builder",
+    contexts: ["page"],
+    documentUrlPatterns: ["https://www.youtube.com/watch*"]
+  });
 });
 
-browser.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === playlistBuilderId) {
+browser.contextMenus.onClicked.addListener(async (info, tab) => {
+  if ([playlistBuilderPageId, playlistBuilderId].indexOf("" + info.menuItemId) > -1) {
     const link = info.linkUrl || info.pageUrl;
     if (!link) {
       console.log("Could not find YouTube video link:", info);
       return;
     }
     addLinkToPlaylistBuilder(link);
+    const tabs = await browser.tabs.query({
+      url: browser.runtime.getURL(
+        `/editor/index.html`
+      )
+    });
+    const builderTabs = tabs.filter(tab => tab.url && new URL(tab.url).hash === "#/playlist-builder");
+    if (builderTabs.length == 0) {
+      await browser.tabs.create({
+        url: browser.runtime.getURL(
+          `/editor/index.html#/playlist-builder`
+        ),
+      });
+    } else {
+      builderTabs.forEach(tab => browser.tabs.reload(tab.id));
+    }
   }
 });
 
@@ -26,8 +48,13 @@ browser.runtime.onMessage.addListener(async request => {
     await saveBuilder([]);
     browser.browserAction.setBadgeText({ text: "" })
     return true;
+  } else if (request.cmd === "update-playlist-builder") {
+    const playlistBuilder = request.playlistBuilder;
+    await saveBuilder(playlistBuilder);
+    browser.browserAction.setBadgeText({ text: "" + playlistBuilder.length })
+    return true;
   }
-});  
+});
 
 async function fetchBuilder() {
   const items = await browser.storage.local.get(playlistBuilderId);
