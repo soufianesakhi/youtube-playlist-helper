@@ -49,24 +49,9 @@ getById("from-bookmark").onclick = () => {
 };
 
 getById("from-builder").onclick = async () => {
-  const tabs = await browser.tabs.query({
-    url: browser.runtime.getURL(
-      `/editor/index.html`
-    )
+  browser.runtime.sendMessage({
+    cmd: "focus-playlist-builder"
   });
-  const builderTabs = tabs.filter(tab => tab.url && new URL(tab.url).hash === "#/playlist-builder");
-  if (builderTabs.length == 0) {
-    await browser.tabs.create({
-      url: browser.runtime.getURL(
-        `/editor/index.html#/playlist-builder`
-      ),
-    });
-  } else {
-    const windowId = builderTabs[0].windowId;
-    windowId && await browser.windows.update(windowId, { focused: true });
-    const tabId = builderTabs[0].id;
-    tabId && await browser.tabs.update(tabId, { active: true });
-  }
   window.close();
 };
 

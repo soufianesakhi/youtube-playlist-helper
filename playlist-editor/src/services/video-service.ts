@@ -13,11 +13,11 @@ class VideoService {
 
   youtubeServiceURL = globalThis.youtubeServiceURL;
 
-  async fetchVideo(videoId: string) {
+  async fetchVideo(videoId: string, sessionOnly = false) {
     let title = "";
     let channel = "";
     let sessionVideoData = sessionStorage.getItem(videoId);
-    if (!sessionVideoData) {
+    if (!sessionOnly && !sessionVideoData) {
       try {
         const res = await fetch(
           `https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`
@@ -29,8 +29,11 @@ class VideoService {
       } catch (e) {
         console.log(e);
       }
-    } else {
+    } else if(sessionVideoData) {
       ({ title, channel } = JSON.parse(sessionVideoData));
+    } else {
+      title = "";
+      channel = "";
     }
     return {
       id: window.videoIdCount++,

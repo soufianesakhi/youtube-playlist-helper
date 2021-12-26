@@ -23,21 +23,8 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
       return;
     }
     addLinkToPlaylistBuilder(link);
-    const tabs = await browser.tabs.query({
-      url: browser.runtime.getURL(
-        `/editor/index.html`
-      )
-    });
-    const builderTabs = tabs.filter(tab => tab.url && new URL(tab.url).hash === "#/playlist-builder");
-    if (builderTabs.length == 0) {
-      await browser.tabs.create({
-        url: browser.runtime.getURL(
-          `/editor/index.html#/playlist-builder`
-        ),
-      });
-    } else {
-      builderTabs.forEach(tab => browser.tabs.reload(tab.id));
-    }
+    const builderTabs = await openPlaylistBuilderTab();
+    builderTabs.forEach(tab => browser.tabs.reload(tab.id));
   }
 });
 
@@ -53,6 +40,15 @@ browser.runtime.onMessage.addListener(async request => {
     await saveBuilder(playlistBuilder);
     browser.browserAction.setBadgeText({ text: "" + playlistBuilder.length })
     return true;
+  } else if (request.cmd === "focus-playlist-builder") {
+    const builderTabs = await openPlaylistBuilderTab();
+    if (builderTabs.length > 0) {
+      const windowId = builderTabs[0].windowId;
+      windowId && await browser.windows.update(windowId, { focused: true });
+      const tabId = builderTabs[0].id;
+      tabId && await browser.tabs.update(tabId, { active: true });
+      return true;
+    }
   }
 });
 
@@ -84,4 +80,22 @@ async function addLinkToPlaylistBuilder(link) {
     browser.browserAction.setBadgeText({ text: "" + playlistBuilder.length });
     saveBuilder(playlistBuilder);
   }
+}
+
+async function openPlaylistBuilderTab() {
+  const tabs = await browser.tabs.query({
+    url: browser.runtime.getURL(
+      `/editor/index.html`
+    )
+  });
+  const builderTabs = tabs.filter(tab => tab.url && new URL(tab.url).hash === "#/playlist-builder");
+  if (builderTabs.length == 0) {
+    await browser.tabs.create({
+      url: browser.runtime.getURL(
+        `/editor/index.html#/playlist-builder`
+      ),
+    });
+    return [];
+  }
+  return builderTabs;
 }

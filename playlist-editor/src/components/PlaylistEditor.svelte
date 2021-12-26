@@ -17,6 +17,7 @@
   import PlaylistVideo from "./PlaylistVideo.svelte";
   import Sidebar from "./Sidebar.svelte";
   import SimpleButton from "./SimpleButton.svelte";
+  import { paginate, LightPaginationNav } from 'svelte-paginate';
 
   const videoService = window.videoService;
 
@@ -34,6 +35,36 @@
   let dataLoaded = false;
   let videos = [];
   
+  async function loadPageVideos(page) {
+    let indicesToLoad = [];
+    for (let videoIndex = (page - 1) * pageSize; videoIndex < page * pageSize && videoIndex < videos.length; videoIndex++) {
+      if (videos[videoIndex].title == "") {
+        indicesToLoad.push(videoIndex);
+      }
+    }
+    if (indicesToLoad.length > 0) {
+      const loadIndexToVideoIndex = {};
+      indicesToLoad.forEach((videoIndex, loadIndex) => loadIndexToVideoIndex[loadIndex] = videoIndex);
+      const videosToLoad = indicesToLoad.map((videoIndex) => videos[videoIndex].videoId);
+      console.debug("Loading videos", videosToLoad);
+      const loadedVideos = await Promise.all(videosToLoad.map((videoId) => videoService.fetchVideo(videoId)));
+      const videosUpdated = [ ...videos ];
+      loadedVideos.forEach((loadedVideo, loadIndex) => videosUpdated[loadIndexToVideoIndex[loadIndex]] = loadedVideo);
+      videos = [ ...videosUpdated ];
+    }
+  }
+
+  let currentPage = 1;
+  let pageSize = 10;
+  $: paginatedVideos = paginate({ items: videos, pageSize, currentPage });
+
+  async function updatePaginationPage(e) {
+    currentPage = e.detail.page;
+    loading = true;
+    await loadPageVideos(currentPage);
+    loading = false;
+  }
+
   (async function() {
     if (isPlaylistBuilder) {
       const videoIds = await browser.runtime.sendMessage({
@@ -44,8 +75,8 @@
     if (!playlist) {
       replace("/");
     }
-    Promise.all(playlist.videos.map((id) => videoService.fetchVideo(id))).then(
-      (loadedVideos) => {
+    Promise.all(playlist.videos.map((id) => videoService.fetchVideo(id, true))).then(
+      async (loadedVideos) => {
         videos = [...loadedVideos];
         if (videos.length > 0) {
           const ids = videos
@@ -55,6 +86,7 @@
             window.videoIdCount = Math.max(...ids) + 1;
           }
         }
+        await loadPageVideos(currentPage);
         loading = false;
         dataLoaded = true;
       }
@@ -101,6 +133,9 @@
 
   async function deleteVideo(event: CustomEvent<Video>) {
     videos = videos.filter((video) => video.id !== event.detail.id);
+    if (paginatedVideos.length == 1 && currentPage > 1) {
+      currentPage = currentPage - 1;
+    }
     await savePlaylistBuilder();
   }
 
@@ -289,7 +324,7 @@
       {/if}
     </div>
     <div class="list">
-      {#each videos as video, index (video.id)}
+      {#each paginatedVideos as video, index (video.id)}
         <div
           animate:customFlip
           draggable={true}
@@ -308,6 +343,16 @@
       {:else}
         <p style="text-align: center">The playlist is empty</p>
       {/each}
+      {#if videos.length > pageSize}
+        <LightPaginationNav
+          totalItems="{videos.length}"
+          pageSize="{pageSize}"
+          currentPage="{currentPage}"
+          limit="{1}"
+          showStepOptions="{true}"
+          on:setPage="{updatePaginationPage}"
+        />
+      {/if}
     </div>
   {/if}
 </main>
