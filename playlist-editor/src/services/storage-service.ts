@@ -25,6 +25,11 @@ window.getRecentPlaylists = async () => {
   return playlists;
 };
 
+window.getRecentPlaylist = async (id) => {
+  const item = localStorage.getItem(PLAYLIST_KEY_PREFIX + id);
+  return JSON.parse(item);
+};
+
 window.savePlaylist = async (playlist: Playlist) => {
   let id = playlist.id;
   if (!playlist.saved) {
@@ -119,6 +124,7 @@ if (typeof browser != "undefined") {
 }
 
 const DEFAULT_SETTINGS: Settings = {
+  openPlaylistEditorAfterCreation: false,
   openPlaylistPage: false,
   closeAfterCombine: false,
   disableThumbnails: false,

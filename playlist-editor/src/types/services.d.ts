@@ -17,6 +17,7 @@ type GeneratePlaylistId = () => Promise<string>;
 type SavePlaylist = (playlist: Playlist) => Promise<string>;
 type RemovePlaylist = (playlist: Playlist) => Promise<void>;
 type GetPlaylists = () => Promise<Playlist[]>;
+type GetPlaylist = (id: string) => Promise<Playlist>;
 
 interface Window {
   getSettings: GetSettings;
@@ -30,4 +31,5 @@ interface Window {
   getPlaylists: GetPlaylists;
   saveRecentPlaylist: SavePlaylist;
   getRecentPlaylists: GetPlaylists;
+  getRecentPlaylist: GetPlaylist;
 }

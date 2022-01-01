@@ -77,6 +77,11 @@
         cmd: "get-playlist-builder",
       });
       playlist = await videoService.generatePlaylist(videoIds);
+    } else {
+      const id = new URL(document.URL).searchParams.get("id");
+      if (id) {
+        playlist = await window.getRecentPlaylist(id);
+      }
     }
     if (!playlist) {
       replace("/");
@@ -362,7 +367,7 @@
           <!-- svelte-ignore a11y-no-onchange -->
           <select bind:value={pageSize} on:change="{pageSizeChanged}">
             {#each possiblePageSizes as size}
-            <option value={size}>
+            <option value={size} selected={size == pageSize}>
               {size}
             </option>
             {/each}

@@ -397,8 +397,17 @@ async function createPlaylist(videoIds) {
   if (videoIds.length == 0) {
     return;
   }
-  videoService.openPlaylist(videoIds);
   const playlist = await videoService.generatePlaylist(videoIds);
+  const settings = await window.getSettings();
+  if (settings.openPlaylistEditorAfterCreation) {
+    browser.tabs.create({
+      url: browser.runtime.getURL(
+        `/editor/index.html?id=${playlist.id}#/editor`
+      ),
+    });
+  } else {
+    videoService.openPlaylist(videoIds);
+  }
   window.saveRecentPlaylist(playlist);
 }
 

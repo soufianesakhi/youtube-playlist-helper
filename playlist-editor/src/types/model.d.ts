@@ -18,6 +18,7 @@ interface Playlist {
 
 interface Settings {
   [id: string]: any;
+  openPlaylistEditorAfterCreation: boolean;
   openPlaylistPage: boolean;
   closeAfterCombine: boolean;
   disableThumbnails: boolean;
