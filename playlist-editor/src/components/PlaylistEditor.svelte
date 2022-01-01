@@ -36,6 +36,7 @@
   let videos = [];
   
   async function loadPageVideos(page) {
+    loading = true;
     let indicesToLoad = [];
     for (let videoIndex = (page - 1) * pageSize; videoIndex < page * pageSize && videoIndex < videos.length; videoIndex++) {
       if (videos[videoIndex].title == "") {
@@ -50,6 +51,7 @@
       loadedVideos.forEach((loadedVideo, loadIndex) => videosUpdated[indicesToLoad[loadIndex]] = loadedVideo);
       videos = [ ...videosUpdated ];
     }
+    loading = false;
   }
 
   const possiblePageSizes = [10, 20, 50];
@@ -60,17 +62,13 @@
 
   async function updatePaginationPage(e) {
     currentPage = e.detail.page;
-    loading = true;
     await loadPageVideos(currentPage);
-    loading = false;
   }
 
   async function pageSizeChanged() {
     currentPage = 1;
-    loading = true;
     window.storeObject("page-size", pageSize);
     await loadPageVideos(currentPage);
-    loading = false;
   }
 
   (async function() {
@@ -139,6 +137,7 @@
     if (paginatedVideos.length == 1 && currentPage > 1) {
       currentPage = currentPage - 1;
     }
+    loadPageVideos(currentPage);
     await savePlaylistBuilder();
   }
 
