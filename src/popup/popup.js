@@ -15,7 +15,7 @@ const parseYoutubeId = videoService.parseYoutubeId;
 
 getById("open-editor").onclick = async () => {
   const settings = await window.getSettings();
-  browser.tabs.create({
+  await browser.tabs.create({
     url: browser.runtime.getURL(
       `/editor/index.html#${settings.defaultEditorPage}`
     ),
@@ -50,7 +50,7 @@ getById("from-bookmark").onclick = () => {
 
 getById("from-builder").onclick = async () => {
   browser.runtime.sendMessage({
-    cmd: "focus-playlist-builder"
+    cmd: "focus-playlist-builder",
   });
   window.close();
 };
@@ -84,7 +84,7 @@ getById("combine-tabs-exclude-playlists").onclick = async () => {
 
 getById("combine-tabs-current-playlist").onclick = async () => {
   const activeTab = await getActiveTab();
-  if (!(isYoutubeTab(activeTab) && isPlaylistTab(activeTab))) {
+  if (!isYoutubeTab(activeTab)) {
     return alert("The current tab is not a YouTube playlist tab");
   }
   let tabs = await getCurrentYoutubeTabs();
@@ -97,6 +97,9 @@ getById("combine-tabs-current-playlist").onclick = async () => {
     const currentPlaylistVideoIds = await browser.tabs.executeScript(tabId, {
       file: "/actions/getPlaylistVideoIds.js",
     });
+    if (!currentPlaylistVideoIds[0] || currentPlaylistVideoIds[0].length == 0) {
+      return alert("The current tab is not a YouTube playlist tab");
+    }
     videoIds.push(...currentPlaylistVideoIds[0]);
     const settings = await window.getSettings();
     if (settings.closeAfterCombine) {
@@ -146,7 +149,10 @@ getById("combine-tabs-all-playlist").onclick = async () => {
 
 getById("from-current-links").onclick = async () => {
   let body = await getCurrentTabBody();
-  let videoIds = [...parseYoutubeLinks(body), ...parseYoutubeThumbnailIds(body)];
+  let videoIds = [
+    ...parseYoutubeLinks(body),
+    ...parseYoutubeThumbnailIds(body),
+  ];
   videoIds = removeDuplicates(videoIds);
   if (videoIds.length > 0) {
     await createPlaylist(videoIds);
@@ -170,7 +176,7 @@ getById("convert-playlist-to-queue").onclick = async () => {
 
 getById("save-playlist").onclick = async () => {
   const activeTab = await getActiveTab();
-  if (!(isYoutubeTab(activeTab) && isPlaylistTab(activeTab))) {
+  if (!isYoutubeTab(activeTab)) {
     return alert("The current tab is not a YouTube playlist tab");
   }
   /** @type {any} */ let tabId = activeTab.id;
@@ -178,6 +184,9 @@ getById("save-playlist").onclick = async () => {
     file: "/actions/getPlaylistVideoIds.js",
   });
   const videoIds = result[0];
+  if (!videoIds || videoIds.length == 0) {
+    return alert("The current tab is not a YouTube playlist tab");
+  }
   const playlist = await videoService.generatePlaylist(videoIds);
   const id = await window.savePlaylist(playlist);
   await browser.tabs.create({
@@ -188,8 +197,8 @@ getById("save-playlist").onclick = async () => {
   window.close();
 };
 
-getById("open-settings").onclick = () => {
-  browser.tabs.create({
+getById("open-settings").onclick = async () => {
+  await browser.tabs.create({
     url: browser.runtime.getURL("/options/options.html"),
   });
   window.close();
@@ -201,14 +210,16 @@ queryAll(".back-item").forEach((item) => {
   };
 });
 
-getById("create-from-urls").onclick = () => createPlaylistFromTextArea("urlsTextarea");
+getById("create-from-urls").onclick = () =>
+  createPlaylistFromTextArea("urlsTextarea");
 
 async function createPlaylistFromTextArea(id) {
   // @ts-ignore
   const text = getById(id).value;
   const videoIds = videoService.parseYoutubeIds(text);
   await createPlaylist(videoIds);
-};
+  window.close();
+}
 
 /**
  * @param  {string} menuId
@@ -332,7 +343,7 @@ function isPlaylistTab(tab) {
 /**
  * @param  {Tab} tab
  */
- function isPlayingPlaylistTab(tab) {
+function isPlayingPlaylistTab(tab) {
   const url = tab.url || "";
   return isPlaylistTab(tab) && !url.includes("/playlist");
 }
@@ -404,15 +415,15 @@ async function createPlaylist(videoIds) {
   const playlist = await videoService.generatePlaylist(videoIds);
   const settings = await window.getSettings();
   if (settings.openPlaylistEditorAfterCreation) {
-    browser.tabs.create({
+    await browser.tabs.create({
       url: browser.runtime.getURL(
         `/editor/index.html?id=${playlist.id}#/editor`
       ),
     });
   } else {
-    videoService.openPlaylist(videoIds);
+    await videoService.openPlaylist(videoIds);
   }
-  window.saveRecentPlaylist(playlist);
+  await window.saveRecentPlaylist(playlist);
 }
 
 /***********************************
