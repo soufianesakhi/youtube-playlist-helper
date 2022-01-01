@@ -179,9 +179,13 @@ getById("save-playlist").onclick = async () => {
   });
   const videoIds = result[0];
   const playlist = await videoService.generatePlaylist(videoIds);
-  await window.savePlaylist(playlist);
+  const id = await window.savePlaylist(playlist);
+  await browser.tabs.create({
+    url: browser.runtime.getURL(
+      `/editor/index.html?id=${id}&saved=true#/editor`
+    ),
+  });
   window.close();
-  alert("Playlist saved", true);
 };
 
 getById("open-settings").onclick = () => {

@@ -78,9 +78,16 @@
       });
       playlist = await videoService.generatePlaylist(videoIds);
     } else {
-      const id = new URL(document.URL).searchParams.get("id");
+      const url = new URL(document.URL);
+      const id = url.searchParams.get("id");
+      const saved = url.searchParams.get("saved");
       if (id) {
-        playlist = await window.getRecentPlaylist(id);
+        if (saved) {
+          playlist = await window.getPlaylist(id);
+        } else {
+          playlist = await window.getRecentPlaylist(id);
+        }
+        history.replaceState({playlist}, "", url.pathname + url.hash);
       }
     }
     if (!playlist) {

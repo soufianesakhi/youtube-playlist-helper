@@ -64,6 +64,16 @@ window.getPlaylists = async () => {
     });
 };
 
+window.getPlaylist = async (id) => {
+  const item = await window.fetchObject(PLAYLIST_KEY_PREFIX + id, null);
+  if (!item) {
+    return null;
+  }
+  const playlist: Playlist = JSON.parse(item);
+  playlist.saved = true;
+  return playlist;
+};
+
 if (typeof browser != "undefined") {
   const storage = browser.storage.sync;
 
