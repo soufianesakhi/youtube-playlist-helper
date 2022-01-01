@@ -52,13 +52,23 @@
     }
   }
 
+  const possiblePageSizes = [10, 20, 50];
+  const defaultPageSize = 50;
   let currentPage = 1;
-  let pageSize = 10;
+  let pageSize = defaultPageSize;
   $: paginatedVideos = paginate({ items: videos, pageSize, currentPage });
 
   async function updatePaginationPage(e) {
     currentPage = e.detail.page;
     loading = true;
+    await loadPageVideos(currentPage);
+    loading = false;
+  }
+
+  async function pageSizeChanged() {
+    currentPage = 1;
+    loading = true;
+    window.storeObject("page-size", pageSize);
     await loadPageVideos(currentPage);
     loading = false;
   }
@@ -73,6 +83,8 @@
     if (!playlist) {
       replace("/");
     }
+    
+    pageSize = await window.fetchObject("page-size", defaultPageSize);
     Promise.all(playlist.videos.map((id) => videoService.fetchVideo(id, true))).then(
       async (loadedVideos) => {
         videos = [...loadedVideos];
@@ -334,16 +346,30 @@
       {:else}
         <p style="text-align: center">The playlist is empty</p>
       {/each}
-      {#if videos.length > pageSize}
-        <LightPaginationNav
-          totalItems="{videos.length}"
-          pageSize="{pageSize}"
-          currentPage="{currentPage}"
-          limit="{1}"
-          showStepOptions="{true}"
-          on:setPage="{updatePaginationPage}"
-        />
-      {/if}
+      <div class="pagination">
+        {#if videos.length > pageSize}
+          <LightPaginationNav
+            totalItems="{videos.length}"
+            pageSize="{pageSize}"
+            currentPage="{currentPage}"
+            limit="{1}"
+            showStepOptions="{true}"
+            on:setPage="{updatePaginationPage}"
+          />
+        {:else if videos.length > 0}
+          <span>Page size:</span>
+        {/if}
+        {#if videos.length > 0}
+          <!-- svelte-ignore a11y-no-onchange -->
+          <select bind:value={pageSize} on:change="{pageSizeChanged}">
+            {#each possiblePageSizes as size}
+            <option value={size}>
+              {size}
+            </option>
+            {/each}
+          </select>
+        {/if}
+      </div>
     </div>
   {/if}
 </main>
@@ -416,5 +442,15 @@
 
   :global(textarea + *) {
     margin-left: 1rem;
+  }
+
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pagination select {
+    margin: 0.5rem;
   }
 </style>
