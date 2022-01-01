@@ -43,13 +43,11 @@
       }
     }
     if (indicesToLoad.length > 0) {
-      const loadIndexToVideoIndex = {};
-      indicesToLoad.forEach((videoIndex, loadIndex) => loadIndexToVideoIndex[loadIndex] = videoIndex);
       const videosToLoad = indicesToLoad.map((videoIndex) => videos[videoIndex].videoId);
       console.debug("Loading videos", videosToLoad);
       const loadedVideos = await Promise.all(videosToLoad.map((videoId) => videoService.fetchVideo(videoId)));
       const videosUpdated = [ ...videos ];
-      loadedVideos.forEach((loadedVideo, loadIndex) => videosUpdated[loadIndexToVideoIndex[loadIndex]] = loadedVideo);
+      loadedVideos.forEach((loadedVideo, loadIndex) => videosUpdated[indicesToLoad[loadIndex]] = loadedVideo);
       videos = [ ...videosUpdated ];
     }
   }
@@ -78,14 +76,6 @@
     Promise.all(playlist.videos.map((id) => videoService.fetchVideo(id, true))).then(
       async (loadedVideos) => {
         videos = [...loadedVideos];
-        if (videos.length > 0) {
-          const ids = videos
-            .map((v) => parseInt(v.id as string))
-            .filter((n) => !isNaN(n));
-          if (ids.length > 0) {
-            window.videoIdCount = Math.max(...ids) + 1;
-          }
-        }
         await loadPageVideos(currentPage);
         loading = false;
         dataLoaded = true;
@@ -111,6 +101,7 @@
   const drop = (event, target) => {
     event.dataTransfer.dropEffect = "move";
     const start = parseInt(event.dataTransfer.getData("text/plain"));
+    target = (currentPage - 1) * pageSize + target;
     const newPlaylistVideos = videos;
 
     if (start < target) {
@@ -127,7 +118,7 @@
   const dragstart = (event, i) => {
     event.dataTransfer.effectAllowed = "move";
     event.dataTransfer.dropEffect = "move";
-    const start = i;
+    const start = (currentPage - 1) * pageSize + i;
     event.dataTransfer.setData("text/plain", start);
   };
 
