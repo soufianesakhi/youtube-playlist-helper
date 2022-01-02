@@ -10,6 +10,8 @@ A YouTube playlist creator for [Firefox](https://addons.mozilla.org/en-US/firefo
 
   ![playlist-editor](https://raw.githubusercontent.com/soufianesakhi/youtube-playlist-helper/master/screenshots/playlist-editor.png)
 
+- Queue up videos from any page (with the right-click context menu) and play or save them using the playlist builder.
+
 - Save playlists using your browser's sync storage
 
   ![saved-playlists](https://raw.githubusercontent.com/soufianesakhi/youtube-playlist-helper/master/screenshots/saved-playlists.png)
