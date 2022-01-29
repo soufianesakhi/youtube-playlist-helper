@@ -5,6 +5,9 @@
   "author": "Soufiane Sakhi <soufiane.sakhi.js@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "dev": "cd playlist-editor && npm run dev",
+    "prod": "cd playlist-editor && npm run prod",
+    "cors": "cd playlist-editor && npm run cors",
     "build": "cd playlist-editor && npm run build"
   },
   "dependencies": {},
