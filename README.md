@@ -35,3 +35,8 @@ A YouTube playlist creator for [Firefox](https://addons.mozilla.org/en-US/firefo
 ![playlist-created](https://raw.githubusercontent.com/soufianesakhi/youtube-playlist-helper/master/screenshots/playlist-created.png)
 
 - Convert current YouTube playlist tab to YouTube queue
+
+## Build instructions
+1. Install Node.js and npm.
+2. Run `npm run build`. 
+3. The extension final sources are found in the `src` directory. 
