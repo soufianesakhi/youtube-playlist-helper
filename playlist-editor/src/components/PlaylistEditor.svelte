@@ -88,6 +88,12 @@
           playlist = await window.getRecentPlaylist(id);
         }
         history.replaceState({playlist}, "", url.pathname + url.hash);
+      } else {
+        const videoIds = url.searchParams.get("videoIds");
+        if (videoIds) {
+          playlist = await videoService.generatePlaylist(videoIds.split(","));
+          history.replaceState({playlist}, "", url.pathname + url.hash);
+        }
       }
     }
     if (!playlist) {

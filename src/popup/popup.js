@@ -414,16 +414,33 @@ async function createPlaylist(videoIds) {
   }
   const playlist = await videoService.generatePlaylist(videoIds);
   const settings = await window.getSettings();
+  let saved = false;
+  let playlistId;
+  if (settings.createdPlaylistStorage == "saved") {
+    saved = true;
+    playlistId = await window.savePlaylist(playlist);
+  } else if (settings.createdPlaylistStorage == "recent") {
+    playlistId = await window.saveRecentPlaylist(playlist);
+  }  
   if (settings.openPlaylistEditorAfterCreation) {
-    await browser.tabs.create({
-      url: browser.runtime.getURL(
-        `/editor/index.html?id=${playlist.id}#/editor`
-      ),
-    });
+    if (settings.createdPlaylistStorage) {
+      const extraQueryParams = saved ? "&saved=true" : "";
+      await browser.tabs.create({
+        url: browser.runtime.getURL(
+          `/editor/index.html?id=${playlistId}${extraQueryParams}#/editor`
+        ),
+      });
+    } else {
+      const videoIdsParam = videoIds.join(",");
+      await browser.tabs.create({
+        url: browser.runtime.getURL(
+          `/editor/index.html?videoIds=${videoIdsParam}#/editor`
+        ),
+      });
+    }
   } else {
     await videoService.openPlaylist(videoIds);
   }
-  await window.saveRecentPlaylist(playlist);
 }
 
 /***********************************

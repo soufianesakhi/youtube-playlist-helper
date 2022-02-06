@@ -22,5 +22,6 @@ interface Settings {
   openPlaylistPage: boolean;
   closeAfterCombine: boolean;
   disableThumbnails: boolean;
-  defaultEditorPage: string;
+  defaultEditorPage: "/recent" | "/new" | "/saved";
+  createdPlaylistStorage: "recent" | "saved" | "";
 }

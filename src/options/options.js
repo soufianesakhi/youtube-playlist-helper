@@ -1,12 +1,14 @@
 /// <reference path="../../playlist-editor/src/types/model.d.ts" />
 
+const MULTI_VALUE_SETTINGS = ["defaultEditorPage", "createdPlaylistStorage"];
+
 /**
  * @param {string} id
  * @param {boolean} defaultValue
  * @returns {Option}
  */
 function buildOption(id, defaultValue) {
-  if (id === "defaultEditorPage") {
+  if (MULTI_VALUE_SETTINGS.indexOf(id) > -1) {
     return new SelectBoxOption(id, defaultValue);
   }
   return new CheckBoxOption(id, defaultValue);

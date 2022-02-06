@@ -139,6 +139,7 @@ const DEFAULT_SETTINGS: Settings = {
   closeAfterCombine: false,
   disableThumbnails: false,
   defaultEditorPage: "/recent",
+  createdPlaylistStorage: "recent"
 };
 window.getSettings = async () => {
   const settings = { ...DEFAULT_SETTINGS };
