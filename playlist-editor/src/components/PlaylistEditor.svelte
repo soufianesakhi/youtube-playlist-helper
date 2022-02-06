@@ -210,6 +210,7 @@
       reversed[i] = videos[r];
     }
     videos = reversed;
+    loadPageVideos(currentPage);
     await savePlaylistBuilder();
   }
 
