@@ -2,9 +2,9 @@
 
 window.videoIdCount = 100;
 
-// https://regex101.com/r/8OtNe5/1
+// https://regex101.com/r/rq2KLv/1
 window.youtubeRegexPattern =
-  /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[^&\s\?\."'<\\]{11,}(?!\S))\/)|(?:\S*v=|v\/)))([^&\s\?\."'<\\]{11,})/.source;
+  /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[-a-zA-Z0-9_]{11,}(?!\S))\/)|(?:\S*v=|v\/)))([-a-zA-Z0-9_]{11,})/.source;
 
 class VideoService {
   YOUTUBE_URL_PREFIX = "https://www.youtube.com/watch?v=";
