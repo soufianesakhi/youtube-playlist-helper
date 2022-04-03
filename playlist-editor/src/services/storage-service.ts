@@ -138,6 +138,7 @@ const DEFAULT_SETTINGS: Settings = {
   openPlaylistPage: false,
   closeAfterCombine: false,
   disableThumbnails: false,
+  openPlaylistBuilderAfterAdd: false,
   defaultEditorPage: "/recent",
   createdPlaylistStorage: "recent"
 };

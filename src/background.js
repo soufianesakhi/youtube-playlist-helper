@@ -23,7 +23,14 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
       alert("Invalid YouTube video link: " + link, true);
       return;
     }
-    const builderTabs = await openPlaylistBuilderTab();
+    const settings = await window.getSettings();
+    /** @type {browser.tabs.Tab[]} */
+    let builderTabs = [];
+    if (settings.openPlaylistBuilderAfterAdd) {
+      builderTabs = await openPlaylistBuilderTab();
+    } else {
+      builderTabs = await getPlaylistBuilderTab();
+    }
     builderTabs.forEach((tab) => browser.tabs.reload(tab.id));
   }
 });
@@ -84,13 +91,17 @@ async function addLinkToPlaylistBuilder(link) {
   return false;
 }
 
-async function openPlaylistBuilderTab() {
+async function getPlaylistBuilderTab() {
   const tabs = await browser.tabs.query({
     url: browser.runtime.getURL(`/editor/index.html`),
   });
-  const builderTabs = tabs.filter(
+  return tabs.filter(
     (tab) => tab.url && new URL(tab.url).hash === "#/playlist-builder"
   );
+}
+
+async function openPlaylistBuilderTab() {
+  const builderTabs = await getPlaylistBuilderTab();
   if (builderTabs.length == 0) {
     await browser.tabs.create({
       url: browser.runtime.getURL(`/editor/index.html#/playlist-builder`),
