@@ -29,7 +29,7 @@ class VideoService {
       } catch (e) {
         console.log(e);
       }
-    } else if(sessionVideoData) {
+    } else if (sessionVideoData) {
       ({ title, channel } = JSON.parse(sessionVideoData));
     } else {
       title = "";
@@ -98,18 +98,28 @@ class VideoService {
     await Promise.all(
       videoIdsChunks.map(async (videoIds) => {
         const video_ids = videoIds.join(",");
-        let url = `https://www.youtube.com/watch_videos?video_ids=${video_ids}`;
-        if (settings.openPlaylistPage) {
-          url = `${this.youtubeServiceURL}/watch_videos?video_ids=${video_ids}`;
-          const data = await (await fetch(url)).text();
-          const exec = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
-          if (exec && exec.length > 1) {
-            url = "https://www.youtube.com/playlist?list=" + exec[1];
+        let url = `${this.youtubeServiceURL}/watch_videos?video_ids=${video_ids}`;
+        const data = await (await fetch(url)).text();
+        const [_, listId] = /og:video:url[^>]+\?list=([^"']+)/.exec(data);
+        if (listId) {
+          if (settings.openPlaylistPage) {
+            url = `https://www.youtube.com/playlist?list=${listId}`;
           } else {
-            alert(
-              "Unable to retrieve playlist id. Directly playing videos instead..."
-            );
+            url = `https://www.youtube.com/watch?v=${videoIds[0]}&list=${listId}`;
+            // Fix playlist not displayed
+            await Promise.all([
+              fetch(
+                `${this.youtubeServiceURL}/watch?v=${videoIds[0]}&list=${listId}`
+              ),
+              fetch(
+                `${this.youtubeServiceURL}/watch?v=${videoIds[0]}&list=${listId}`
+              ),
+            ]);
           }
+        } else if (settings.openPlaylistPage) {
+          alert(
+            "Unable to retrieve playlist id. Directly playing videos instead..."
+          );
         }
         if (typeof browser != "undefined") {
           return browser.tabs.create({ url });
