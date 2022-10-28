@@ -17,7 +17,8 @@
   import PlaylistVideo from "./PlaylistVideo.svelte";
   import Sidebar from "./Sidebar.svelte";
   import SimpleButton from "./SimpleButton.svelte";
-  import { paginate, LightPaginationNav } from 'svelte-paginate';
+  import { paginate, LightPaginationNav } from "svelte-paginate";
+  import RemoveDuplicates from "./icons/RemoveDuplicates.svelte";
 
   const videoService = window.videoService;
 
@@ -34,22 +35,33 @@
   let loading = true;
   let dataLoaded = false;
   let videos = [];
-  
+
   async function loadPageVideos(page) {
     loading = true;
     let indicesToLoad = [];
-    for (let videoIndex = (page - 1) * pageSize; videoIndex < page * pageSize && videoIndex < videos.length; videoIndex++) {
+    for (
+      let videoIndex = (page - 1) * pageSize;
+      videoIndex < page * pageSize && videoIndex < videos.length;
+      videoIndex++
+    ) {
       if (videos[videoIndex].title == "") {
         indicesToLoad.push(videoIndex);
       }
     }
     if (indicesToLoad.length > 0) {
-      const videosToLoad = indicesToLoad.map((videoIndex) => videos[videoIndex].videoId);
+      const videosToLoad = indicesToLoad.map(
+        (videoIndex) => videos[videoIndex].videoId
+      );
       console.debug("Loading videos", videosToLoad);
-      const loadedVideos = await Promise.all(videosToLoad.map((videoId) => videoService.fetchVideo(videoId)));
-      const videosUpdated = [ ...videos ];
-      loadedVideos.forEach((loadedVideo, loadIndex) => videosUpdated[indicesToLoad[loadIndex]] = loadedVideo);
-      videos = [ ...videosUpdated ];
+      const loadedVideos = await Promise.all(
+        videosToLoad.map((videoId) => videoService.fetchVideo(videoId))
+      );
+      const videosUpdated = [...videos];
+      loadedVideos.forEach(
+        (loadedVideo, loadIndex) =>
+          (videosUpdated[indicesToLoad[loadIndex]] = loadedVideo)
+      );
+      videos = [...videosUpdated];
     }
     loading = false;
   }
@@ -71,7 +83,7 @@
     await loadPageVideos(currentPage);
   }
 
-  (async function() {
+  (async function () {
     if (isPlaylistBuilder) {
       const videoIds = await browser.runtime.sendMessage({
         cmd: "get-playlist-builder",
@@ -87,28 +99,29 @@
         } else {
           playlist = await window.getRecentPlaylist(id);
         }
-        history.replaceState({playlist}, "", url.pathname + url.hash);
+        history.replaceState({ playlist }, "", url.pathname + url.hash);
       } else {
         const videoIds = url.searchParams.get("videoIds");
         if (videoIds) {
           playlist = await videoService.generatePlaylist(videoIds.split(","));
-          history.replaceState({playlist}, "", url.pathname + url.hash);
+          history.replaceState({ playlist }, "", url.pathname + url.hash);
         }
       }
     }
     if (!playlist) {
       replace("/");
+      return;
     }
-    
+
     pageSize = await window.fetchObject("page-size", defaultPageSize);
-    Promise.all(playlist.videos.map((id) => videoService.fetchVideo(id, true))).then(
-      async (loadedVideos) => {
-        videos = [...loadedVideos];
-        await loadPageVideos(currentPage);
-        loading = false;
-        dataLoaded = true;
-      }
-    );
+    await Promise.all(
+      playlist.videos.map((id) => videoService.fetchVideo(id, true))
+    ).then(async (loadedVideos) => {
+      videos = [...loadedVideos];
+      await loadPageVideos(currentPage);
+      loading = false;
+      dataLoaded = true;
+    });
   })();
 
   let hovering = -1;
@@ -220,6 +233,27 @@
     await savePlaylistBuilder();
   }
 
+  async function removeDuplicates() {
+    const videosMap = videos.reduce((acc, video) => {
+      const videoId = video.videoId.toString();
+      if (!acc[videoId]) {
+        acc[videoId] = video;
+      }
+      return acc;
+    }, {});
+    const uniqueVideos = Object.values(videosMap);
+
+    const duplicatesCount = videos.length - uniqueVideos.length;
+    if (duplicatesCount > 0) {
+      videos = uniqueVideos;
+      loadPageVideos(currentPage);
+      await savePlaylistBuilder();
+      setTimeout(() => alert(`Removed ${duplicatesCount} duplicates`), 200);
+    } else {
+      alert("No duplicates found");
+    }
+  }
+
   async function savePlaylist() {
     const videoIds = videos.map((video) => video.videoId.toString());
     playlist = { ...playlist, videos: videoIds };
@@ -239,7 +273,7 @@
       const videoIds = videos.map((video) => video.videoId.toString());
       await browser.runtime.sendMessage({
         cmd: "update-playlist-builder",
-        playlistBuilder: videoIds
+        playlistBuilder: videoIds,
       });
     }
   }
@@ -248,7 +282,7 @@
     if (isPlaylistBuilder) {
       videos = [];
       await browser.runtime.sendMessage({
-        cmd: "clear-playlist-builder"
+        cmd: "clear-playlist-builder",
       });
     }
   }
@@ -322,6 +356,9 @@
           <FloatingButton on:click={reversePlaylist} title="Reverse order"
             ><ReverseIcon /></FloatingButton
           >
+          <FloatingButton on:click={removeDuplicates} title="Remove duplicates"
+            ><RemoveDuplicates /></FloatingButton
+          >
         {/if}
         {#if isPlaylistBuilder}
           <FloatingButton
@@ -367,23 +404,23 @@
       <div class="pagination">
         {#if videos.length > pageSize}
           <LightPaginationNav
-            totalItems="{videos.length}"
-            pageSize="{pageSize}"
-            currentPage="{currentPage}"
-            limit="{1}"
-            showStepOptions="{true}"
-            on:setPage="{updatePaginationPage}"
+            totalItems={videos.length}
+            {pageSize}
+            {currentPage}
+            limit={1}
+            showStepOptions={true}
+            on:setPage={updatePaginationPage}
           />
         {:else if videos.length > 0}
           <span>Page size:</span>
         {/if}
         {#if videos.length > 0}
           <!-- svelte-ignore a11y-no-onchange -->
-          <select bind:value={pageSize} on:change="{pageSizeChanged}">
+          <select bind:value={pageSize} on:change={pageSizeChanged}>
             {#each possiblePageSizes as size}
-            <option value={size} selected={size == pageSize}>
-              {size}
-            </option>
+              <option value={size} selected={size == pageSize}>
+                {size}
+              </option>
             {/each}
           </select>
         {/if}
