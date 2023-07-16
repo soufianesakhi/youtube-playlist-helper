@@ -44,6 +44,19 @@ window.savePlaylist = async (playlist: Playlist) => {
   return id;
 };
 
+window.importPlaylists = async (playlistsExport: PlaylistExport[]) => {
+  const ids = await window.generatePlaylistIds(playlistsExport.length);
+  const playlists = playlistsExport.map((p) => ({ ...p, id: ids.shift() }));
+  await Promise.all(
+    playlists.map((playlist) =>
+      window.storeObject(
+        PLAYLIST_KEY_PREFIX + playlist.id,
+        playlistToDto(playlist)
+      )
+    )
+  );
+};
+
 window.removePlaylist = async (playlist: Playlist) => {
   if (!playlist.saved) {
     // Recent playlist
@@ -51,6 +64,13 @@ window.removePlaylist = async (playlist: Playlist) => {
   } else {
     return window.removeObject(PLAYLIST_KEY_PREFIX + playlist.id);
   }
+};
+
+window.removeSavedPlaylists = async () => {
+  const ids = (await window.getPlaylists()).map(({ id }) => id);
+  await Promise.all(
+    ids.map((id) => window.removeObject(PLAYLIST_KEY_PREFIX + id))
+  );
 };
 
 window.getPlaylists = async () => {
@@ -108,6 +128,16 @@ if (typeof browser != "undefined") {
     storage.set(obj);
     return count;
   };
+
+  window.generatePlaylistIds = async (size: number) => {
+    const obj = await storage.get(ID_COUNTER_KEY);
+    let count = obj[ID_COUNTER_KEY] || 0;
+    count++;
+    const ids = [...Array(size).keys()].map((i) => i + count);
+    obj[ID_COUNTER_KEY] = ids[ids.length - 1];
+    storage.set(obj);
+    return ids;
+  };
 } else if (window.location.protocol.startsWith("http")) {
   // Development mode fallback
 
@@ -131,6 +161,14 @@ if (typeof browser != "undefined") {
   window.generatePlaylistId = async () => {
     return Date.now().toString();
   };
+
+  window.generatePlaylistIds = async (size: number) => {
+    const count = Date.now();
+    const ids = [...Array(size).keys()].map((i) => (i + count).toString());
+    return ids;
+  };
+
+  window.removeSavedPlaylists = async () => {};
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -140,7 +178,7 @@ const DEFAULT_SETTINGS: Settings = {
   disableThumbnails: false,
   openPlaylistBuilderAfterAdd: false,
   defaultEditorPage: "/recent",
-  createdPlaylistStorage: "recent"
+  createdPlaylistStorage: "recent",
 };
 window.getSettings = async () => {
   const settings = { ...DEFAULT_SETTINGS };

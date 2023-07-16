@@ -7,6 +7,12 @@ interface Video {
   thumbnailUrl: string;
 }
 
+interface PlaylistExport {
+  title: string;
+  videos: string[];
+  timestamp: number;
+}
+
 interface Playlist {
   id: string;
   title: string;

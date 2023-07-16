@@ -34,7 +34,7 @@
   const isPlaylistBuilder = location.hash.startsWith("#/playlist-builder");
   let loading = true;
   let dataLoaded = false;
-  let videos = [];
+  let videos = [] as Video[];
 
   async function loadPageVideos(page) {
     loading = true;
@@ -70,7 +70,7 @@
   const defaultPageSize = 50;
   let currentPage = 1;
   let pageSize = defaultPageSize;
-  $: paginatedVideos = paginate({ items: videos, pageSize, currentPage });
+  $: paginatedVideos = paginate({ items: videos, pageSize, currentPage }) as Video[];
 
   async function updatePaginationPage(e) {
     currentPage = e.detail.page;
@@ -240,7 +240,7 @@
         acc[videoId] = video;
       }
       return acc;
-    }, {});
+    }, {} as Video[]);
     const uniqueVideos = Object.values(videosMap);
 
     const duplicatesCount = videos.length - uniqueVideos.length;
