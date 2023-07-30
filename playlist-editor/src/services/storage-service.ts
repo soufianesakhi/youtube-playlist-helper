@@ -41,6 +41,7 @@ window.savePlaylist = async (playlist: Playlist) => {
     timestamp: Date.now(),
   };
   await window.storeObject(PLAYLIST_KEY_PREFIX + id, playlistToDto(playlist));
+  savedPlaylistsChanged();
   return id;
 };
 
@@ -55,6 +56,7 @@ window.importPlaylists = async (playlistsExport: PlaylistExport[]) => {
       )
     )
   );
+  savedPlaylistsChanged();
 };
 
 window.removePlaylist = async (playlist: Playlist) => {
@@ -62,7 +64,8 @@ window.removePlaylist = async (playlist: Playlist) => {
     // Recent playlist
     localStorage.removeItem(PLAYLIST_KEY_PREFIX + playlist.id);
   } else {
-    return window.removeObject(PLAYLIST_KEY_PREFIX + playlist.id);
+    await window.removeObject(PLAYLIST_KEY_PREFIX + playlist.id);
+    savedPlaylistsChanged();
   }
 };
 
@@ -71,6 +74,7 @@ window.removeSavedPlaylists = async () => {
   await Promise.all(
     ids.map((id) => window.removeObject(PLAYLIST_KEY_PREFIX + id))
   );
+  savedPlaylistsChanged();
 };
 
 window.getPlaylists = async () => {
@@ -177,6 +181,7 @@ const DEFAULT_SETTINGS: Settings = {
   closeAfterCombine: false,
   disableThumbnails: false,
   openPlaylistBuilderAfterAdd: false,
+  openSavedPlaylistAfterAdd: false,
   defaultEditorPage: "/recent",
   createdPlaylistStorage: "recent",
 };
@@ -190,5 +195,11 @@ window.getSettings = async () => {
   );
   return settings;
 };
+
+function savedPlaylistsChanged() {
+  browser.runtime.sendMessage({
+    cmd: "update-saved-playlists",
+  });
+}
 
 export {};

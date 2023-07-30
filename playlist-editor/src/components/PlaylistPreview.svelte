@@ -17,19 +17,19 @@
     <div class="preview-row">
       <img
         class="preview-img"
-        alt="Playlist Video Thumbail 1"
+        alt=""
         src={videoService.getVideoThumbnailUrl(videos[0])}
       />
       <img
         class="preview-img"
-        alt="Playlist Video Thumbail 2"
+        alt=""
         src={videoService.getVideoThumbnailUrl(videos[1])}
       />
     </div>
     <div class="preview-row">
       <img
         class="preview-img"
-        alt="Playlist Video Thumbail 3"
+        alt=""
         src={videoService.getVideoThumbnailUrl(videos[2])}
       />
       <PlaylistCount {playlist} className="preview-img" />

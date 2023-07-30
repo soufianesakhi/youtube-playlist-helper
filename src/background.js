@@ -1,5 +1,12 @@
 const playlistBuilderId = "yphPlaylistBuilder";
 const playlistBuilderPageId = "yphPlaylistBuilderPage";
+const addVideoToPlaylistId = "yphAddVideoToPlaylist";
+const addVideoToPlaylistPageId = "yphAddVideoToPlaylistPage";
+const idSep = "#";
+const addVideoToPlaylistItemPrefix = `${addVideoToPlaylistId}${idSep}`;
+const addVideoToPlaylistPageItemPrefix = `${addVideoToPlaylistPageId}${idSep}`;
+
+const addVideoToPlaylistItemsContextIds = [];
 
 browser.contextMenus.create({
   id: playlistBuilderId,
@@ -13,25 +20,66 @@ browser.contextMenus.create({
   documentUrlPatterns: ["https://www.youtube.com/watch*"],
 });
 
+browser.contextMenus.create({
+  id: addVideoToPlaylistId,
+  title: "Add video to saved playlist",
+  contexts: ["link", "video"],
+});
+browser.contextMenus.create({
+  id: addVideoToPlaylistPageId,
+  title: "Add video to saved playlist",
+  contexts: ["page"],
+  documentUrlPatterns: ["https://www.youtube.com/watch*"],
+});
+
+buildAddVideoToPlaylistItems();
+
+function buildAddVideoToPlaylistItems() {
+  window.getPlaylists().then((playlists) => {
+    for (const playlist of playlists) {
+      const contextId = `${addVideoToPlaylistItemPrefix}${playlist.id}`;
+      const pageContextId = `${addVideoToPlaylistPageItemPrefix}${playlist.id}`;
+      addVideoToPlaylistItemsContextIds.push(contextId);
+      addVideoToPlaylistItemsContextIds.push(pageContextId);
+      browser.contextMenus.create({
+        id: contextId,
+        title: playlist.title,
+        parentId: addVideoToPlaylistId,
+      });
+      browser.contextMenus.create({
+        id: pageContextId,
+        title: playlist.title,
+        parentId: addVideoToPlaylistPageId,
+      });
+    }
+  });
+}
+
+async function clearAddVideoToPlaylistItems() {
+  await Promise.all(
+    [...addVideoToPlaylistItemsContextIds].map(async (contextId) => {
+      await browser.contextMenus.remove(contextId);
+    })
+  );
+  addVideoToPlaylistItemsContextIds.length = 0;
+}
+
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (
-    [playlistBuilderPageId, playlistBuilderId].indexOf("" + info.menuItemId) >
-    -1
-  ) {
-    const link = info.linkUrl || info.pageUrl;
-    if (!link || !(await addLinkToPlaylistBuilder(link))) {
-      alert("Invalid YouTube video link: " + link, true);
-      return;
+  const clickedMenuId = info.menuItemId.toString();
+  try {
+    if (
+      clickedMenuId == playlistBuilderId ||
+      clickedMenuId == playlistBuilderPageId
+    ) {
+      addVideoToPlaylistBuilder(info);
+    } else if (
+      clickedMenuId.startsWith(addVideoToPlaylistItemPrefix) ||
+      clickedMenuId.startsWith(addVideoToPlaylistPageItemPrefix)
+    ) {
+      addVideoToPlaylist(info, clickedMenuId);
     }
-    const settings = await window.getSettings();
-    /** @type {browser.tabs.Tab[]} */
-    let builderTabs = [];
-    if (settings.openPlaylistBuilderAfterAdd) {
-      builderTabs = await openPlaylistBuilderTab();
-    } else {
-      builderTabs = await getPlaylistBuilderTab();
-    }
-    builderTabs.forEach((tab) => browser.tabs.reload(tab.id));
+  } catch (error) {
+    handleError(error);
   }
 });
 
@@ -56,6 +104,10 @@ browser.runtime.onMessage.addListener(async (request) => {
       tabId && (await browser.tabs.update(tabId, { active: true }));
       return true;
     }
+  } else if (request.cmd === "update-saved-playlists") {
+    clearAddVideoToPlaylistItems();
+    buildAddVideoToPlaylistItems();
+    return true;
   }
 });
 
@@ -79,16 +131,56 @@ fetchBuilder().then((playlistBuilder) => {
   }
 });
 
-async function addLinkToPlaylistBuilder(link) {
-  const id = window.videoService.parseYoutubeId(link);
-  if (id) {
-    const playlistBuilder = await fetchBuilder();
-    playlistBuilder.push(id);
-    browser.browserAction.setBadgeText({ text: "" + playlistBuilder.length });
-    saveBuilder(playlistBuilder);
-    return true;
+/**
+ * @param {browser.contextMenus.OnClickData} info
+ */
+async function addVideoToPlaylistBuilder(info) {
+  const videoId = parseVideoId(info);
+  const playlistBuilder = await fetchBuilder();
+  playlistBuilder.push(videoId);
+  browser.browserAction.setBadgeText({ text: "" + playlistBuilder.length });
+  await saveBuilder(playlistBuilder);
+  const settings = await window.getSettings();
+  /** @type {browser.tabs.Tab[]} */
+  let builderTabs = [];
+  if (settings.openPlaylistBuilderAfterAdd) {
+    builderTabs = await openPlaylistBuilderTab();
+  } else {
+    builderTabs = await getPlaylistBuilderTab();
   }
-  return false;
+  builderTabs.forEach((tab) => browser.tabs.reload(tab.id));
+}
+
+/**
+ * @param {browser.contextMenus.OnClickData} info
+ * @param {string} clickedMenuId
+ */
+async function addVideoToPlaylist(info, clickedMenuId) {
+  const videoId = parseVideoId(info);
+  const playlistId = clickedMenuId.split(idSep)[1];
+  const playlist = await window.getPlaylist(playlistId);
+  playlist.videos.push(videoId);
+  await window.savePlaylist(playlist);
+  const settings = await window.getSettings();
+  if (settings.openSavedPlaylistAfterAdd) {
+    await browser.tabs.create({
+      url: browser.runtime.getURL(
+        `/editor/index.html?id=${playlistId}&saved=true#/editor`
+      ),
+    });
+  }
+}
+
+/**
+ * @param {browser.contextMenus.OnClickData} info
+ */
+function parseVideoId(info) {
+  const link = info.linkUrl || info.pageUrl;
+  const videoId = link && window.videoService.parseYoutubeId(link);
+  if (!videoId) {
+    throw new Error("Invalid YouTube video link: " + link);
+  }
+  return videoId;
 }
 
 async function getPlaylistBuilderTab() {
@@ -109,6 +201,10 @@ async function openPlaylistBuilderTab() {
     return [];
   }
   return builderTabs;
+}
+
+function handleError(error) {
+  alert(error.message);
 }
 
 /**

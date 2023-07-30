@@ -5,6 +5,7 @@
   import Recent from "./views/Recent.svelte";
   import Saved from "./views/Saved.svelte";
   import Manage from "./views/Manage.svelte";
+  import Support from "./views/Support.svelte";
 
   const routes = {
     "/": Recent,
@@ -14,6 +15,7 @@
     "/editor": PlaylistEditor,
     "/playlist-builder": PlaylistEditor,
     "/manage": Manage,
+    "/support": Support,
     "*": Recent,
   };
 </script>

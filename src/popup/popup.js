@@ -204,6 +204,13 @@ getById("open-settings").onclick = async () => {
   window.close();
 };
 
+getById("open-support").onclick = async () => {
+  await browser.tabs.create({
+    url: browser.runtime.getURL("/editor/index.html#/support"),
+  });
+  window.close();
+};
+
 queryAll(".back-item").forEach((item) => {
   item.onclick = () => {
     activatePopupMenu("main-menu");
@@ -421,7 +428,7 @@ async function createPlaylist(videoIds) {
     playlistId = await window.savePlaylist(playlist);
   } else if (settings.createdPlaylistStorage == "recent") {
     playlistId = await window.saveRecentPlaylist(playlist);
-  }  
+  }
   if (settings.openPlaylistEditorAfterCreation) {
     if (settings.createdPlaylistStorage) {
       const extraQueryParams = saved ? "&saved=true" : "";

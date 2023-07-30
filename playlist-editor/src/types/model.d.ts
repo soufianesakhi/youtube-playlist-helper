@@ -29,6 +29,7 @@ interface Settings {
   closeAfterCombine: boolean;
   disableThumbnails: boolean;
   openPlaylistBuilderAfterAdd: boolean;
+  openSavedPlaylistAfterAdd: boolean;
   defaultEditorPage: "/recent" | "/new" | "/saved";
   createdPlaylistStorage: "recent" | "saved" | "";
 }
