@@ -19,6 +19,7 @@
   import SimpleButton from "./SimpleButton.svelte";
   import { paginate, LightPaginationNav } from "svelte-paginate";
   import RemoveDuplicates from "./icons/RemoveDuplicates.svelte";
+  import type { Playlist, Video } from "../types/model.js";
 
   const videoService = window.videoService;
 
@@ -70,7 +71,11 @@
   const defaultPageSize = 50;
   let currentPage = 1;
   let pageSize = defaultPageSize;
-  $: paginatedVideos = paginate({ items: videos, pageSize, currentPage }) as Video[];
+  $: paginatedVideos = paginate({
+    items: videos,
+    pageSize,
+    currentPage,
+  }) as Video[];
 
   async function updatePaginationPage(e) {
     currentPage = e.detail.page;
@@ -415,7 +420,6 @@
           <span>Page size:</span>
         {/if}
         {#if videos.length > 0}
-          <!-- svelte-ignore a11y-no-onchange -->
           <select bind:value={pageSize} on:change={pageSizeChanged}>
             {#each possiblePageSizes as size}
               <option value={size} selected={size == pageSize}>

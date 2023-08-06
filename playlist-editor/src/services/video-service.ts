@@ -1,5 +1,7 @@
 /// <reference path="../types/services.d.ts" />
 
+import type { Playlist } from "../types/model.js";
+
 window.videoIdCount = 100;
 
 // https://regex101.com/r/rq2KLv/1

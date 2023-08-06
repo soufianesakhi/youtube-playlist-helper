@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Playlist } from "../types/model.js";
   import PlaylistCount from "./PlaylistCount.svelte";
 
   const videoService = window.videoService;

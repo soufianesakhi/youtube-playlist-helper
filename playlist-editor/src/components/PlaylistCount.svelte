@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Playlist } from "../types/model.js";
+
   export let playlist: Playlist;
   export let className = "";
 </script>

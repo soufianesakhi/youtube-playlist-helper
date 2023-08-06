@@ -1,4 +1,4 @@
-interface Video {
+export interface Video {
   id: string | number;
   videoId: string;
   url: string;
@@ -7,22 +7,23 @@ interface Video {
   thumbnailUrl: string;
 }
 
-interface PlaylistExport {
+export interface PlaylistExport {
   title: string;
   videos: string[];
   timestamp: number;
 }
 
-interface Playlist {
+export interface Playlist {
   id: string;
   title: string;
   loadedVideos?: Video[];
   videos: string[];
+  /** Date created */
   timestamp: number;
   saved?: boolean;
 }
 
-interface Settings {
+export interface Settings {
   [id: string]: any;
   openPlaylistEditorAfterCreation: boolean;
   openPlaylistPage: boolean;
@@ -33,3 +34,9 @@ interface Settings {
   defaultEditorPage: "/recent" | "/new" | "/saved";
   createdPlaylistStorage: "recent" | "saved" | "";
 }
+
+export type PlaylistsSorting =
+  | "date-created-asc"
+  | "date-created-desc"
+  | "title-az"
+  | "title-za";

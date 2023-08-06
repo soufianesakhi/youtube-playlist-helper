@@ -52,12 +52,17 @@ export default {
           ? "https://www.youtube.com"
           : "http://localhost:4444/www.youtube.com:443",
       }),
+      preventAssignment: true,
     }),
     svelte({
       preprocess: sveltePreprocess({ sourceMap: !production }),
       compilerOptions: {
         // enable run-time checks when not in production
         dev: !production,
+      },
+      onwarn: (warning, handler) => {
+        if (warning.code === "a11y-no-onchange") return;
+        handler(warning);
       },
     }),
     // we'll extract any component CSS out into

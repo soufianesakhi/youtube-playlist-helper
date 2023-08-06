@@ -1,5 +1,7 @@
 <script lang="ts">
+  import type { Playlist } from "../types/model.js";
   import PlaylistPreview from "./PlaylistPreview.svelte";
+  import PlaylistsFilters from "./PlaylistsFilters.svelte";
 
   export let playlists: Playlist[];
 
@@ -8,6 +10,10 @@
     disableThumbnails = settings.disableThumbnails;
   });
 </script>
+
+{#if playlists.length > 0}
+  <PlaylistsFilters bind:playlists />
+{/if}
 
 <div class="selector">
   {#each playlists as playlist (playlist.id)}
@@ -22,6 +28,6 @@
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
-    padding: 10px;
+    padding-top: 2rem;
   }
 </style>

@@ -1,5 +1,6 @@
-/// <reference path="../types/services.d.ts" />
 /// <reference path="../../node_modules/@types/firefox-webext-browser/index.d.ts" />
+
+import type { Playlist, PlaylistExport, Settings } from "../types/model.js";
 
 function playlistToDto(playlist: Playlist) {
   const dto = { ...playlist };
@@ -36,9 +37,9 @@ window.savePlaylist = async (playlist: Playlist) => {
     id = await window.generatePlaylistId();
   }
   playlist = {
+    timestamp: Date.now(),
     ...playlist,
     id,
-    timestamp: Date.now(),
   };
   await window.storeObject(PLAYLIST_KEY_PREFIX + id, playlistToDto(playlist));
   savedPlaylistsChanged();
