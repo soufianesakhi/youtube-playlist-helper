@@ -116,7 +116,11 @@ if (typeof browser != "undefined") {
 
   window.storeObject = async (id, obj) => {
     const items = {};
-    items[id] = obj ? JSON.stringify(obj) : null;
+    items[id] = obj
+      ? typeof obj === "string"
+        ? obj
+        : JSON.stringify(obj)
+      : null;
     return storage.set(items);
   };
 

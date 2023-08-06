@@ -20,7 +20,7 @@
   {#each filteredPlaylists as playlist (playlist.id)}
     <PlaylistPreview {playlist} {disableThumbnails} />
   {:else}
-    <p style="text-align: center">No playlist found</p>
+    <p style="text-align: center; padding: 1rem 0;">No playlist found</p>
   {/each}
 </div>
 
@@ -29,6 +29,5 @@
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
-    padding-top: 2rem;
   }
 </style>

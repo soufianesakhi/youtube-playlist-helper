@@ -13,6 +13,9 @@
 
   let sortBy = get(playlistsSorting);
   let search = get(playlistsSearch);
+  $: sortBy, filtersUpdated();
+  $: search, filtersUpdated();
+  filtersUpdated();
 
   const sortOptions: Record<PlaylistsSorting, string> = {
     "date-created-desc": "Date created (descending)",
@@ -21,18 +24,12 @@
     "title-za": "Title (Z -> A)",
   };
 
-  onMount(() => {
-    filtersUpdated();
-  });
-
   function sortingChanged() {
     playlistsSorting.set(sortBy);
-    filtersUpdated();
   }
 
   function searchChanged() {
     playlistsSearch.set(search);
-    filtersUpdated();
   }
 
   function filtersUpdated() {
@@ -74,6 +71,10 @@
 
 <style>
   aside {
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    background-color: white;
     width: 100%;
     display: flex;
     flex-direction: row;

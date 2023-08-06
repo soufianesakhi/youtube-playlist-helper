@@ -1,36 +1,51 @@
 <script lang="ts">
+  import LargeButton from "../components/LargeButton.svelte";
   import Sidebar from "../components/Sidebar.svelte";
+  import MailIcon from "../components/icons/MailIcon.svelte";
+  import PayPalIcon from "../components/icons/PayPalIcon.svelte";
+
+  function openLink(link) {
+    window.open(link, "_blank");
+  }
+  function openSupportMail() {
+    openLink(
+      "mailto:soufiane.sakhi.js@gmail.com?subject=YouTube Playlist Helper request"
+    );
+  }
+  function donate() {
+    openLink("https://www.paypal.com/donate/?hosted_button_id=DXRGUUALQDKXW");
+  }
 </script>
 
 <Sidebar />
 
 <main>
-  <p>
-    Send me an <a
-      href="mailto:soufiane.sakhi.js@gmail.com?subject=YouTube Playlist Helper request"
-      >email</a
-    > if you have any request or suggestions.
-  </p>
+  <div>
+    <LargeButton on:click={openSupportMail}>
+      <MailIcon />Send an email
+    </LargeButton>
+    if you have any request or suggestions.
+  </div>
 
   <div>
-    <a href="https://www.paypal.com/donate/?hosted_button_id=DXRGUUALQDKXW">
-      <img
-        src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif"
-        alt="Donate"
-      />
-    </a> to support the development costs of this extension.
+    <LargeButton
+      on:click={donate}
+      style="background-color: #ffcc00; font-weight: bold;"
+    >
+      <PayPalIcon />Donate
+    </LargeButton>
+    to support the development costs of this extension.
   </div>
 </main>
 
 <style>
   main {
     padding: 5rem;
+    font-size: 1.25rem;
   }
   div {
     display: flex;
     align-items: center;
-  }
-  img {
-    margin-right: 0.5rem;
+    gap: 0.5rem;
   }
 </style>

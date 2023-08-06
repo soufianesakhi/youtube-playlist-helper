@@ -1,4 +1,4 @@
-<button class={$$props.class} on:click>
+<button class={$$props.class} style={$$props.style} on:click>
   <slot />
 </button>
 
@@ -10,11 +10,12 @@
     gap: 0.5rem;
     flex-shrink: 0;
     text-align: center;
-    border-radius: 0.5rem;
-    height: 3rem;
+    border-radius: 1rem;
+    height: 2.5rem;
     padding-left: 1rem;
     padding-right: 1rem;
     cursor: pointer;
+    margin: 0;
   }
   button:hover {
     background-color: #f0f0f0;

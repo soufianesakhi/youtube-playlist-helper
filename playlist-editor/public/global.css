@@ -24,7 +24,9 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
+  padding: 0 2rem;
+  gap: 1rem;
+  font-size: 18px;
 }
 
 a {

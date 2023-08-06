@@ -1,4 +1,5 @@
 <script lang="ts">
+  import LargeButton from "../components/LargeButton.svelte";
   import Sidebar from "../components/Sidebar.svelte";
 
   function exportFile(content: string, filename?: string) {
@@ -62,12 +63,14 @@
 <Sidebar />
 
 <main style="padding: 5rem;">
-  <button on:click={exportSavedPlaylists}>Export saved playlists</button>
-  <button on:click={importSavedPlaylists} style="margin-top: 1rem;"
-    >Import saved playlists</button
+  <LargeButton on:click={exportSavedPlaylists}
+    >Export saved playlists</LargeButton
   >
-  <button on:click={removeSavedPlaylists} style="margin-top: 1rem;"
-    >Delete all saved playlists</button
+  <LargeButton on:click={importSavedPlaylists} style="margin-top: 1rem;"
+    >Import saved playlists</LargeButton
+  >
+  <LargeButton on:click={removeSavedPlaylists} style="margin-top: 1rem;"
+    >Delete all saved playlists</LargeButton
   >
 </main>
 
