@@ -1,38 +1,69 @@
 <script lang="ts">
   import { get } from "svelte/store";
   import { getPlaylistsSorter } from "../services/playlists-sorter.js";
-  import { playlistsSorting } from "../stores/playlists-filters.js";
+  import {
+    playlistsSearch,
+    playlistsSorting,
+  } from "../stores/playlists-filters.js";
   import type { Playlist, PlaylistsSorting } from "../types/model.js";
   import { onMount } from "svelte";
 
   export let playlists: Playlist[];
-
-  onMount(() => {
-    sortPlaylists();
-  });
+  export let filteredPlaylists: Playlist[];
 
   let sortBy = get(playlistsSorting);
-  function sortingChanged() {
-    playlistsSorting.set(sortBy);
-    sortPlaylists();
-  }
-  function sortPlaylists() {
-    playlists = playlists.sort(getPlaylistsSorter(sortBy));
-  }
+  let search = get(playlistsSearch);
+
   const sortOptions: Record<PlaylistsSorting, string> = {
     "date-created-desc": "Date created (descending)",
     "date-created-asc": "Date created (ascending)",
     "title-az": "Title (A -> Z)",
     "title-za": "Title (Z -> A)",
   };
+
+  onMount(() => {
+    filtersUpdated();
+  });
+
+  function sortingChanged() {
+    playlistsSorting.set(sortBy);
+    filtersUpdated();
+  }
+
+  function searchChanged() {
+    playlistsSearch.set(search);
+    filtersUpdated();
+  }
+
+  function filtersUpdated() {
+    filteredPlaylists = playlists.sort(getPlaylistsSorter(sortBy));
+    const keywords = search
+      .split(/\s+/)
+      .filter((k) => k.length)
+      .map((k) => k.toLowerCase());
+    if (keywords.length) {
+      filteredPlaylists = filteredPlaylists.filter((playlist) =>
+        keywords.every((k) => playlist.title.toLowerCase().includes(k))
+      );
+    }
+  }
 </script>
 
 <aside>
-  <h2 style="margin: 0">
-    {playlists.length} playlist{playlists.length > 1 ? "s" : ""}
+  <h2 style="margin: 0; flex-grow: 1; text-align: center;">
+    {filteredPlaylists.length} playlist{filteredPlaylists.length > 1 ? "s" : ""}
   </h2>
-  <label>
-    Sort by
+  <label style="flex-grow: 2">
+    <span style="width: 30%">Search</span>
+    <input
+      type="text"
+      bind:value={search}
+      on:input={searchChanged}
+      style="width: 70%"
+    />
+  </label>
+  <label style="min-width: fit-content;">
+    <span>Sort by</span>
     <select bind:value={sortBy} on:change={sortingChanged}>
       {#each Object.entries(sortOptions) as [value, label]}
         <option {value}>{label}</option>

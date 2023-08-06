@@ -1,16 +1,17 @@
 import { writable } from "svelte/store";
 import type { PlaylistsSorting } from "../types/model.js";
 
-const storageKey = "playlistsSorting";
+const playlistsSortingStorageKey = "playlistsSorting";
 const defaultPlaylistsSorting: PlaylistsSorting = "date-created-desc";
 
 export const playlistsSorting = writable<PlaylistsSorting>(
   defaultPlaylistsSorting
 );
+export const playlistsSearch = writable("");
 
 window
-  .fetchObject(storageKey, defaultPlaylistsSorting)
+  .fetchObject(playlistsSortingStorageKey, defaultPlaylistsSorting)
   .then(playlistsSorting.set);
 playlistsSorting.subscribe((sorting) => {
-  window.storeObject(storageKey, sorting);
+  window.storeObject(playlistsSortingStorageKey, sorting);
 });
