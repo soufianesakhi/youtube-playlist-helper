@@ -1,7 +1,7 @@
 {
   "name": "YouTube Playlist Helper",
   "description": "YouTube playlist editor and generator",
-  "version": "2.11.0",
+  "version": "2.11.1",
   "manifest_version": 2,
   "icons": {
     "48": "icons/icon_48.png",

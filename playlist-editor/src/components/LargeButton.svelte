@@ -1,4 +1,12 @@
-<button class={$$props.class} style={$$props.style} on:click>
+<script lang="ts">
+  export let bgcolor = "#007bff";
+</script>
+
+<button
+  class={$$props.class}
+  style={`background-color: ${bgcolor}; ` + $$props.style}
+  on:click
+>
   <slot />
 </button>
 
@@ -16,9 +24,12 @@
     padding-right: 1rem;
     cursor: pointer;
     margin: 0;
+    border-color: transparent;
+    color: white;
   }
-  button:hover {
-    background-color: #f0f0f0;
+  button:hover,
+  button:active {
+    background-image: linear-gradient(rgb(0 0 0/5%) 0 0);
   }
   button:active {
     animation: none;

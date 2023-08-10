@@ -1,6 +1,13 @@
 <script lang="ts">
+  import Fa from "svelte-fa";
+  import {
+    faFileExport,
+    faFileImport,
+    faTriangleExclamation,
+  } from "@fortawesome/free-solid-svg-icons";
   import LargeButton from "../components/LargeButton.svelte";
   import Sidebar from "../components/Sidebar.svelte";
+  import type { PlaylistExport } from "../types/model.js";
 
   function exportFile(content: string, filename?: string) {
     var textToSaveAsBlob = new Blob([content], { type: "application/json" });
@@ -63,18 +70,37 @@
 <Sidebar />
 
 <main style="padding: 5rem;">
-  <LargeButton on:click={exportSavedPlaylists}
-    >Export saved playlists</LargeButton
+  <LargeButton on:click={exportSavedPlaylists}>
+    <Fa icon={faFileExport} />
+    Export saved playlists
+  </LargeButton>
+
+  <LargeButton on:click={importSavedPlaylists} style="margin-top: 1rem;">
+    <Fa icon={faFileImport} />
+    Import saved playlists
+  </LargeButton>
+
+  <div class="spacer" />
+
+  <LargeButton
+    on:click={removeSavedPlaylists}
+    style="margin-top: 1rem; color: black; background-color: #FF8080"
   >
-  <LargeButton on:click={importSavedPlaylists} style="margin-top: 1rem;"
-    >Import saved playlists</LargeButton
-  >
-  <LargeButton on:click={removeSavedPlaylists} style="margin-top: 1rem;"
-    >Delete all saved playlists</LargeButton
-  >
+    <Fa icon={faTriangleExclamation} />
+    Delete all saved playlists
+  </LargeButton>
 </main>
 
 <input id="ImportSavedPlaylists" style="visibility: hidden;" type="file" />
 
 <style>
+  main {
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+  }
+  .spacer {
+    flex-grow: 1;
+  }
 </style>

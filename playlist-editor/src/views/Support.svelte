@@ -1,8 +1,9 @@
 <script lang="ts">
+  import Fa from "svelte-fa";
   import LargeButton from "../components/LargeButton.svelte";
   import Sidebar from "../components/Sidebar.svelte";
-  import MailIcon from "../components/icons/MailIcon.svelte";
   import PayPalIcon from "../components/icons/PayPalIcon.svelte";
+  import { faEnvelope } from "@fortawesome/free-regular-svg-icons";
 
   function openLink(link) {
     window.open(link, "_blank");
@@ -22,7 +23,8 @@
 <main>
   <div>
     <LargeButton on:click={openSupportMail}>
-      <MailIcon />Send an email
+      <Fa icon={faEnvelope} />
+      Send an email
     </LargeButton>
     if you have any request or suggestions.
   </div>
@@ -30,7 +32,7 @@
   <div>
     <LargeButton
       on:click={donate}
-      style="background-color: #ffcc00; font-weight: bold;"
+      style="background-color: #ffcc00; color: black; font-weight: bold;"
     >
       <PayPalIcon />Donate
     </LargeButton>
@@ -40,8 +42,10 @@
 
 <style>
   main {
+    height: 50%;
     padding: 5rem;
     font-size: 1.25rem;
+    gap: 2rem;
   }
   div {
     display: flex;
