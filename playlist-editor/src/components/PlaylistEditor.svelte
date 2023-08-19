@@ -67,7 +67,7 @@
     loading = false;
   }
 
-  const possiblePageSizes = [10, 20, 50];
+  const possiblePageSizes = [10, 20, 30, 40, 50];
   const defaultPageSize = 50;
   let currentPage = 1;
   let pageSize = defaultPageSize;
@@ -422,7 +422,7 @@
         {#if videos.length > 0}
           <select bind:value={pageSize} on:change={pageSizeChanged}>
             {#each possiblePageSizes as size}
-              <option value={size} selected={size == pageSize}>
+              <option value={size}>
                 {size}
               </option>
             {/each}

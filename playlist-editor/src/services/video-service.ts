@@ -72,12 +72,12 @@ class VideoService {
     return videoIds;
   }
 
-  async generatePlaylist(videoIds?: string[]) {
+  async generatePlaylist(videoIds?: string[], title?: string) {
     const id = await window.generatePlaylistId();
     const date = new Date();
     return {
       id,
-      title: date.toLocaleString(),
+      title: title ?? date.toLocaleString(),
       videos: videoIds || [],
       timestamp: date.getTime(),
     };

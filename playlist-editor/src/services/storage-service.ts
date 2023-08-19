@@ -100,18 +100,19 @@ window.getPlaylist = async (id) => {
 };
 
 if (typeof browser != "undefined") {
-  const storage = browser.storage.sync;
-
   window.fetchObject = async (id, defaultValue) => {
-    const result = await storage.get(id);
+    const result = await browser.storage.sync.get(id);
     if (result && result[id] != null) {
+      if (typeof defaultValue === "number") {
+        return +result[id];
+      }
       return result[id];
     }
     return defaultValue;
   };
 
   window.fetchAllObjects = async () => {
-    return storage.get(null);
+    return browser.storage.sync.get(null);
   };
 
   window.storeObject = async (id, obj) => {
@@ -121,30 +122,30 @@ if (typeof browser != "undefined") {
         ? obj
         : JSON.stringify(obj)
       : null;
-    return storage.set(items);
+    return browser.storage.sync.set(items);
   };
 
   window.removeObject = async (id) => {
-    return storage.remove(id);
+    return browser.storage.sync.remove(id);
   };
 
   const ID_COUNTER_KEY = "PlaylistIdCounter";
   window.generatePlaylistId = async () => {
-    const obj = await storage.get(ID_COUNTER_KEY);
+    const obj = await browser.storage.sync.get(ID_COUNTER_KEY);
     let count = obj[ID_COUNTER_KEY] || 0;
     count++;
     obj[ID_COUNTER_KEY] = count;
-    storage.set(obj);
+    browser.storage.sync.set(obj);
     return count;
   };
 
   window.generatePlaylistIds = async (size: number) => {
-    const obj = await storage.get(ID_COUNTER_KEY);
+    const obj = await browser.storage.sync.get(ID_COUNTER_KEY);
     let count = obj[ID_COUNTER_KEY] || 0;
     count++;
     const ids = [...Array(size).keys()].map((i) => i + count);
     obj[ID_COUNTER_KEY] = ids[ids.length - 1];
-    storage.set(obj);
+    browser.storage.sync.set(obj);
     return ids;
   };
 } else if (window.location.protocol.startsWith("http")) {
@@ -152,7 +153,14 @@ if (typeof browser != "undefined") {
 
   window.fetchObject = async (id, defaultValue) => {
     const value = localStorage.getItem(id);
-    return (value && JSON.parse(value)) || defaultValue;
+    if (value) {
+      const parsed = JSON.parse(value);
+      if (typeof defaultValue === "number") {
+        return +parsed;
+      }
+      return parsed;
+    }
+    return defaultValue;
   };
 
   window.fetchAllObjects = async () => {
@@ -180,17 +188,17 @@ if (typeof browser != "undefined") {
   window.removeSavedPlaylists = async () => {};
 }
 
-const DEFAULT_SETTINGS: Settings = {
-  openPlaylistEditorAfterCreation: false,
-  openPlaylistPage: false,
-  closeAfterCombine: false,
-  disableThumbnails: false,
-  openPlaylistBuilderAfterAdd: false,
-  openSavedPlaylistAfterAdd: false,
-  defaultEditorPage: "/recent",
-  createdPlaylistStorage: "recent",
-};
 window.getSettings = async () => {
+  const DEFAULT_SETTINGS: Settings = {
+    openPlaylistEditorAfterCreation: true,
+    openPlaylistPage: false,
+    closeAfterCombine: false,
+    disableThumbnails: false,
+    openPlaylistBuilderAfterAdd: false,
+    openSavedPlaylistAfterAdd: false,
+    defaultEditorPage: "/recent",
+    createdPlaylistStorage: "recent",
+  };
   const settings = { ...DEFAULT_SETTINGS };
   await Promise.all(
     Object.keys(DEFAULT_SETTINGS).map(async (key) => {

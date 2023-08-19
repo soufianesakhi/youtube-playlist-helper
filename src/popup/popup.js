@@ -39,7 +39,7 @@ getById("from-bookmark").onclick = () => {
       div.textContent = folder.folderName;
       div.className = "menu-item";
       div.onclick = () => {
-        createPlaylist(folder.videoIds);
+        createPlaylist(folder.videoIds, getFileName(folder.folderName));
         setTimeout(() => window.close(), 10);
       };
       container.append(div);
@@ -414,40 +414,14 @@ function parseYoutubeLinks(text) {
 
 /**
  * @param  {string[]} videoIds
+ * @param  {string} [title]
  */
-async function createPlaylist(videoIds) {
-  if (videoIds.length == 0) {
-    return;
-  }
-  const playlist = await videoService.generatePlaylist(videoIds);
-  const settings = await window.getSettings();
-  let saved = false;
-  let playlistId;
-  if (settings.createdPlaylistStorage == "saved") {
-    saved = true;
-    playlistId = await window.savePlaylist(playlist);
-  } else if (settings.createdPlaylistStorage == "recent") {
-    playlistId = await window.saveRecentPlaylist(playlist);
-  }
-  if (settings.openPlaylistEditorAfterCreation) {
-    if (settings.createdPlaylistStorage) {
-      const extraQueryParams = saved ? "&saved=true" : "";
-      await browser.tabs.create({
-        url: browser.runtime.getURL(
-          `/editor/index.html?id=${playlistId}${extraQueryParams}#/editor`
-        ),
-      });
-    } else {
-      const videoIdsParam = videoIds.join(",");
-      await browser.tabs.create({
-        url: browser.runtime.getURL(
-          `/editor/index.html?videoIds=${videoIdsParam}#/editor`
-        ),
-      });
-    }
-  } else {
-    await videoService.openPlaylist(videoIds);
-  }
+async function createPlaylist(videoIds, title) {
+  await browser.runtime.sendMessage({
+    cmd: "create-playlist",
+    videoIds,
+    title,
+  });
 }
 
 /***********************************
@@ -508,4 +482,9 @@ async function alert(message, isInfo) {
  */
 function removeDuplicates(array) {
   return Array.from(new Set(array));
+}
+
+function getFileName(fullPath) {
+  const split = fullPath.split(/[\/\\]/);
+  return split.pop() || split.pop();
 }

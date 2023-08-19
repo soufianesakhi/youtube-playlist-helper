@@ -1,6 +1,8 @@
-/// <reference path="../../playlist-editor/src/types/model.d.ts" />
-
 const MULTI_VALUE_SETTINGS = ["defaultEditorPage", "createdPlaylistStorage"];
+
+/**
+ * @typedef {import("../../playlist-editor/src/types/model.js").Settings} Settings
+ */
 
 /**
  * @param {string} id

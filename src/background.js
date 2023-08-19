@@ -108,8 +108,50 @@ browser.runtime.onMessage.addListener(async (request) => {
     clearAddVideoToPlaylistItems();
     buildAddVideoToPlaylistItems();
     return true;
+  } else if (request.cmd === "create-playlist") {
+    await createPlaylist(request.videoIds, request.title);
+    return true;
   }
 });
+
+/**
+ * @param  {string[]} videoIds
+ * @param  {string} [title]
+ */
+async function createPlaylist(videoIds, title) {
+  if (videoIds.length == 0) {
+    return;
+  }
+  const playlist = await window.videoService.generatePlaylist(videoIds, title);
+  const settings = await window.getSettings();
+  let saved = false;
+  let playlistId;
+  if (settings.createdPlaylistStorage == "saved") {
+    saved = true;
+    playlistId = await window.savePlaylist(playlist);
+  } else if (settings.createdPlaylistStorage == "recent") {
+    playlistId = await window.saveRecentPlaylist(playlist);
+  }
+  if (settings.openPlaylistEditorAfterCreation) {
+    if (settings.createdPlaylistStorage) {
+      const extraQueryParams = saved ? "&saved=true" : "";
+      await browser.tabs.create({
+        url: browser.runtime.getURL(
+          `/editor/index.html?id=${playlistId}${extraQueryParams}#/editor`
+        ),
+      });
+    } else {
+      const videoIdsParam = videoIds.join(",");
+      await browser.tabs.create({
+        url: browser.runtime.getURL(
+          `/editor/index.html?videoIds=${videoIdsParam}#/editor`
+        ),
+      });
+    }
+  } else {
+    await window.videoService.openPlaylist(videoIds);
+  }
+}
 
 async function fetchBuilder() {
   const items = await browser.storage.local.get(playlistBuilderId);
