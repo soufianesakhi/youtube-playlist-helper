@@ -6,33 +6,50 @@ const idSep = "#";
 const addVideoToPlaylistItemPrefix = `${addVideoToPlaylistId}${idSep}`;
 const addVideoToPlaylistPageItemPrefix = `${addVideoToPlaylistPageId}${idSep}`;
 
+const contextMenuIds = [];
 const addVideoToPlaylistItemsContextIds = [];
 
-browser.contextMenus.create({
-  id: playlistBuilderId,
-  title: "Add video to the playlist builder",
-  contexts: ["link", "video"],
-});
-browser.contextMenus.create({
-  id: playlistBuilderPageId,
-  title: "Add video to the playlist builder",
-  contexts: ["page"],
-  documentUrlPatterns: ["https://www.youtube.com/watch*"],
-});
+window.getSettings().then(buildContextMenus);
 
-browser.contextMenus.create({
-  id: addVideoToPlaylistId,
-  title: "Add video to saved playlist",
-  contexts: ["link", "video"],
-});
-browser.contextMenus.create({
-  id: addVideoToPlaylistPageId,
-  title: "Add video to saved playlist",
-  contexts: ["page"],
-  documentUrlPatterns: ["https://www.youtube.com/watch*"],
-});
+/**
+ *
+ * @param {import("../playlist-editor/src/types/model").Settings} settings
+ */
+function buildContextMenus(settings) {
+  if (!settings.disableContextBuilder) {
+    browser.contextMenus.create({
+      id: playlistBuilderId,
+      title: "Add video to the playlist builder",
+      contexts: ["link", "video"],
+    });
+    contextMenuIds.push(playlistBuilderId);
+  }
 
-buildAddVideoToPlaylistItems();
+  if (!settings.disableContextSaved) {
+    browser.contextMenus.create({
+      id: playlistBuilderPageId,
+      title: "Add video to the playlist builder",
+      contexts: ["page"],
+      documentUrlPatterns: ["https://www.youtube.com/watch*"],
+    });
+
+    browser.contextMenus.create({
+      id: addVideoToPlaylistId,
+      title: "Add video to saved playlist",
+      contexts: ["link", "video"],
+    });
+    browser.contextMenus.create({
+      id: addVideoToPlaylistPageId,
+      title: "Add video to saved playlist",
+      contexts: ["page"],
+      documentUrlPatterns: ["https://www.youtube.com/watch*"],
+    });
+    contextMenuIds.push(playlistBuilderPageId);
+    contextMenuIds.push(addVideoToPlaylistId);
+    contextMenuIds.push(addVideoToPlaylistPageId);
+    buildAddVideoToPlaylistItems();
+  }
+}
 
 function buildAddVideoToPlaylistItems() {
   window.getPlaylists().then((playlists) => {
@@ -61,6 +78,18 @@ async function clearAddVideoToPlaylistItems() {
       await browser.contextMenus.remove(contextId);
     })
   );
+  addVideoToPlaylistItemsContextIds.length = 0;
+}
+
+async function clearContextMenus() {
+  await Promise.all(
+    [...contextMenuIds, ...addVideoToPlaylistItemsContextIds].map(
+      async (contextId) => {
+        await browser.contextMenus.remove(contextId);
+      }
+    )
+  );
+  contextMenuIds.length = 0;
   addVideoToPlaylistItemsContextIds.length = 0;
 }
 
@@ -110,6 +139,11 @@ browser.runtime.onMessage.addListener(async (request) => {
     return true;
   } else if (request.cmd === "create-playlist") {
     await createPlaylist(request.videoIds, request.title);
+    return true;
+  } else if (request.cmd === "update-settings") {
+    const settings = await window.getSettings();
+    await clearContextMenus();
+    await buildContextMenus(settings);
     return true;
   }
 });

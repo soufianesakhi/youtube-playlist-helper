@@ -93,6 +93,9 @@ let options = [];
 async function saveOptions(e) {
   e.preventDefault();
   await Promise.all(options.map((option) => option.save()));
+  browser.runtime.sendMessage({
+    cmd: "update-settings",
+  });
   alert("Settings saved");
 }
 

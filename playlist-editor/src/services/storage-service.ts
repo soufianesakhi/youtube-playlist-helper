@@ -194,10 +194,12 @@ window.getSettings = async () => {
     openPlaylistPage: false,
     closeAfterCombine: false,
     disableThumbnails: false,
-    openPlaylistBuilderAfterAdd: false,
-    openSavedPlaylistAfterAdd: false,
+    openPlaylistBuilderAfterAdd: true,
+    openSavedPlaylistAfterAdd: true,
     defaultEditorPage: "/recent",
     createdPlaylistStorage: "recent",
+    disableContextBuilder: false,
+    disableContextSaved: false,
   };
   const settings = { ...DEFAULT_SETTINGS };
   await Promise.all(

@@ -33,6 +33,8 @@ export interface Settings {
   openSavedPlaylistAfterAdd: boolean;
   defaultEditorPage: "/recent" | "/new" | "/saved";
   createdPlaylistStorage: "recent" | "saved" | "";
+  disableContextBuilder: boolean;
+  disableContextSaved: boolean;
 }
 
 export type PlaylistsSorting =
