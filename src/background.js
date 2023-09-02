@@ -22,17 +22,17 @@ function buildContextMenus(settings) {
       title: "Add video to the playlist builder",
       contexts: ["link", "video"],
     });
-    contextMenuIds.push(playlistBuilderId);
-  }
-
-  if (!settings.disableContextSaved) {
     browser.contextMenus.create({
       id: playlistBuilderPageId,
       title: "Add video to the playlist builder",
       contexts: ["page"],
       documentUrlPatterns: ["https://www.youtube.com/watch*"],
     });
+    contextMenuIds.push(playlistBuilderPageId);
+    contextMenuIds.push(playlistBuilderId);
+  }
 
+  if (!settings.disableContextSaved) {
     browser.contextMenus.create({
       id: addVideoToPlaylistId,
       title: "Add video to saved playlist",
@@ -44,7 +44,6 @@ function buildContextMenus(settings) {
       contexts: ["page"],
       documentUrlPatterns: ["https://www.youtube.com/watch*"],
     });
-    contextMenuIds.push(playlistBuilderPageId);
     contextMenuIds.push(addVideoToPlaylistId);
     contextMenuIds.push(addVideoToPlaylistPageId);
     buildAddVideoToPlaylistItems();

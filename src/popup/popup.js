@@ -9,6 +9,16 @@
 const videoService = window.videoService;
 const parseYoutubeId = videoService.parseYoutubeId;
 
+window.getSettings().then((settings) => {
+  let theme = settings.themeChoice;
+  if (theme == "device") {
+    theme = window.matchMedia?.("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+  document.documentElement.dataset.theme = theme;
+});
+
 /***********************************
  *               UI
  ***********************************/

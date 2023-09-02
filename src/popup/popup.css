@@ -1,9 +1,25 @@
+:root {
+  color-scheme: light;
+  --background-color: #fff;
+  --text-color: black;
+  --border-color: #ccc;
+  --hover-color: #cff2f2;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background-color: rgba(36, 56, 102);
+  --text-color: rgb(179, 201, 255);
+  --border-color: rgb(15, 23, 41);
+  --hover-color: rgba(179, 201, 255, 0.2);
+}
+
 body {
   margin: 0;
   font-size: 15px;
   font-weight: 400;
-  color: #212529;
-  background-color: #fff;
+  color: var(--text-color);
+  background-color: var(--background-color);
   overflow-y: auto;
 }
 
@@ -11,7 +27,8 @@ body {
   overflow-x: hidden;
 }
 
-#urlsTextarea, #builderUrlsTextarea {
+#urlsTextarea,
+#builderUrlsTextarea {
   min-height: 250px;
   min-width: 335px;
   width: 100%;
@@ -23,17 +40,17 @@ body {
 
 .menu-item:hover,
 .menu-item.back-item:hover {
-  background-color: #cff2f2;
+  background-color: var(--hover-color);
 }
 
 .back-item {
-  background-color: #eef0f0;
+  background-color: var(--background-color);
 }
 
 .menu-item {
   min-width: 25rem;
   padding: 0.75rem 1.25rem;
-  border-top: 1px solid rgba(0, 0, 0, 0.125);
+  border-top: 1px solid var(--border-color);
   text-align: left;
   cursor: pointer;
 }
@@ -41,24 +58,26 @@ body {
 .menu-item > i {
   border-bottom: 6px solid transparent;
   border-top: 6px solid transparent;
-  border-left: 6px solid #000000;
+  border-left: 6px solid var(--text-color);
   float: right;
   margin: 0.5rem 0rem 0.5rem 1rem;
 }
 
 .back-item.menu-item > i {
   border-left: none;
-  border-right: 6px solid #000000;
+  border-right: 6px solid var(--text-color);
   float: left;
   margin: 0.4rem 1.4rem 0.4rem 0rem;
 }
 
-#create-from-urls, #create-from-builder {
+#create-from-urls,
+#create-from-builder {
   background-color: #296969;
   color: white;
   text-align: center;
 }
 
-#create-from-urls:hover, #create-from-builder:hover {
+#create-from-urls:hover,
+#create-from-builder:hover {
   opacity: 0.9;
 }
