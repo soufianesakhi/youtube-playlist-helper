@@ -179,6 +179,7 @@ window.getSettings = async () => {
     saveCreatedPlaylists: false,
     disableContextBuilder: false,
     disableContextSaved: false,
+    themeChoice: "device",
   };
   const settings = { ...DEFAULT_SETTINGS };
   await Promise.all(

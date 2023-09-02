@@ -1,4 +1,4 @@
-const MULTI_VALUE_SETTINGS = ["defaultEditorPage"];
+const MULTI_VALUE_SETTINGS = ["defaultEditorPage", "themeChoice"];
 
 /**
  * @typedef {import("../../playlist-editor/src/types/model.js").Settings} Settings
@@ -107,6 +107,13 @@ async function restoreOptions() {
     options.push(option);
     option.restore();
   });
+  let theme = settings.themeChoice;
+  if (theme == "device") {
+    theme = window.matchMedia?.("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+  document.documentElement.dataset.theme = theme;
 }
 
 document.addEventListener("DOMContentLoaded", restoreOptions);

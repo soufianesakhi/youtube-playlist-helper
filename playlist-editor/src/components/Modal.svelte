@@ -36,7 +36,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #fefefe;
+    background-color: var(--background-color);
     padding: 20px;
     border: 1px solid #888;
     width: 80%;

@@ -20,13 +20,13 @@
     line-height: 40px;
     color: white;
     border-radius: 50%;
-    box-shadow: 0 6px 10px 0 #666;
+    box-shadow: 0 6px 10px 0 var(--shadow-color);
     transition: all 0.1s ease-in-out;
     cursor: pointer;
   }
 
   .fab:hover {
-    box-shadow: 0 6px 14px 0 #666;
+    box-shadow: 0 6px 14px 0 var(--shadow-color);
     transform: scale(1.05);
   }
 

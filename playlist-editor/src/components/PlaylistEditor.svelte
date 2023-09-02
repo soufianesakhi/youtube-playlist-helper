@@ -17,9 +17,10 @@
   import PlaylistVideo from "./PlaylistVideo.svelte";
   import Sidebar from "./Sidebar.svelte";
   import SimpleButton from "./SimpleButton.svelte";
-  import { paginate, LightPaginationNav } from "svelte-paginate";
+  import { paginate } from "svelte-paginate";
   import RemoveDuplicates from "./icons/RemoveDuplicates.svelte";
   import type { Playlist, Video } from "../types/model.js";
+  import PaginationNav from "./PaginationNav.svelte";
 
   const videoService = window.videoService;
 
@@ -407,29 +408,29 @@
       {:else}
         <p style="text-align: center">The playlist is empty</p>
       {/each}
-      <div class="pagination">
-        {#if videos.length > pageSize}
-          <LightPaginationNav
-            totalItems={videos.length}
-            {pageSize}
-            {currentPage}
-            limit={1}
-            showStepOptions={true}
-            on:setPage={updatePaginationPage}
-          />
-        {:else if videos.length > 0}
-          <span>Page size:</span>
-        {/if}
-        {#if videos.length > 0}
-          <select bind:value={pageSize} on:change={pageSizeChanged}>
-            {#each possiblePageSizes as size}
-              <option value={size}>
-                {size}
-              </option>
-            {/each}
-          </select>
-        {/if}
-      </div>
+    </div>
+    <div class="pagination">
+      {#if videos.length > pageSize}
+        <PaginationNav
+          totalItems={videos.length}
+          {pageSize}
+          {currentPage}
+          limit={1}
+          showStepOptions={true}
+          on:setPage={updatePaginationPage}
+        />
+      {:else if videos.length > 0}
+        <span>Page size:</span>
+      {/if}
+      {#if videos.length > 0}
+        <select bind:value={pageSize} on:change={pageSizeChanged}>
+          {#each possiblePageSizes as size}
+            <option value={size}>
+              {size}
+            </option>
+          {/each}
+        </select>
+      {/if}
     </div>
   {/if}
 </main>
@@ -486,13 +487,12 @@
 
   .list {
     width: 100%;
-    background-color: white;
     border-radius: 4px;
-    box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(10, 10, 10, 0.1);
+    border: 1px solid var(--border-color);
   }
 
   .list > div:not(:last-child) {
-    border-bottom: 1px solid #dbdbdb;
+    border-bottom: 1px solid var(--border-color);
   }
 
   textarea {

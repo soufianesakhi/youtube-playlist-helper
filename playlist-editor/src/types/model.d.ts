@@ -35,6 +35,7 @@ export interface Settings {
   saveCreatedPlaylists: boolean;
   disableContextBuilder: boolean;
   disableContextSaved: boolean;
+  themeChoice: ThemeChoice;
 }
 
 export type PlaylistsSorting =
@@ -42,3 +43,6 @@ export type PlaylistsSorting =
   | "date-created-desc"
   | "title-az"
   | "title-za";
+
+export type Theme = "light" | "dark";
+export type ThemeChoice = "device" | Theme;

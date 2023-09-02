@@ -1,3 +1,29 @@
+:root {
+  color-scheme: light;
+  --background-color: #fff;
+  --text-color: #333;
+  --border-color: #ccc;
+  --hover-color: rgb(255, 154, 154);
+  --active-bg-color: rgb(255, 221, 221);
+  --active-text-color: rgb(74, 75, 105);
+  --shadow-color: #666;
+  --sidebar-bg-color: rgb(255, 82, 82);
+  --sidebar-text-color: #ffffff;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background-color: rgba(36, 56, 102);
+  --text-color: rgb(179, 201, 255);
+  --border-color: rgb(15, 23, 41);
+  --hover-color: rgba(179, 201, 255, 0.2);
+  --active-bg-color: rgba(179, 201, 255, 0.1);
+  --active-text-color: rgb(58, 191, 248);
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --sidebar-bg-color: rgb(26, 39, 71);
+  --sidebar-text-color: rgb(179, 201, 255);
+}
+
 html,
 body {
   position: relative;
@@ -6,7 +32,8 @@ body {
 }
 
 body {
-  color: #333;
+  color: var(--text-color);
+  background-color: var(--background-color);
   margin: 0;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -24,7 +51,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 2rem;
+  padding: 0 2rem 2rem;
   gap: 1rem;
   font-size: 18px;
 }
@@ -56,28 +83,6 @@ textarea {
   padding: 0.4em;
   margin: 0 0 0.5em 0;
   box-sizing: border-box;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 2px;
-}
-
-input:disabled {
-  color: #ccc;
-}
-
-button {
-  color: #333;
-  background-color: #f4f4f4;
-  outline: none;
-}
-
-button:disabled {
-  color: #999;
-}
-
-button:not(:disabled):active {
-  background-color: #ddd;
-}
-
-button:focus {
-  border-color: #666;
 }

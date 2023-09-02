@@ -43,7 +43,7 @@
   }
 
   .playlist-video:hover {
-    background-color: #eeeeee;
+    background-color: var(--hover-color);
   }
 
   .playlist-video.is-active {

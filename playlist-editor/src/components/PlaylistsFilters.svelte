@@ -74,7 +74,7 @@
     padding: 1rem 0;
     position: sticky;
     top: 0;
-    background-color: white;
+    background-color: var(--background-color);
     width: 100%;
     display: flex;
     flex-direction: row;

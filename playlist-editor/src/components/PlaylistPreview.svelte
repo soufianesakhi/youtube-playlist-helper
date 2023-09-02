@@ -50,7 +50,7 @@
   }
 
   .preview:hover {
-    background-color: #eeeeee;
+    background-color: var(--hover-color);
   }
 
   :global(.preview-img) {

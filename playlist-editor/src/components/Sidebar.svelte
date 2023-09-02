@@ -21,7 +21,7 @@
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: rgb(255, 82, 82);
+    background-color: var(--sidebar-bg-color);
     padding: 1rem 0.2rem;
   }
 
@@ -31,18 +31,17 @@
     text-decoration: none;
     font-size: 1.2rem;
     line-height: 1.2rem;
-    color: #ffffff;
+    color: var(--sidebar-text-color);
     display: block;
   }
 
   .sidenav a:hover {
-    background-color: rgb(255, 154, 154);
+    background-color: var(--hover-color);
   }
 
   .sidenav a.active {
-    background-color: rgb(255, 221, 221);
-    color: rgb(74, 75, 105);
-    box-shadow: inset 0px 0px 0.2rem #c1c1c1;
+    background-color: var(--active-bg-color);
+    color: var(--active-text-color);
   }
 
   .sidenav a:hover,
