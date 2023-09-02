@@ -4,7 +4,7 @@ A YouTube playlist creator for [Firefox](https://addons.mozilla.org/en-US/firefo
 
 ## Support
 
-Send me an <a href="mailto:soufiane.sakhi.js@gmail.com?subject=YouTube Playlist Helper request">email</a> if you have any request or suggestions.
+Send me an <a href="mailto:soufiane.sakhi.js@gmail.com?subject=YouTube Playlist Helper request">email</a> if you have any request or suggestions. I will try to respond when I have the time.
 
 <a href="https://www.paypal.com/donate/?hosted_button_id=DXRGUUALQDKXW" alt="Donate">![](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)</a> to support the development costs of this extension.
 

@@ -26,7 +26,8 @@
       <Fa icon={faEnvelope} />
       Send an email
     </LargeButton>
-    if you have any request or suggestions.
+    if you have any request or suggestions. I will try to respond when I have the
+    time.
   </div>
 
   <div>
