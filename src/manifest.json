@@ -21,6 +21,7 @@
       "browser-polyfill.min.js",
       "editor/storage-service.js",
       "editor/video-service.js",
+      "editor/utils.js",
       "background.js"
     ]
   },

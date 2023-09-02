@@ -183,7 +183,7 @@
       videos = [...videos, video];
       await savePlaylistBuilder();
     } else {
-      alert("Invalid YouTube url");
+      window.error("Invalid YouTube url");
     }
   }
 
@@ -200,7 +200,10 @@
     importText = "";
     displayModal = false;
     loading = false;
-    setTimeout(() => alert(`Imported ${importedVideos.length} videos`), 100);
+    setTimeout(
+      () => window.success(`Imported ${importedVideos.length} videos`),
+      100
+    );
   }
 
   async function exportVideos() {
@@ -248,9 +251,12 @@
       videos = uniqueVideos;
       loadPageVideos(currentPage);
       await savePlaylistBuilder();
-      setTimeout(() => alert(`Removed ${duplicatesCount} duplicates`), 200);
+      setTimeout(
+        () => window.success(`Removed ${duplicatesCount} duplicates`),
+        200
+      );
     } else {
-      alert("No duplicates found");
+      window.info("No duplicates found");
     }
   }
 
@@ -264,7 +270,7 @@
         cmd: "clear-playlist-builder",
       });
     }
-    alert("Playlist saved");
+    window.success("Playlist saved");
     await replace("/saved");
   }
 

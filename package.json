@@ -11,9 +11,9 @@
     "cors": "cd playlist-editor && npm run cors",
     "build": "cd playlist-editor && npm run build"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/firefox-webext-browser": "^70.0.1",
+    "notyf": "^3.10.0",
     "webextension-polyfill": "^0.6.0"
   }
 }

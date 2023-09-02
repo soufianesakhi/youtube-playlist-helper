@@ -37,7 +37,7 @@
   async function removeSavedPlaylists() {
     if (confirm("All the saved playlists are about to be deleted")) {
       await window.removeSavedPlaylists();
-      alert("All saved playlists were successfully removed");
+      window.success("All saved playlists were successfully removed");
     }
   }
 
@@ -53,10 +53,10 @@
             fr.result as string
           );
           await window.importPlaylists(playlistsExport);
-          alert("The playlists were successfully imported");
+          window.success("The playlists were successfully imported");
         } catch (e) {
           console.log(e);
-          alert("The file is incorrectly formatted");
+          window.error("The file is incorrectly formatted");
         }
         fileInput.value = null;
       };

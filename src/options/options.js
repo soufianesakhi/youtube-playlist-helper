@@ -2,6 +2,7 @@ const MULTI_VALUE_SETTINGS = ["defaultEditorPage"];
 
 /**
  * @typedef {import("../../playlist-editor/src/types/model.js").Settings} Settings
+ * @typedef {import("./options.js").Option} Option
  */
 
 /**
@@ -96,7 +97,7 @@ async function saveOptions(e) {
   browser.runtime.sendMessage({
     cmd: "update-settings",
   });
-  alert("Settings saved");
+  window.success("Settings saved");
 }
 
 async function restoreOptions() {

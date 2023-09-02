@@ -37,3 +37,13 @@ interface Window {
   getPlaylists: GetPlaylists;
   getPlaylist: GetPlaylist;
 }
+
+/**
+ * utils
+ */
+
+interface Window {
+  success: (string) => Function;
+  error: (string) => Function;
+  info: (string) => Function;
+}

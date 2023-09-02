@@ -119,7 +119,7 @@ class VideoService {
             ]);
           }
         } else if (settings.openPlaylistPage) {
-          alert(
+          window.error(
             "Unable to retrieve playlist id. Directly playing videos instead..."
           );
         }
