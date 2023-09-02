@@ -36,7 +36,4 @@ interface Window {
   removePlaylist: RemovePlaylist;
   getPlaylists: GetPlaylists;
   getPlaylist: GetPlaylist;
-  saveRecentPlaylist: SavePlaylist;
-  getRecentPlaylists: GetPlaylists;
-  getRecentPlaylist: GetPlaylist;
 }

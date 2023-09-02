@@ -158,20 +158,15 @@ async function createPlaylist(videoIds, title) {
   }
   const playlist = await window.videoService.generatePlaylist(videoIds, title);
   const settings = await window.getSettings();
-  let saved = false;
   let playlistId;
-  if (settings.createdPlaylistStorage == "saved") {
-    saved = true;
+  if (settings.saveCreatedPlaylists) {
     playlistId = await window.savePlaylist(playlist);
-  } else if (settings.createdPlaylistStorage == "recent") {
-    playlistId = await window.saveRecentPlaylist(playlist);
   }
   if (settings.openPlaylistEditorAfterCreation) {
-    if (settings.createdPlaylistStorage) {
-      const extraQueryParams = saved ? "&saved=true" : "";
+    if (settings.saveCreatedPlaylists) {
       await browser.tabs.create({
         url: browser.runtime.getURL(
-          `/editor/index.html?id=${playlistId}${extraQueryParams}#/editor`
+          `/editor/index.html?id=${playlistId}#/editor`
         ),
       });
     } else {

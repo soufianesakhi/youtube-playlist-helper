@@ -10,27 +10,6 @@ function playlistToDto(playlist: Playlist) {
 
 const PLAYLIST_KEY_PREFIX = "playlist_";
 
-window.saveRecentPlaylist = async (playlist: Playlist) => {
-  localStorage.setItem(
-    PLAYLIST_KEY_PREFIX + playlist.id,
-    JSON.stringify(playlistToDto(playlist))
-  );
-  return playlist.id;
-};
-
-window.getRecentPlaylists = async () => {
-  const items = { ...localStorage };
-  const playlists = Object.keys(items)
-    .filter((key) => key.startsWith(PLAYLIST_KEY_PREFIX))
-    .map((key) => JSON.parse(items[key]) as Playlist);
-  return playlists;
-};
-
-window.getRecentPlaylist = async (id) => {
-  const item = localStorage.getItem(PLAYLIST_KEY_PREFIX + id);
-  return JSON.parse(item);
-};
-
 window.savePlaylist = async (playlist: Playlist) => {
   let id = playlist.id;
   if (!playlist.saved) {
@@ -196,8 +175,8 @@ window.getSettings = async () => {
     disableThumbnails: false,
     openPlaylistBuilderAfterAdd: true,
     openSavedPlaylistAfterAdd: true,
-    defaultEditorPage: "/recent",
-    createdPlaylistStorage: "recent",
+    defaultEditorPage: "/saved",
+    saveCreatedPlaylists: false,
     disableContextBuilder: false,
     disableContextSaved: false,
   };
@@ -208,8 +187,24 @@ window.getSettings = async () => {
       settings[key] = value;
     })
   );
+  await migrateSettings(settings);
   return settings;
 };
+
+async function migrateSettings(settings) {
+  if (settings.createdPlaylistStorage == "saved") {
+    settings.saveCreatedPlaylists = true;
+    await browser.storage.sync.set({
+      saveCreatedPlaylists: settings.saveCreatedPlaylists,
+    });
+  }
+  if (settings.defaultEditorPage == "/recent") {
+    settings.defaultEditorPage = "/saved";
+    await browser.storage.sync.set({
+      defaultEditorPage: settings.defaultEditorPage,
+    });
+  }
+}
 
 function savedPlaylistsChanged() {
   browser.runtime.sendMessage({

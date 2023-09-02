@@ -97,13 +97,8 @@
     } else {
       const url = new URL(document.URL);
       const id = url.searchParams.get("id");
-      const saved = url.searchParams.get("saved");
       if (id) {
-        if (saved) {
-          playlist = await window.getPlaylist(id);
-        } else {
-          playlist = await window.getRecentPlaylist(id);
-        }
+        playlist = await window.getPlaylist(id);
         history.replaceState({ playlist }, "", url.pathname + url.hash);
       } else {
         const videoIds = url.searchParams.get("videoIds");

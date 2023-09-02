@@ -42,29 +42,32 @@
                 Open the playlist editor instead of playing the playlist
               </label>
 
-              <label
-                ><select id="createdPlaylistStorage">
-                  <option value="recent">
-                    add playlist to "Recently created playlists"
-                  </option>
-                  <option value="saved">
-                    add playlist to "Saved playlists"
-                  </option>
-                  <option value="">don't save playlist</option>
-                </select>
+              <label for="saveCreatedPlaylists">
+                <input
+                  type="checkbox"
+                  id="saveCreatedPlaylists"
+                  role="switch"
+                />
+                Save the playlist
               </label>
             </fieldset>
 
             <fieldset>
+              <legend>When playing a playlist:</legend>
               <label>
                 <input type="checkbox" id="openPlaylistPage" role="switch" />
-                When playing a playlist, open the YouTube playlist page instead
-                of playing an anonymous playlist
+                Open the YouTube playlist page instead of playing an anonymous
+                playlist
               </label>
+            </fieldset>
 
+            <fieldset>
+              <legend>
+                After combining Youtube Tabs using the pop-up menu:
+              </legend>
               <label>
                 <input type="checkbox" id="closeAfterCombine" role="switch" />
-                Close tabs after combining Youtube Tabs using the pop-up menu
+                Close the combined tabs
               </label>
             </fieldset>
           </details>
@@ -76,7 +79,6 @@
               <label
                 >Default page
                 <select id="defaultEditorPage">
-                  <option value="/recent">Recently created playlists</option>
                   <option value="/new">New playlist</option>
                   <option value="/saved">Saved playlists</option>
                 </select>

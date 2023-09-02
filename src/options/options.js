@@ -1,4 +1,4 @@
-const MULTI_VALUE_SETTINGS = ["defaultEditorPage", "createdPlaylistStorage"];
+const MULTI_VALUE_SETTINGS = ["defaultEditorPage"];
 
 /**
  * @typedef {import("../../playlist-editor/src/types/model.js").Settings} Settings

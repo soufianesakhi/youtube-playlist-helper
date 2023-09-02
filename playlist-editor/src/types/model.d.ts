@@ -31,8 +31,8 @@ export interface Settings {
   disableThumbnails: boolean;
   openPlaylistBuilderAfterAdd: boolean;
   openSavedPlaylistAfterAdd: boolean;
-  defaultEditorPage: "/recent" | "/new" | "/saved";
-  createdPlaylistStorage: "recent" | "saved" | "";
+  defaultEditorPage: "/new" | "/saved";
+  saveCreatedPlaylists: boolean;
   disableContextBuilder: boolean;
   disableContextSaved: boolean;
 }

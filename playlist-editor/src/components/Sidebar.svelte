@@ -8,11 +8,8 @@
 </script>
 
 <div class="sidenav">
-  <a href="#/recent" class:active={isActive("recent", "#", ".html")}
-    >Recently created playlists</a
-  >
-  <a href="#/new" class:active={isActive("new")}>New playlist</a>
   <a href="#/saved" class:active={isActive("saved")}>Saved playlists</a>
+  <a href="#/new" class:active={isActive("new")}>New playlist</a>
   <a href="#/manage" class:active={isActive("manage")}>Manage playlists</a>
   <a href="#/support" class:active={isActive("support")}>Support</a>
 </div>
