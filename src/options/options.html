@@ -3,81 +3,125 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Settings</title>
+    <link rel="icon" type="image/png" href="../icons/icon_48.png" />
+    <title>Settings - YouTube Playlist Helper</title>
+    <link rel="stylesheet" href="../css/pico.min.css" />
+    <style>
+      article {
+        --block-spacing-vertical: 1.5rem;
+      }
+      details > summary {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+      details > summary + * {
+        margin-top: 1.5rem;
+      }
+
+      button[type="submit"] {
+        margin-top: 2rem;
+      }
+    </style>
   </head>
 
-  <body style="display: flex; flex-direction: column; align-items: center">
-    <header style="display: flex; align-items: center">
-      <img style="margin-right: 10px" src="../icons/icon_48.png" />
-      <h1>YouTube Playlist Helper</h1>
-    </header>
-    <form style="padding: 10px">
-      <fieldset>
-        <legend>General</legend>
-        <label
-          >After creating a playlist, open the playlist editor instead of
-          playing the playlist<input
-            type="checkbox"
-            id="openPlaylistEditorAfterCreation"
-        /></label>
-        <br />
-        <label
-          >After creating a playlist,
-          <select id="createdPlaylistStorage">
-            <option value="recent">
-              add playlist to "Recently created playlists"
-            </option>
-            <option value="saved">add playlist to "Saved playlists"</option>
-            <option value="">don't save playlist</option>
-          </select>
-        </label>
-        <br />
-        <label
-          >When playing a playlist, open the YouTube playlist page instead of
-          playing an anonymous playlist<input
-            type="checkbox"
-            id="openPlaylistPage"
-        /></label>
-        <br />
-        <label
-          >Close tabs after combine<input
-            type="checkbox"
-            id="closeAfterCombine"
-        /></label>
-        <br />
-        <label
-          >Disable thumbnail previews (playlist editor)<input
-            type="checkbox"
-            id="disableThumbnails"
-        /></label>
-        <br />
-        <label
-          >Default playlist editor page (used when selecting "Open playlist
-          editor")
-          <select id="defaultEditorPage">
-            <option value="/recent">Recently created playlists</option>
-            <option value="/new">New playlist</option>
-            <option value="/saved">Saved playlists</option>
-          </select>
-        </label>
-        <br />
-        <label
-          >Open the playlist builder after adding a video using the context
-          menu<input type="checkbox" id="openPlaylistBuilderAfterAdd"
-        /></label>
-        <br />
-        <label
-          >Open the saved playlist after adding a video using the context
-          menu<input type="checkbox" id="openSavedPlaylistAfterAdd"
-        /></label>
-      </fieldset>
-      <div style="float: right; padding: 10px">
-        <button type="submit">Save</button>
-      </div>
-    </form>
+  <body>
+    <main class="container" style="padding-top: 0rem">
+      <article>
+        <form>
+          <details open>
+            <summary>General</summary>
 
-    <script src="../browser-polyfill.min.js"></script>
-    <script src="../editor/storage-service.js"></script>
-    <script src="options.js"></script>
+            <fieldset>
+              <legend>When a playlist is created using the pop-up menu:</legend>
+              <label for="openPlaylistEditorAfterCreation">
+                <input
+                  type="checkbox"
+                  id="openPlaylistEditorAfterCreation"
+                  role="switch"
+                />
+                Open the playlist editor instead of playing the playlist
+              </label>
+
+              <label
+                ><select id="createdPlaylistStorage">
+                  <option value="recent">
+                    add playlist to "Recently created playlists"
+                  </option>
+                  <option value="saved">
+                    add playlist to "Saved playlists"
+                  </option>
+                  <option value="">don't save playlist</option>
+                </select>
+              </label>
+            </fieldset>
+
+            <fieldset>
+              <label>
+                <input type="checkbox" id="openPlaylistPage" role="switch" />
+                When playing a playlist, open the YouTube playlist page instead
+                of playing an anonymous playlist
+              </label>
+
+              <label>
+                <input type="checkbox" id="closeAfterCombine" role="switch" />
+                Close tabs after combining Youtube Tabs using the pop-up menu
+              </label>
+            </fieldset>
+          </details>
+
+          <details open>
+            <summary>Playlist editor</summary>
+
+            <fieldset>
+              <label
+                >Default page
+                <select id="defaultEditorPage">
+                  <option value="/recent">Recently created playlists</option>
+                  <option value="/new">New playlist</option>
+                  <option value="/saved">Saved playlists</option>
+                </select>
+              </label>
+            </fieldset>
+
+            <label>
+              <input type="checkbox" id="disableThumbnails" role="switch" />
+              Disable thumbnail previews
+            </label>
+          </details>
+
+          <details open>
+            <summary>Context menu</summary>
+
+            <fieldset>
+              <label>
+                <input
+                  type="checkbox"
+                  id="openSavedPlaylistAfterAdd"
+                  role="switch"
+                />
+                After adding a video to a saved playlist, open the saved
+                playlist
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  id="openPlaylistBuilderAfterAdd"
+                  role="switch"
+                />
+                After adding a video to the playlist builder, open the playlist
+                builder
+              </label>
+            </fieldset>
+          </details>
+
+          <button type="submit">Save</button>
+        </form>
+
+        <script src="../browser-polyfill.min.js"></script>
+        <script src="../editor/storage-service.js"></script>
+        <script src="options.js"></script>
+      </article>
+    </main>
   </body>
 </html>
