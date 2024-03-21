@@ -78,10 +78,15 @@ class VideoService {
   async generatePlaylist(videoIds?: string[], title?: string) {
     const id = await window.generatePlaylistId();
     const date = new Date();
+    let watchedInfo = [];
+    if (videoIds) {
+      watchedInfo = new Array(videoIds.length).fill(false);
+    }
     return {
       id,
       title: title ?? date.toLocaleString(),
       videos: videoIds || [],
+      watchedInfo: watchedInfo,
       timestamp: date.getTime(),
     };
   }

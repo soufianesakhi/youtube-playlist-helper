@@ -12,6 +12,7 @@ export interface PlaylistExport {
   title: string;
   videos: string[];
   timestamp: number;
+  watchedInfo: boolean[];
 }
 
 export interface Playlist {
