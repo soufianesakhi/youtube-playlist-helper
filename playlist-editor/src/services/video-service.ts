@@ -19,6 +19,7 @@ class VideoService {
     let title = "";
     let channel = "";
     let sessionVideoData = sessionStorage.getItem(videoId);
+    let isWatched = false;
     if (!sessionOnly && !sessionVideoData) {
       try {
         const res = await fetch(
@@ -27,15 +28,16 @@ class VideoService {
         const json = await res.json();
         title = json.title;
         channel = json.author_name;
-        sessionStorage.setItem(videoId, JSON.stringify({ title, channel }));
+        sessionStorage.setItem(videoId, JSON.stringify({ title, channel,isWatched }));
       } catch (e) {
         console.log(e);
       }
     } else if (sessionVideoData) {
-      ({ title, channel } = JSON.parse(sessionVideoData));
+      ({ title, channel,isWatched } = JSON.parse(sessionVideoData));
     } else {
       title = "";
       channel = "";
+      isWatched = false;
     }
     return {
       id: window.videoIdCount++,
@@ -44,6 +46,7 @@ class VideoService {
       title,
       channel,
       thumbnailUrl: this.getVideoThumbnailUrl(videoId),
+      isWatched,
     };
   }
 
