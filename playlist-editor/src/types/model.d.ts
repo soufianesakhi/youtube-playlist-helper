@@ -5,6 +5,7 @@ export interface Video {
   title: string;
   channel: string;
   thumbnailUrl: string;
+  isWatched: boolean;
 }
 
 export interface PlaylistExport {
@@ -18,6 +19,7 @@ export interface Playlist {
   title: string;
   loadedVideos?: Video[];
   videos: string[];
+  watchedInfo: boolean[];
   /** Date created */
   timestamp: number;
   saved?: boolean;
