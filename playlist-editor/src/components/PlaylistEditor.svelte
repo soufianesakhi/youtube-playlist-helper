@@ -116,7 +116,11 @@
 
     pageSize = await window.fetchObject("page-size", defaultPageSize);
     await Promise.all(
-      playlist.videos.map((id) => videoService.fetchVideo(id, true))
+      playlist.videos.map(async (id, index) => {
+          const videoData = await videoService.fetchVideo(id, true);
+          videoData.isWatched = playlist.watchedInfo[index] || false;
+          return videoData;
+        })
     ).then(async (loadedVideos) => {
       videos = [...loadedVideos];
       await loadPageVideos(currentPage);
@@ -170,6 +174,12 @@
       currentPage = currentPage - 1;
     }
     loadPageVideos(currentPage);
+    await savePlaylistBuilder();
+  }
+
+  async function watchVideo(event: CustomEvent<{ video: Video; watched: boolean }>) {
+    const video = event.detail.video;
+    video.isWatched = event.detail.watched;
     await savePlaylistBuilder();
   }
 
@@ -263,7 +273,9 @@
 
   async function savePlaylist() {
     const videoIds = videos.map((video) => video.videoId.toString());
-    playlist = { ...playlist, videos: videoIds };
+    const watchdedInfo = videos.map((video) => video.isWatched);
+
+    playlist = { ...playlist, videos: videoIds , watchedInfo: watchdedInfo};
     const id = await window.savePlaylist(playlist);
     playlist = { ...playlist, id };
     if (isPlaylistBuilder) {
@@ -400,6 +412,7 @@
         >
           <PlaylistVideo
             on:delete={deleteVideo}
+            on:watch={watchVideo}
             {video}
             {disableThumbnails}
             active={hovering === index}
