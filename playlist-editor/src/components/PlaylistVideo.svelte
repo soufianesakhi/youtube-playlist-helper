@@ -16,9 +16,19 @@
   function deleteVideo(_: Event) {
     dispatch("delete", video);
   }
+
+  function watchVideo(event: Event) {
+    dispatch("watch", { video, watched: (event.target as HTMLInputElement).checked });
+  }
 </script>
 
-<div class="playlist-video" class:is-active={active}>
+<div class="playlist-video" class:is-active={active}  class:watched={video.isWatched}>
+  <!-- checkbox for watched  -->
+  <div class="watched">
+    <input type="checkbox" bind:checked={video.isWatched} on:change={watchVideo} />
+  </div>
+
+
   {#if !disableThumbnails}
     <img
       alt={video.title}
@@ -48,6 +58,10 @@
 
   .playlist-video.is-active {
     background-color: #3273dc;
+    color: #fff;
+  }  
+  .playlist-video.watched {
+    background-color: #52a451; 
     color: #fff;
   }
 
@@ -82,5 +96,12 @@
     justify-content: center;
     align-items: center;
     margin-left: 10px;
+  }
+
+  .watched {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
   }
 </style>
